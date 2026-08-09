@@ -11,11 +11,13 @@ Set up a new feature branch following this workflow:
    - If there are any uncommitted changes (staged or unstaged), warn me and show the list of affected files.
    - Ask whether I want to stash, commit, or abort before continuing.
    - Wait for my response before proceeding.
+   - If I choose to commit, commit on the current branch only. Do not switch to `main`/`master` (or any other branch) as part of or after this commit — stay on whatever branch I was already on.
 
 2. **Check current branch**
    - Run `git branch --show-current`.
    - If it's not `main` or `master`, warn me: show the current branch name and ask whether I want to switch to `main`/`master` first, or continue from the current branch anyway.
    - Wait for my response before proceeding.
+   - Only switch branches here if I explicitly say so. Never switch to `main`/`master` on your own initiative (including right after a commit in step 1).
 
 3. **Pull latest changes**
    - Run `git pull` on the current branch.
@@ -50,3 +52,4 @@ Set up a new feature branch following this workflow:
 - Feature number is a plain integer — no zero-padding, no fixed digit width, grows naturally over time.
 - If session name is not kebab-case, convert it automatically (lowercase, spaces/underscores → hyphens).
 - Checks run in order: uncommitted changes → branch check → pull → number suggestion → re-check before creation. Each can stop or loop the workflow before it proceeds further.
+- Never switch branches automatically (e.g. back to `main`/`master` after a commit). The only branch switch this workflow performs on its own is the final `git checkout -b` in step 8, which creates and moves to the new feature branch.
