@@ -1,13 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { POSTS } from './data';
 import { supabase } from './lib/supabase';
+import { linkError, startedInRecovery } from './lib/recovery';
 import Landing from './components/Landing';
 import AuthScreen from './components/AuthScreen';
+import NewPassword from './components/NewPassword';
 import Dashboard from './components/Dashboard';
 import Reader from './components/Reader';
 import VocabBank from './components/VocabBank';
 import FinishModal from './components/FinishModal';
 import DeleteModal from './components/DeleteModal';
+import ChangePasswordModal from './components/ChangePasswordModal';
 
 const THEME_KEY = 'lesener-theme';
 
@@ -15,8 +18,12 @@ export default function App() {
   const [theme, setThemeState] = useState('light');
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const [screen, setScreen] = useState('landing');
-  const [authTab, setAuthTab] = useState('up');
+  // A recovery link grants a real session, so without seeding the screen from
+  // the URL up front the dashboard would flash before PASSWORD_RECOVERY lands.
+  const [screen, setScreen] = useState(startedInRecovery ? 'reset' : linkError ? 'auth' : 'landing');
+  const [authTab, setAuthTab] = useState(linkError ? 'in' : 'up');
+  const [authForgot, setAuthForgot] = useState(Boolean(linkError));
+  const [authMessage, setAuthMessage] = useState(linkError ? { kind: 'error', text: linkError } : null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [completed, setCompleted] = useState([1, 2, 3, 4, 5, 6, 7]);
   const [active, setActive] = useState(8);
@@ -28,6 +35,17 @@ export default function App() {
   const [session, setSession] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+
+  // Finishing a reset signs out globally, which fires the same SIGNED_OUT event
+  // as pressing Log out. This is how the listener tells the two apart.
+  const resetCompleted = useRef(false);
+
+  // A reset link that failed lands someone on the auth screen holding an
+  // explanation — while they may still be signed in from before. Without this
+  // the session check below would read that screen as "signed out and idling"
+  // and forward them to the dashboard, silently binning the explanation.
+  const unreadLinkError = useRef(Boolean(linkError));
 
   const setTheme = useCallback((t) => {
     document.documentElement.setAttribute('data-theme', t);
@@ -58,18 +76,40 @@ export default function App() {
       setUser(authSession?.user ?? null);
       setAuthReady(true);
 
+      // Fired instead of SIGNED_IN when the page was opened from a recovery
+      // link. The session it carries belongs to whoever the link was sent to —
+      // which may not be who was signed in a moment ago.
+      if (event === 'PASSWORD_RECOVERY') {
+        setScreen('reset');
+        setMenuOpen(false);
+        setShowChangePassword(false);
+        return;
+      }
+
       if (event === 'SIGNED_OUT') {
-        setScreen('landing');
         setMenuOpen(false);
         setShowModal(false);
         setShowDelete(false);
+        setShowChangePassword(false);
         setSession([]);
+
+        if (resetCompleted.current) {
+          resetCompleted.current = false;
+          setAuthTab('in');
+          setAuthForgot(false);
+          setAuthMessage({ kind: 'notice', text: 'Password updated. Sign in with your new password.' });
+          setScreen('auth');
+          return;
+        }
+
+        setScreen('landing');
         return;
       }
 
       // SIGNED_IN re-fires when the tab regains focus, so only move someone who
-      // is still sitting on a signed-out screen — never yank them out of a post.
-      if (authSession) {
+      // is still sitting on a signed-out screen — never yank them out of a post,
+      // and never off the reset screen before they have chosen a password.
+      if (authSession && !unreadLinkError.current) {
         setScreen((s) => (s === 'landing' || s === 'auth' ? 'dash' : s));
       }
     });
@@ -80,7 +120,14 @@ export default function App() {
   const dark = theme === 'dark';
   const toggleTheme = () => setTheme(dark ? 'light' : 'dark');
 
+  // Any deliberate move away means the explanation has been read, so the normal
+  // "you have a session, go to the dashboard" behaviour can resume.
+  const dismissLinkError = () => {
+    unreadLinkError.current = false;
+  };
+
   const goLanding = () => {
+    dismissLinkError();
     setScreen('landing');
     setMenuOpen(false);
     setShowDelete(false);
@@ -91,19 +138,19 @@ export default function App() {
     setMenuOpen(false);
     supabase.auth.signOut();
   };
+  const openAuth = (tab) => {
+    dismissLinkError();
+    setAuthTab(tab);
+    setAuthForgot(false);
+    setAuthMessage(null);
+    setScreen('auth');
+  };
   // Landing stays reachable while signed in (the logo goes there), so its two
   // CTAs must not send someone with a live session back through the form.
-  const goSignIn = () => {
-    if (user) return goDashboard();
-    setScreen('auth');
-    setAuthTab('in');
-  };
-  const goSignUp = () => {
-    if (user) return goDashboard();
-    setScreen('auth');
-    setAuthTab('up');
-  };
+  const goSignIn = () => (user ? goDashboard() : openAuth('in'));
+  const goSignUp = () => (user ? goDashboard() : openAuth('up'));
   const goDashboard = () => {
+    dismissLinkError();
     setScreen('dash');
     setShowModal(false);
     setMenuOpen(false);
@@ -111,6 +158,19 @@ export default function App() {
   const goVocab = () => {
     setScreen('vocab');
     setMenuOpen(false);
+  };
+
+  // The new password is saved by now; signing out globally drops every other
+  // device too, and the listener above turns that into the Sign in screen.
+  const completeReset = () => {
+    resetCompleted.current = true;
+    supabase.auth.signOut();
+  };
+  const requestFreshLink = () => {
+    setAuthTab('in');
+    setAuthForgot(true);
+    setAuthMessage(null);
+    setScreen('auth');
   };
 
   const openPost = (n) => {
@@ -125,6 +185,11 @@ export default function App() {
     setMenuOpen(false);
   };
   const closeDelete = () => setShowDelete(false);
+  const askChangePassword = () => {
+    setShowChangePassword(true);
+    setMenuOpen(false);
+  };
+  const closeChangePassword = () => setShowChangePassword(false);
   const toggleMenu = (e) => {
     e.stopPropagation();
     setMenuOpen((m) => !m);
@@ -166,12 +231,28 @@ export default function App() {
 
       {screen === 'auth' && (
         <AuthScreen
+          // AuthScreen seeds its own view and message from these once, so a
+          // later expired link or reset confirmation needs a fresh instance.
+          key={`${authForgot}-${authMessage?.text ?? ''}`}
           dark={dark}
           toggleTheme={toggleTheme}
           goLanding={goLanding}
           authTab={authTab}
           setSignUp={() => setAuthTab('up')}
           setSignIn={() => setAuthTab('in')}
+          initialForgot={authForgot}
+          initialMessage={authMessage}
+        />
+      )}
+
+      {screen === 'reset' && (
+        <NewPassword
+          dark={dark}
+          toggleTheme={toggleTheme}
+          goLanding={goLanding}
+          email={user?.email}
+          onComplete={completeReset}
+          onExpired={requestFreshLink}
         />
       )}
 
@@ -189,6 +270,7 @@ export default function App() {
           goVocab={goVocab}
           signOut={signOut}
           askDelete={askDelete}
+          askChangePassword={askChangePassword}
           openPost={openPost}
           reviewPost={reviewPost}
         />
@@ -215,6 +297,8 @@ export default function App() {
       {showModal && (
         <FinishModal doneCount={done} pctLabel={pctLabel} session={session} backToDash={backToDash} closeModal={closeModal} />
       )}
+
+      {showChangePassword && <ChangePasswordModal email={user?.email} onClose={closeChangePassword} />}
 
       {/* TODO: erasing the account needs auth.admin.deleteUser, which the
           publishable key cannot call — it belongs behind an Edge Function.

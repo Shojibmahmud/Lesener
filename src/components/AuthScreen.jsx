@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import {
+  authErrorText,
+  errorMessageStyle,
+  inputStyle,
+  labelStyle,
+  noticeMessageStyle,
+  submitButtonStyle,
+} from '../lib/authUi';
 import Logo from './Logo';
+import PasswordField from './PasswordField';
 import ThemeToggle from './ThemeToggle';
 
 function tabStyle(active) {
@@ -16,67 +25,61 @@ function tabStyle(active) {
   };
 }
 
-const inputStyle = {
-  width: '100%',
-  padding: '13px 14px',
-  borderRadius: 11,
-  border: '1px solid var(--line)',
-  background: 'var(--bg)',
-  color: 'var(--text)',
-  font: '400 14.5px var(--ui)',
-};
-
-const labelStyle = {
-  display: 'block',
+const linkStyle = {
   font: '600 12.5px var(--ui)',
-  color: 'var(--muted)',
-  marginBottom: 7,
+  color: 'var(--ind)',
 };
 
-// Supabase's raw strings leak its own vocabulary ("email rate limit exceeded"),
-// which tells a reader nothing about what to do. Anything unmapped falls through
-// to the original message rather than a useless generic.
-const ERROR_TEXT = {
-  over_email_send_rate_limit:
-    'Too many confirmation emails have gone out in the last hour. Please try again a little later.',
-  email_not_confirmed: 'Confirm your email first — check your inbox for the link we sent.',
-  invalid_credentials: 'That email and password do not match.',
-  user_already_exists: 'An account with that email already exists. Try signing in instead.',
-  email_exists: 'An account with that email already exists. Try signing in instead.',
-  email_address_invalid: 'That email address does not look valid.',
-};
-
-const messageStyle = {
-  font: '400 13px/1.55 var(--ui)',
-  borderRadius: 10,
-  padding: '10px 12px',
-  marginBottom: 16,
-};
-
-export default function AuthScreen({ dark, toggleTheme, goLanding, authTab, setSignUp, setSignIn }) {
+export default function AuthScreen({
+  dark,
+  toggleTheme,
+  goLanding,
+  authTab,
+  setSignUp,
+  setSignIn,
+  initialForgot = false,
+  initialMessage = null,
+}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
+  const [forgot, setForgot] = useState(initialForgot);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState(initialMessage?.kind === 'error' ? initialMessage.text : '');
+  const [notice, setNotice] = useState(initialMessage?.kind === 'notice' ? initialMessage.text : '');
   const [busy, setBusy] = useState(false);
 
   const isUp = authTab === 'up';
-  const authTitle = isUp ? 'Create your account' : 'Welcome back';
-  const authSub = isUp ? 'Ten B1 texts are waiting. No card, no trial timer.' : 'Pick up where you left off.';
-  const authCta = isUp ? 'Start learning' : 'Sign in';
 
-  const switchTab = (next) => {
+  const clearMessages = () => {
     setError('');
     setNotice('');
+  };
+
+  const switchTab = (next) => {
+    clearMessages();
+    setForgot(false);
+    setSent(false);
     if (next === 'up') setSignUp();
     else setSignIn();
+  };
+
+  const openForgot = () => {
+    clearMessages();
+    setSent(false);
+    setForgot(true);
+  };
+
+  const backToSignIn = () => {
+    clearMessages();
+    setForgot(false);
+    setSent(false);
+    setSignIn();
   };
 
   const submit = async (e) => {
     e.preventDefault();
     if (busy) return;
-    setError('');
-    setNotice('');
+    clearMessages();
     setBusy(true);
 
     const credentials = { email: email.trim(), password };
@@ -85,7 +88,7 @@ export default function AuthScreen({ dark, toggleTheme, goLanding, authTab, setS
       : await supabase.auth.signInWithPassword(credentials);
 
     if (authError) {
-      setError(ERROR_TEXT[authError.code] || authError.message);
+      setError(authErrorText(authError));
       setBusy(false);
       return;
     }
@@ -95,7 +98,7 @@ export default function AuthScreen({ dark, toggleTheme, goLanding, authTab, setS
     // identities. Without this branch a duplicate registration looks like it
     // worked and the reader waits for a mail that will never arrive.
     if (isUp && data.user?.identities?.length === 0) {
-      setError(ERROR_TEXT.user_already_exists);
+      setError(authErrorText({ code: 'user_already_exists' }));
       setBusy(false);
       return;
     }
@@ -110,6 +113,65 @@ export default function AuthScreen({ dark, toggleTheme, goLanding, authTab, setS
     }
   };
 
+  const requestReset = async (e) => {
+    e.preventDefault();
+    if (busy) return;
+    clearMessages();
+    setBusy(true);
+
+    const address = email.trim();
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(address, {
+      redirectTo: window.location.origin,
+    });
+
+    // The hourly send cap is swallowed on purpose. It can only be reached by an
+    // address that really has an account, so showing it would answer exactly the
+    // question the neutral confirmation below exists to refuse. The cost is a
+    // reader who waits for a mail that never comes — accepted knowingly.
+    if (resetError && resetError.code !== 'over_email_send_rate_limit') {
+      setError(authErrorText(resetError));
+      setBusy(false);
+      return;
+    }
+
+    setSent(true);
+    setBusy(false);
+  };
+
+  const messages = (
+    <>
+      {error && (
+        <p role="alert" style={errorMessageStyle}>
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" style={noticeMessageStyle}>
+          {notice}
+        </p>
+      )}
+    </>
+  );
+
+  const emailInput = (
+    <>
+      <label htmlFor="auth-email" style={labelStyle}>
+        Email address
+      </label>
+      <input
+        id="auth-email"
+        type="email"
+        required
+        autoComplete="email"
+        placeholder="anna@example.de"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        disabled={busy}
+        style={{ ...inputStyle, marginBottom: 16 }}
+      />
+    </>
+  );
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, position: 'relative', animation: 'fade .35s ease' }}>
       <ThemeToggle dark={dark} onToggle={toggleTheme} style={{ position: 'absolute', top: 24, right: 32 }} />
@@ -119,79 +181,95 @@ export default function AuthScreen({ dark, toggleTheme, goLanding, authTab, setS
 
       <div style={{ width: '100%', maxWidth: 420, animation: 'rise .4s cubic-bezier(.2,.7,.3,1)' }}>
         <div style={{ background: 'var(--surf)', border: '1px solid var(--line)', borderRadius: 20, boxShadow: 'var(--shadow-lg)', padding: 32 }}>
-          <div style={{ display: 'flex', padding: 4, background: 'var(--surf2)', borderRadius: 12, marginBottom: 26 }}>
-            <button type="button" onClick={() => switchTab('up')} style={tabStyle(isUp)}>
-              Create account
-            </button>
-            <button type="button" onClick={() => switchTab('in')} style={tabStyle(!isUp)}>
-              Sign in
-            </button>
-          </div>
-          <h2 style={{ font: '400 30px/1.2 var(--serif)', margin: '0 0 6px', letterSpacing: '-.02em' }}>{authTitle}</h2>
-          <p style={{ font: '400 14.5px/1.6 var(--ui)', color: 'var(--muted)', margin: '0 0 24px' }}>{authSub}</p>
-
-          <form onSubmit={submit}>
-            {error && (
-              <p role="alert" style={{ ...messageStyle, background: 'var(--surf2)', color: 'var(--red)', border: '1px solid var(--red)' }}>
-                {error}
+          {forgot ? (
+            <>
+              <h2 style={{ font: '400 30px/1.2 var(--serif)', margin: '0 0 6px', letterSpacing: '-.02em' }}>
+                Reset your password
+              </h2>
+              <p style={{ font: '400 14.5px/1.6 var(--ui)', color: 'var(--muted)', margin: '0 0 24px' }}>
+                {sent
+                  ? 'Follow the link in the email to choose a new password.'
+                  : 'Tell us your address and we will send a link to choose a new one.'}
               </p>
-            )}
-            {notice && (
-              <p role="status" style={{ ...messageStyle, background: 'var(--surf2)', color: 'var(--muted)', border: '1px solid var(--line)' }}>
-                {notice}
+
+              {messages}
+
+              {sent ? (
+                <>
+                  {/* Worded so it reads the same whether or not that address has
+                      an account — and the same when the hourly cap swallowed the
+                      request. Nothing here confirms the account exists. */}
+                  <p role="status" style={noticeMessageStyle}>
+                    If an account exists for <strong>{email.trim()}</strong>, a link is on its way. It
+                    is good for about an hour.
+                  </p>
+                  <button type="button" className="btng" onClick={backToSignIn} style={{ ...submitButtonStyle(false), background: 'none', color: 'var(--text)', border: '1px solid var(--line)' }}>
+                    Back to sign in
+                  </button>
+                </>
+              ) : (
+                <form onSubmit={requestReset}>
+                  {emailInput}
+                  <button type="submit" className="btnp" disabled={busy} style={{ ...submitButtonStyle(busy), marginTop: 8 }}>
+                    {busy ? 'Sending…' : 'Send reset link'}
+                  </button>
+                  <p style={{ textAlign: 'center', margin: '16px 0 0' }}>
+                    <button type="button" onClick={backToSignIn} style={linkStyle}>
+                      Back to sign in
+                    </button>
+                  </p>
+                </form>
+              )}
+            </>
+          ) : (
+            <>
+              <div style={{ display: 'flex', padding: 4, background: 'var(--surf2)', borderRadius: 12, marginBottom: 26 }}>
+                <button type="button" onClick={() => switchTab('up')} style={tabStyle(isUp)}>
+                  Create account
+                </button>
+                <button type="button" onClick={() => switchTab('in')} style={tabStyle(!isUp)}>
+                  Sign in
+                </button>
+              </div>
+              <h2 style={{ font: '400 30px/1.2 var(--serif)', margin: '0 0 6px', letterSpacing: '-.02em' }}>
+                {isUp ? 'Create your account' : 'Welcome back'}
+              </h2>
+              <p style={{ font: '400 14.5px/1.6 var(--ui)', color: 'var(--muted)', margin: '0 0 24px' }}>
+                {isUp ? 'Ten B1 texts are waiting. No card, no trial timer.' : 'Pick up where you left off.'}
               </p>
-            )}
 
-            <label htmlFor="auth-email" style={labelStyle}>
-              Email address
-            </label>
-            <input
-              id="auth-email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="anna@example.de"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={busy}
-              style={{ ...inputStyle, marginBottom: 16 }}
-            />
-            <label htmlFor="auth-password" style={labelStyle}>
-              Password
-            </label>
-            <input
-              id="auth-password"
-              type="password"
-              required
-              minLength={6}
-              autoComplete={isUp ? 'new-password' : 'current-password'}
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={busy}
-              style={{ ...inputStyle, marginBottom: 24 }}
-            />
-            <button
-              type="submit"
-              className="btnp"
-              disabled={busy}
-              style={{
-                width: '100%',
-                padding: 15,
-                borderRadius: 12,
-                background: 'var(--ind)',
-                color: '#fff',
-                font: '600 15px var(--ui)',
-                opacity: busy ? 0.65 : 1,
-              }}
-            >
-              {busy ? 'One moment…' : authCta}
-            </button>
-          </form>
+              <form onSubmit={submit}>
+                {messages}
+                {emailInput}
+                <PasswordField
+                  id="auth-password"
+                  label="Password"
+                  value={password}
+                  onChange={setPassword}
+                  autoComplete={isUp ? 'new-password' : 'current-password'}
+                  disabled={busy}
+                  minLength={6}
+                  marginBottom={isUp ? 24 : 8}
+                />
+                {/* Sign in only: someone creating an account has no password to
+                    have forgotten yet. */}
+                {!isUp && (
+                  <p style={{ textAlign: 'right', margin: '0 0 20px' }}>
+                    <button type="button" onClick={openForgot} style={linkStyle}>
+                      Forgot password?
+                    </button>
+                  </p>
+                )}
+                <button type="submit" className="btnp" disabled={busy} style={submitButtonStyle(busy)}>
+                  {busy ? 'One moment…' : isUp ? 'Start learning' : 'Sign in'}
+                </button>
+              </form>
 
-          <p style={{ font: '400 12.5px/1.6 var(--ui)', color: 'var(--muted)', textAlign: 'center', margin: '18px 0 0' }}>
-            By continuing you agree to our terms and privacy policy.
-          </p>
+              <p style={{ font: '400 12.5px/1.6 var(--ui)', color: 'var(--muted)', textAlign: 'center', margin: '18px 0 0' }}>
+                By continuing you agree to our terms and privacy policy.
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

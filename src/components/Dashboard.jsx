@@ -15,6 +15,7 @@ export default function Dashboard({
   goVocab,
   signOut,
   askDelete,
+  askChangePassword,
   openPost,
   reviewPost,
 }) {
@@ -76,6 +77,9 @@ export default function Dashboard({
               </div>
               <button className="rowh" onClick={goVocab} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)' }}>
                 Vocabulary bank
+              </button>
+              <button className="rowh" onClick={askChangePassword} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)' }}>
+                Change password
               </button>
               <button
                 className="rowh"
