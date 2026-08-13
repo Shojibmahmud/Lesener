@@ -1,4 +1,4 @@
-export default function DeleteModal({ closeDelete, goLanding }) {
+export default function DeleteModal({ closeDelete, onConfirm }) {
   return (
     <div
       onClick={closeDelete}
@@ -41,7 +41,7 @@ export default function DeleteModal({ closeDelete, goLanding }) {
             Keep my account
           </button>
           <button
-            onClick={goLanding}
+            onClick={onConfirm}
             style={{ flex: 1, padding: 13, borderRadius: 11, background: 'var(--red)', color: '#fff', font: '600 14px var(--ui)' }}
           >
             Delete forever

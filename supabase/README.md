@@ -39,7 +39,7 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
 - **`levels` / `posts` / `dictionary_entries`** — the library. Written by
   `service_role` only. `posts.body` holds prose with paragraphs separated by a
   blank line, matching the `'\n\n'` split in `Reader.jsx`.
-- **`dictionary_entries.term`** is a normalised *surface form*, not a lemma: it has
+- **`dictionary_entries.term`** is a normalised _surface form_, not a lemma: it has
   to equal `clean(raw).toLowerCase()` from `src/utils.js` or lookups silently miss.
   A check constraint enforces the lowercasing.
 - **`reading_sessions`** — one row per pass through a post.

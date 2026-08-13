@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { POSTS } from './data';
+import { supabase } from './lib/supabase';
 import Landing from './components/Landing';
 import AuthScreen from './components/AuthScreen';
 import Dashboard from './components/Dashboard';
@@ -12,6 +13,8 @@ const THEME_KEY = 'lesener-theme';
 
 export default function App() {
   const [theme, setThemeState] = useState('light');
+  const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [screen, setScreen] = useState('landing');
   const [authTab, setAuthTab] = useState('up');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,6 +49,34 @@ export default function App() {
     setTheme(t);
   }, [setTheme]);
 
+  // supabase-js fires INITIAL_SESSION on subscribe, so this covers restoring a
+  // stored session on reload as well as every later sign-in and sign-out.
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, authSession) => {
+      setUser(authSession?.user ?? null);
+      setAuthReady(true);
+
+      if (event === 'SIGNED_OUT') {
+        setScreen('landing');
+        setMenuOpen(false);
+        setShowModal(false);
+        setShowDelete(false);
+        setSession([]);
+        return;
+      }
+
+      // SIGNED_IN re-fires when the tab regains focus, so only move someone who
+      // is still sitting on a signed-out screen — never yank them out of a post.
+      if (authSession) {
+        setScreen((s) => (s === 'landing' || s === 'auth' ? 'dash' : s));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const dark = theme === 'dark';
   const toggleTheme = () => setTheme(dark ? 'light' : 'dark');
 
@@ -54,11 +85,21 @@ export default function App() {
     setMenuOpen(false);
     setShowDelete(false);
   };
+  // The SIGNED_OUT branch of the auth listener does the navigating and clears
+  // the per-user state, so there is nothing to do here on the way back.
+  const signOut = () => {
+    setMenuOpen(false);
+    supabase.auth.signOut();
+  };
+  // Landing stays reachable while signed in (the logo goes there), so its two
+  // CTAs must not send someone with a live session back through the form.
   const goSignIn = () => {
+    if (user) return goDashboard();
     setScreen('auth');
     setAuthTab('in');
   };
   const goSignUp = () => {
+    if (user) return goDashboard();
     setScreen('auth');
     setAuthTab('up');
   };
@@ -111,6 +152,12 @@ export default function App() {
   const done = completed.length;
   const pctLabel = Math.round((done / 10) * 100) + '%';
 
+  // Hold the painted background until the stored session has been read, so a
+  // returning reader does not see Landing flash before the dashboard.
+  if (!authReady) {
+    return <div style={{ minHeight: '100vh', background: 'var(--bg)' }} />;
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       {screen === 'landing' && (
@@ -125,7 +172,6 @@ export default function App() {
           authTab={authTab}
           setSignUp={() => setAuthTab('up')}
           setSignIn={() => setAuthTab('in')}
-          goDashboard={goDashboard}
         />
       )}
 
@@ -133,6 +179,7 @@ export default function App() {
         <Dashboard
           dark={dark}
           toggleTheme={toggleTheme}
+          email={user?.email}
           savedCount={saved.length}
           doneCount={done}
           pctLabel={pctLabel}
@@ -140,7 +187,7 @@ export default function App() {
           menuOpen={menuOpen}
           toggleMenu={toggleMenu}
           goVocab={goVocab}
-          goLanding={goLanding}
+          signOut={signOut}
           askDelete={askDelete}
           openPost={openPost}
           reviewPost={reviewPost}
@@ -169,7 +216,10 @@ export default function App() {
         <FinishModal doneCount={done} pctLabel={pctLabel} session={session} backToDash={backToDash} closeModal={closeModal} />
       )}
 
-      {showDelete && <DeleteModal closeDelete={closeDelete} goLanding={goLanding} />}
+      {/* TODO: erasing the account needs auth.admin.deleteUser, which the
+          publishable key cannot call — it belongs behind an Edge Function.
+          Until that exists this only signs out; nothing is deleted. */}
+      {showDelete && <DeleteModal closeDelete={closeDelete} onConfirm={signOut} />}
     </div>
   );
 }

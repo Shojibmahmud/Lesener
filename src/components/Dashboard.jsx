@@ -5,6 +5,7 @@ import { POSTS } from '../data';
 export default function Dashboard({
   dark,
   toggleTheme,
+  email,
   savedCount,
   doneCount,
   pctLabel,
@@ -12,7 +13,7 @@ export default function Dashboard({
   menuOpen,
   toggleMenu,
   goVocab,
-  goLanding,
+  signOut,
   askDelete,
   openPost,
   reviewPost,
@@ -71,14 +72,14 @@ export default function Dashboard({
             >
               <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line2)' }}>
                 <div style={{ font: '500 11.5px var(--ui)', color: 'var(--muted)', letterSpacing: '.05em', textTransform: 'uppercase' }}>Signed in as</div>
-                <div style={{ font: '600 14px var(--ui)', marginTop: 4 }}>anna@example.de</div>
+                <div style={{ font: '600 14px var(--ui)', marginTop: 4, overflowWrap: 'anywhere' }}>{email}</div>
               </div>
               <button className="rowh" onClick={goVocab} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)' }}>
                 Vocabulary bank
               </button>
               <button
                 className="rowh"
-                onClick={goLanding}
+                onClick={signOut}
                 style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)', borderBottom: '1px solid var(--line2)' }}
               >
                 Log out

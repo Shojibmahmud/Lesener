@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Local Supabase credentials; copy .env.example to .env
+.env
+.env.*
+!.env.example
+
 # Claude Code local settings
 .claude/settings.local.json
 
