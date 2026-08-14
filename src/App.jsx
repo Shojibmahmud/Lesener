@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { POSTS } from './data';
 import { supabase } from './lib/supabase';
+import { loadContent } from './lib/content';
 import { linkError, startedInRecovery } from './lib/recovery';
 import Landing from './components/Landing';
 import AuthScreen from './components/AuthScreen';
@@ -25,6 +26,10 @@ export default function App() {
   const [authForgot, setAuthForgot] = useState(Boolean(linkError));
   const [authMessage, setAuthMessage] = useState(linkError ? { kind: 'error', text: linkError } : null);
   const [menuOpen, setMenuOpen] = useState(false);
+  // The database copy of the library. Nothing renders from it yet — the screens
+  // still read the bundled src/data.js — so it is loaded but not consumed.
+  // eslint-disable-next-line no-unused-vars -- read once the screens are switched over
+  const [content, setContent] = useState(null);
   const [completed, setCompleted] = useState([1, 2, 3, 4, 5, 6, 7]);
   const [active, setActive] = useState(8);
   const [saved, setSaved] = useState([
@@ -116,6 +121,43 @@ export default function App() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // The library exists twice over: bundled in src/data.js, which is what every
+  // screen still renders, and in the database, which nothing has ever asked for.
+  // This asks. Nothing waits on the answer, so there is no loading state.
+  //
+  // Gated on a session rather than merely preferring one. `anon` holds no
+  // privileges on the content tables, so a request made while signed out does
+  // not return an empty library — it fails outright. The dependency is the user
+  // id and not the user object because SIGNED_IN re-fires whenever the tab
+  // regains focus, handing back an equal-but-fresh object each time.
+  const userId = user?.id ?? null;
+
+  useEffect(() => {
+    if (!userId) {
+      setContent(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    loadContent()
+      .then((loaded) => {
+        if (cancelled) return;
+        setContent(loaded);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        // Loud, but not fatal. Every screen renders the bundled copy, so a
+        // failure here is invisible to a reader and must stay that way rather
+        // than taking the app down over content nobody is looking at yet.
+        console.error('[lesener] content could not be loaded from the database.', error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const dark = theme === 'dark';
   const toggleTheme = () => setTheme(dark ? 'light' : 'dark');
