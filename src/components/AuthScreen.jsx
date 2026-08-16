@@ -180,7 +180,16 @@ export default function AuthScreen({
       </div>
 
       <div style={{ width: '100%', maxWidth: 420, animation: 'rise .4s cubic-bezier(.2,.7,.3,1)' }}>
-        <div style={{ background: 'var(--surf)', border: '1px solid var(--line)', borderRadius: 20, boxShadow: 'var(--shadow-lg)', padding: 32 }}>
+        <div
+          style={{
+            background: isUp ? 'var(--ind-up-soft)' : 'var(--surf)',
+            border: '1px solid var(--line)',
+            borderRadius: 20,
+            boxShadow: 'var(--shadow-lg)',
+            padding: 32,
+            transition: 'background .2s ease',
+          }}
+        >
           {forgot ? (
             <>
               <h2 style={{ font: '400 30px/1.2 var(--serif)', margin: '0 0 6px', letterSpacing: '-.02em' }}>
@@ -260,7 +269,12 @@ export default function AuthScreen({
                     </button>
                   </p>
                 )}
-                <button type="submit" className="btnp" disabled={busy} style={submitButtonStyle(busy)}>
+                <button
+                  type="submit"
+                  className="btnp"
+                  disabled={busy}
+                  style={isUp ? { ...submitButtonStyle(busy), background: 'var(--ind-up)' } : submitButtonStyle(busy)}
+                >
                   {busy ? 'One moment…' : isUp ? 'Start learning' : 'Sign in'}
                 </button>
               </form>
