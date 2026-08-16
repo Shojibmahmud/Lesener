@@ -2,9 +2,13 @@
 
 Postgres schema for Lesener, on Supabase project `mxkyojmuodcksvgddgke`.
 
-The React app does **not** talk to any of this yet — it still reads `src/data.js`
-and keeps progress in `useState`. This directory is the persistence layer waiting
-for it.
+The React app talks to **part** of this. On sign-in it reads `levels`, `posts` and
+`dictionary_entries`, and the translation shown when a reader taps a German word
+comes from the database — correcting one is a row edit, not a rebuild. Everything
+else on screen still comes from `src/data.js`: the post list, the blurbs, the
+prose, the counts. Progress and saved words are still `useState` and reach no
+table at all, so `reading_sessions`, `reading_progress` and `saved_words` remain
+empty and the level gate has never opened for anybody.
 
 ## Layout
 

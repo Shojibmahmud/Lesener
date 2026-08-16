@@ -119,7 +119,7 @@ describe('loading the whole library', () => {
 
     const { dictionary } = await loadContent();
 
-    expect(dictionary.herausforderung).toBe('challenge');
+    expect(dictionary.get('herausforderung')).toBe('challenge');
   });
 });
 
@@ -130,6 +130,18 @@ describe('the dictionary map', () => {
       { term: 'gleichzeitig', translation: 'simultaneously' },
     ]);
 
-    expect(map).toEqual({ herausforderung: 'challenge', gleichzeitig: 'simultaneously' });
+    expect(map.get('herausforderung')).toBe('challenge');
+    expect(map.get('gleichzeitig')).toBe('simultaneously');
+  });
+
+  // The keys are arbitrary German words. A plain object would answer these from
+  // Object.prototype with a function, which the reader would show as though it
+  // were a translation.
+  it('holds no key it was not given', () => {
+    const map = toDictionaryMap([{ term: 'herausforderung', translation: 'challenge' }]);
+
+    expect(map.get('constructor')).toBeUndefined();
+    expect(map.get('toString')).toBeUndefined();
+    expect(map.get('valueOf')).toBeUndefined();
   });
 });

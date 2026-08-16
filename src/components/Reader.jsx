@@ -3,7 +3,13 @@ import { TEXTS, DICT } from '../data';
 import { clean } from '../utils';
 import ThemeToggle from './ThemeToggle';
 
-export default function Reader({ post, saved, session, onSaveWord, onFinish, goDashboard, dark, toggleTheme }) {
+// The compiled-in dictionary, as a Map for the same reason the database one is
+// a Map: a plain object answers for names it was never given — "constructor",
+// "toString" — with a function, which would be shown to a reader as though it
+// were a translation. Built once; DICT never changes.
+const BUNDLED = new Map(Object.entries(DICT));
+
+export default function Reader({ post, dict, saved, session, onSaveWord, onFinish, goDashboard, dark, toggleTheme }) {
   const [open, setOpen] = useState(null);
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef(null);
@@ -16,6 +22,15 @@ export default function Reader({ post, saved, session, onSaveWord, onFinish, goD
 
   const savedSet = useMemo(() => new Set(saved.map((w) => w.de.toLowerCase())), [saved]);
 
+  // The database dictionary is authoritative the moment it arrives. Until then
+  // — while it is in flight, and if the request failed — the bundled copy
+  // stands in, so nobody taps a word and is told there is no translation for it
+  // when there is one. The bundle goes when the screens stop reading it.
+  const translate = useMemo(() => {
+    const source = dict ?? BUNDLED;
+    return (term) => source.get(term) ?? '—';
+  }, [dict]);
+
   const paragraphs = useMemo(
     () =>
       TEXTS[post.t].split('\n\n').map((para, pi) => ({
@@ -25,7 +40,7 @@ export default function Reader({ post, saved, session, onSaveWord, onFinish, goD
           const c = clean(raw);
           const isSaved = savedSet.has(c.toLowerCase());
           const isOpen = open === key;
-          const translation = DICT[c.toLowerCase()] || '—';
+          const translation = translate(c.toLowerCase());
           return {
             key,
             text: raw + ' ',
@@ -56,7 +71,7 @@ export default function Reader({ post, saved, session, onSaveWord, onFinish, goD
           };
         }),
       })),
-    [post, open, savedSet, onSaveWord]
+    [post, open, savedSet, onSaveWord, translate]
   );
 
   const onScroll = (e) => {

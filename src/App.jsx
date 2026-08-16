@@ -26,10 +26,20 @@ export default function App() {
   const [authForgot, setAuthForgot] = useState(Boolean(linkError));
   const [authMessage, setAuthMessage] = useState(linkError ? { kind: 'error', text: linkError } : null);
   const [menuOpen, setMenuOpen] = useState(false);
-  // The database copy of the library. Nothing renders from it yet — the screens
-  // still read the bundled src/data.js — so it is loaded but not consumed.
-  // eslint-disable-next-line no-unused-vars -- read once the screens are switched over
+  // The database copy of the library. The reader takes its dictionary from here
+  // now; posts, blurbs and counts still come from the bundled src/data.js.
   const [content, setContent] = useState(null);
+  // Tracked here rather than inferred from `content` being null, which cannot
+  // tell "still arriving" from "never asked for" from "asked and failed".
+  // Nothing renders from it yet: the loading, error and empty screens a reader
+  // sees are the next stage of this work.
+  // eslint-disable-next-line no-unused-vars -- read once those states are designed
+  const [contentStatus, setContentStatus] = useState('idle');
+  // A recovery link carries a real session, so without holding the fetch back
+  // the entire library would be loaded for somebody who will only ever see the
+  // reset screen. Seeded from the URL rather than from the PASSWORD_RECOVERY
+  // event, because the session lands first and by then the fetch has begun.
+  const [recovering, setRecovering] = useState(startedInRecovery);
   const [completed, setCompleted] = useState([1, 2, 3, 4, 5, 6, 7]);
   const [active, setActive] = useState(8);
   const [saved, setSaved] = useState([
@@ -85,6 +95,7 @@ export default function App() {
       // link. The session it carries belongs to whoever the link was sent to —
       // which may not be who was signed in a moment ago.
       if (event === 'PASSWORD_RECOVERY') {
+        setRecovering(true);
         setScreen('reset');
         setMenuOpen(false);
         setShowChangePassword(false);
@@ -92,6 +103,9 @@ export default function App() {
       }
 
       if (event === 'SIGNED_OUT') {
+        // A completed reset signs out globally, so this is also the point at
+        // which a recovery ends and an ordinary session may begin again.
+        setRecovering(false);
         setMenuOpen(false);
         setShowModal(false);
         setShowDelete(false);
@@ -122,9 +136,9 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // The library exists twice over: bundled in src/data.js, which is what every
-  // screen still renders, and in the database, which nothing has ever asked for.
-  // This asks. Nothing waits on the answer, so there is no loading state.
+  // The library exists twice over: bundled in src/data.js, which is what the
+  // dashboard and the reader's prose still render, and in the database. This
+  // asks the database for it. Nothing on screen waits on the answer.
   //
   // Gated on a session rather than merely preferring one. `anon` holds no
   // privileges on the content tables, so a request made while signed out does
@@ -134,21 +148,27 @@ export default function App() {
   const userId = user?.id ?? null;
 
   useEffect(() => {
-    if (!userId) {
+    if (!userId || recovering) {
       setContent(null);
+      setContentStatus('idle');
       return;
     }
 
     let cancelled = false;
 
+    setContentStatus('loading');
+
     loadContent()
       .then((loaded) => {
         if (cancelled) return;
         setContent(loaded);
+        setContentStatus('ready');
       })
       .catch((error) => {
         if (cancelled) return;
-        // Loud, but not fatal. Every screen renders the bundled copy, so a
+        setContentStatus('error');
+        // Loud, but not fatal. The reader falls back to the bundled dictionary
+        // and every other screen renders the bundled copy regardless, so a
         // failure here is invisible to a reader and must stay that way rather
         // than taking the app down over content nobody is looking at yet.
         console.error('[lesener] content could not be loaded from the database.', error);
@@ -157,7 +177,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, recovering]);
 
   const dark = theme === 'dark';
   const toggleTheme = () => setTheme(dark ? 'light' : 'dark');
@@ -322,6 +342,7 @@ export default function App() {
         <Reader
           key={active}
           post={post}
+          dict={content?.dictionary ?? null}
           saved={saved}
           session={session}
           onSaveWord={saveWord}

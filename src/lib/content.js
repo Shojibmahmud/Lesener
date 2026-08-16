@@ -64,8 +64,13 @@ export function fetchDictionary() {
 
 // Keyed by `term`, which the schema constrains to lowercase so it matches what
 // the reader computes as clean(raw).toLowerCase().
+//
+// A Map rather than a plain object because the keys are arbitrary German words.
+// An object inherits Object.prototype, so a word that cleans to "constructor",
+// "toString" or "valueOf" would look up to a function — truthy, and rendered as
+// though it were a translation. A Map has no keys it was not given.
 export function toDictionaryMap(entries) {
-  return Object.fromEntries(entries.map((e) => [e.term, e.translation]));
+  return new Map(entries.map((e) => [e.term, e.translation]));
 }
 
 // Everything the screens will need, in one call. Posts are requested per level
