@@ -5,15 +5,26 @@ import { act, render, screen } from '@testing-library/react';
 // fragment once, at import time, and whether the page began on a recovery link
 // is precisely what these cases vary — so the hash has to be in place before
 // the module graph is evaluated.
+// A library shaped like the real one. It has to hold at least one level with at
+// least one post: the dashboard now renders from these, so an empty stand-in
+// would exercise the "nothing to read" path rather than the ordinary one.
+const library = () => ({
+  levels: [{ id: 1, slug: 'b1-foundation', name: 'B1 Foundation', cefr: 'B1', position: 1, post_count: 2 }],
+  postsByLevel: {
+    1: [
+      { id: 41, level_id: 1, position: 1, slug: 'der-alltag', title: 'Der Alltag', blurb: 'Ein Morgen.', topic: 'Alltag', body: 'Erster Satz.' },
+      { id: 42, level_id: 1, position: 2, slug: 'die-suche', title: 'Die Suche', blurb: 'Eine Wohnung.', topic: 'Wohnen', body: 'Zweiter Satz.' },
+    ],
+  },
+  dictionary: new Map([['alltag', 'everyday life']]),
+});
+
 async function mountApp(hash = '', loadContentImpl) {
   vi.resetModules();
   window.location.hash = hash;
 
   const listeners = [];
-  const loadContent = vi.fn(
-    loadContentImpl ??
-      (() => Promise.resolve({ levels: [], postsByLevel: {}, dictionary: new Map() })),
-  );
+  const loadContent = vi.fn(loadContentImpl ?? (() => Promise.resolve(library())));
 
   vi.doMock('../src/lib/supabase', () => ({
     supabase: {
@@ -62,6 +73,26 @@ describe('when a reader signs in', () => {
     expect(loadContent).toHaveBeenCalledTimes(1);
   });
 
+  // The gap this covers did not exist before: the compiled-in copy was on
+  // screen the moment the dashboard rendered. Now there is a wait, and a reader
+  // is told about it rather than shown a dashboard with no posts on it.
+  it('says the library is loading before showing the dashboard', async () => {
+    let release;
+    const { emit } = await mountApp('', () => new Promise((resolve) => { release = resolve; }));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/loading your library/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+
+    await act(async () => {
+      release(library());
+    });
+
+    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+    expect(screen.queryByText(/loading your library/i)).not.toBeInTheDocument();
+  });
+
   it('asks for nothing at all while nobody is signed in', async () => {
     const { emit, loadContent } = await mountApp();
 
@@ -102,25 +133,71 @@ describe('when the library cannot be obtained', () => {
   const refuse = () =>
     Promise.reject(new Error('Could not load levels [42501]: permission denied for table levels'));
 
-  // Acceptance criterion 7. The compiled-in copy is what every screen renders,
-  // so a failed request must cost a reader nothing at all — least of all the
-  // whole app.
-  it('leaves the app running and on a real screen', async () => {
+  // The dashboard used to render regardless, because it drew the compiled-in
+  // copy and never needed the request to succeed. Now that it renders the
+  // database's copy there is nothing to fall back to, so the failure has to be
+  // said out loud rather than swallowed.
+  it('tells the reader, rather than showing an empty dashboard', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const { emit } = await mountApp('', refuse);
 
     await emit('SIGNED_IN', session);
 
-    // The dashboard, not a blank page: the reader is where they should be and
-    // the failure is invisible to them, which is the intended behaviour until
-    // the loading and error screens are designed.
+    expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+  });
+
+  // Generic by decision: a reader can do nothing differently whether the cause
+  // was being offline or the database refusing, and naming the wrong one reads
+  // worse than naming neither.
+  it('keeps the message generic', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { emit } = await mountApp('', refuse);
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.queryByText(/permission denied/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/42501/)).not.toBeInTheDocument();
+  });
+
+  // Retry has to move something the fetch effect depends on. Neither the user
+  // nor the recovery flag changes when it is pressed, so without a counter of
+  // its own the button would look alive and do nothing.
+  it('asks again when the reader presses Retry', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const loadContent = vi
+      .fn()
+      .mockImplementationOnce(refuse)
+      .mockImplementation(() => Promise.resolve(library()));
+    const { emit } = await mountApp('', loadContent);
+
+    await emit('SIGNED_IN', session);
+    expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
+
+    await act(async () => {
+      screen.getByRole('button', { name: /try again/i }).click();
+    });
+
+    expect(loadContent).toHaveBeenCalledTimes(2);
     expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
   });
 
-  // Acceptance criterion 8. Invisible to a reader is not the same as invisible
-  // to the maintainer — nothing on screen says anything is wrong, so this is
-  // the only place the failure surfaces at all.
-  it('reports the failure where the maintainer will see it', async () => {
+  // A library that arrives holding no levels is a successful request that
+  // returned nothing to read. The dashboard has no level to name and no count
+  // to render, so it must not be shown.
+  it('treats a library with no levels as a failure', async () => {
+    const { emit } = await mountApp('', () =>
+      Promise.resolve({ levels: [], postsByLevel: {}, dictionary: new Map() }),
+    );
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
+  });
+
+  // Saying nothing on screen is not the same as saying nothing at all — the
+  // cause still has to reach whoever is debugging it.
+  it('reports the cause where the maintainer will see it', async () => {
     const reported = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { emit } = await mountApp('', refuse);
 
@@ -163,6 +240,18 @@ describe('when the page was opened from a recovery link', () => {
     await emit('PASSWORD_RECOVERY', session);
 
     expect(loadContent).not.toHaveBeenCalled();
+  });
+
+  // Nothing was ever requested for them, so there is nothing to wait for. The
+  // loading screen is gated on the same flag as the fetch precisely so it does
+  // not appear over the reset screen and strand somebody mid-recovery.
+  it('shows no loading indication over the reset screen', async () => {
+    const { emit } = await mountApp(recoveryHash);
+
+    await emit('PASSWORD_RECOVERY', session);
+
+    expect(screen.queryByText(/loading your library/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/couldn’t load your library/i)).not.toBeInTheDocument();
   });
 
   // Completing a reset signs out everywhere, which is what ends the recovery.

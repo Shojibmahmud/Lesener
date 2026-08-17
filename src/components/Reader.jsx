@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { TEXTS, DICT } from '../data';
+import { DICT } from '../data';
 import { clean } from '../utils';
 import ThemeToggle from './ThemeToggle';
 
@@ -9,7 +9,7 @@ import ThemeToggle from './ThemeToggle';
 // were a translation. Built once; DICT never changes.
 const BUNDLED = new Map(Object.entries(DICT));
 
-export default function Reader({ post, dict, saved, session, onSaveWord, onFinish, goDashboard, dark, toggleTheme }) {
+export default function Reader({ post, level, dict, saved, session, onSaveWord, onFinish, goDashboard, dark, toggleTheme }) {
   const [open, setOpen] = useState(null);
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef(null);
@@ -33,7 +33,7 @@ export default function Reader({ post, dict, saved, session, onSaveWord, onFinis
 
   const paragraphs = useMemo(
     () =>
-      TEXTS[post.t].split('\n\n').map((para, pi) => ({
+      post.body.split('\n\n').map((para, pi) => ({
         id: pi,
         tokens: para.split(/\s+/).map((raw, wi) => {
           const key = pi + '-' + wi;
@@ -65,7 +65,7 @@ export default function Reader({ post, dict, saved, session, onSaveWord, onFinis
                 setOpen(null);
                 return;
               }
-              onSaveWord({ de: c, en: translation, post: 'Post ' + post.n + ': ' + post.title });
+              onSaveWord({ de: c, en: translation, post: 'Post ' + post.position + ': ' + post.title });
               setOpen(null);
             },
           };
@@ -98,7 +98,7 @@ export default function Reader({ post, dict, saved, session, onSaveWord, onFinis
               ←
             </button>
             <span style={{ font: '600 15px var(--ui)' }}>
-              Post {post.n}: {post.title}
+              Post {post.position}: {post.title}
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -118,9 +118,11 @@ export default function Reader({ post, dict, saved, session, onSaveWord, onFinis
           style={{ height: 'calc(100vh - 57px)', overflowY: 'auto', padding: '56px 56px 140px' }}
         >
           <div style={{ maxWidth: 720, margin: '0 auto' }}>
-            <div style={{ font: '600 12px var(--ui)', letterSpacing: '.09em', textTransform: 'uppercase', color: 'var(--ind)' }}>B1 · Alltag</div>
+            <div style={{ font: '600 12px var(--ui)', letterSpacing: '.09em', textTransform: 'uppercase', color: 'var(--ind)' }}>
+              {level.cefr} · {post.topic}
+            </div>
             <h1 style={{ font: '400 44px/1.15 var(--serif)', letterSpacing: '-.025em', margin: '14px 0 34px' }}>
-              Post {post.n}: {post.title}
+              Post {post.position}: {post.title}
             </h1>
             {paragraphs.map((para) => (
               <p key={para.id} style={{ font: '400 21px/1.85 var(--serif)', color: 'var(--text)', margin: '0 0 30px', textWrap: 'pretty' }}>

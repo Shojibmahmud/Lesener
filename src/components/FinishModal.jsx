@@ -1,4 +1,4 @@
-export default function FinishModal({ doneCount, pctLabel, session, backToDash, closeModal }) {
+export default function FinishModal({ doneCount, postCount, pctLabel, session, backToDash, closeModal }) {
   const noSession = session.length === 0;
 
   return (
@@ -47,7 +47,7 @@ export default function FinishModal({ doneCount, pctLabel, session, backToDash, 
         </div>
         <h2 style={{ font: '400 32px/1.15 var(--serif)', margin: '20px 0 6px', letterSpacing: '-.02em' }}>Gut gemacht!</h2>
         <p style={{ font: '400 15px/1.6 var(--ui)', color: 'var(--muted)', margin: '0 0 22px' }}>
-          Level progression updated — {doneCount} of 10 posts completed.
+          Level progression updated — {doneCount} of {postCount} posts completed.
         </p>
         <div style={{ height: 8, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden', marginBottom: 26 }}>
           <div style={{ height: '100%', background: 'var(--grn)', transition: 'width .8s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />

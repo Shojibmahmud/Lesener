@@ -1,11 +1,15 @@
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
-import { POSTS } from '../data';
 
+// `level` and `posts` are never missing here: App shows the loading and error
+// screens instead of this one until the library has arrived.
 export default function Dashboard({
   dark,
   toggleTheme,
   email,
+  level,
+  posts,
+  postCount,
   savedCount,
   doneCount,
   pctLabel,
@@ -19,7 +23,7 @@ export default function Dashboard({
   openPost,
   reviewPost,
 }) {
-  const remainLabel = 10 - doneCount + ' to go';
+  const remainLabel = postCount - doneCount + ' to go';
 
   return (
     <div style={{ animation: 'fade .35s ease' }}>
@@ -46,7 +50,7 @@ export default function Dashboard({
             <span style={{ color: 'var(--muted)', fontWeight: 500 }}>Saved</span> {savedCount}
           </button>
           <span style={{ padding: '8px 14px', borderRadius: 10, background: 'var(--grn-soft)', color: 'var(--grn)', font: '700 12.5px var(--ui)', letterSpacing: '.02em' }}>
-            B1 · Level 1
+            {level.cefr} · Level {level.position}
           </span>
           <ThemeToggle dark={dark} onToggle={toggleTheme} />
           <button
@@ -107,7 +111,7 @@ export default function Dashboard({
           <div>
             <h1 style={{ font: '400 40px/1.15 var(--serif)', margin: 0, letterSpacing: '-.02em' }}>Guten Tag, Anna.</h1>
             <p style={{ font: '400 15.5px var(--ui)', color: 'var(--muted)', margin: '8px 0 0' }}>
-              Level 1: B1 Foundation — {doneCount} of 10 posts completed.
+              Level {level.position}: {level.name} — {doneCount} of {postCount} posts completed.
             </p>
           </div>
           <div style={{ textAlign: 'right' }}>
@@ -118,14 +122,14 @@ export default function Dashboard({
         <div style={{ marginTop: 22, height: 10, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden' }}>
           <div style={{ height: '100%', borderRadius: 99, background: 'var(--ind)', transition: 'width .6s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />
         </div>
-        <p style={{ font: '500 13px var(--ui)', color: 'var(--muted)', margin: '12px 0 0' }}>🔒 Level 2 unlocks when all 10 posts are read — {remainLabel}</p>
+        <p style={{ font: '500 13px var(--ui)', color: 'var(--muted)', margin: '12px 0 0' }}>🔒 Level {level.position + 1} unlocks when all {postCount} posts are read — {remainLabel}</p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginTop: 38 }}>
-          {POSTS.map((p) => {
-            const isDone = completed.includes(p.n);
+          {posts.map((p) => {
+            const isDone = completed.includes(p.id);
             return (
               <div
-                key={p.n}
+                key={p.id}
                 className="lift"
                 style={{
                   background: 'var(--surf)',
@@ -138,7 +142,7 @@ export default function Dashboard({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ font: '600 11.5px var(--ui)', letterSpacing: '.07em', textTransform: 'uppercase', color: 'var(--muted)' }}>Post {p.n}</span>
+                  <span style={{ font: '600 11.5px var(--ui)', letterSpacing: '.07em', textTransform: 'uppercase', color: 'var(--muted)' }}>Post {p.position}</span>
                   <span
                     style={{
                       padding: '5px 10px',
@@ -157,7 +161,7 @@ export default function Dashboard({
                 <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
                   <button
                     className="btng"
-                    onClick={() => openPost(p.n)}
+                    onClick={() => openPost(p.id)}
                     style={{
                       flex: 1,
                       padding: '11px 16px',

@@ -4,6 +4,8 @@
 
 > **Line references** in this document were last refreshed after Stage B. They shift constantly — the password-reset work moved every `App.jsx` reference by ~40 lines, and Stage B itself moved them again by ~20 within a single session — so confirm one with `grep` before trusting it. Treat the surrounding quoted code, not the number, as the real identifier.
 
+> **Stage C was revised on 2026-08-17**, after `.claude/specs/5-stage-c-content-on-screen.md` was written. Three changes: the loading and error states moved forward from D1 into Stage C, the level's own labels came into scope, and the C1–C4 commit split was found to be unshippable and merged. The behaviour spec is authoritative where it and this roadmap disagree.
+
 ---
 
 ## 📌 Context & Motivation
@@ -40,15 +42,18 @@ The following architectural decisions are locked and must be strictly followed:
 * **Level Access Gating:**
   * `posts_select_unlocked` RLS policy requires `published_at IS NOT NULL` AND level access.
   * Level 2 (`b1-momentum`) is seeded as an empty shell, so querying it legitimately returns `[]`.
-* **Hardcoded Magic Numbers:**
-  * The total post count (`10`) is hardcoded in five locations:
-    * `App.jsx:280`
-    * `Dashboard.jsx:22`
-    * `Dashboard.jsx:110`
-    * `Dashboard.jsx:121`
-    * `FinishModal.jsx:50`
+* **Hardcoded Magic Numbers** *(resolved in C2, 2026-08-17 — kept as a guard):*
+  * The total post count (`10`) used to be hardcoded in five places: `App.jsx:280`, `Dashboard.jsx:22`, `:110`, `:121`, and `FinishModal.jsx:50`. C2 replaced all five with `levels.post_count`, threaded from `content.levels` as a `postCount` prop.
+  * `grep -rn "of 10\|all 10\|10 - doneCount" src/components/` returns nothing, and `pctLabel` divides by `postCount` rather than a literal.
+  * **Rule:** the count belongs to the level row. A new literal `10` in a count, a percentage or an unlock line is a regression — and it will look correct, because the seeded level genuinely holds 10 posts. Change `levels.post_count` in the database and reload to tell the difference.
 * **Data Seed Artifacts:**
   * Fixing `Reader.jsx:36` fixes the structural lookup, not mismatched post prose. The seed faithfully copied `data.js`'s 2-body alternation pattern for posts 3–10. Correcting prose is Feature 7 (performed via an SQL `UPDATE`, not a code edit).
+* **The Seed Data Hides Wiring Mistakes** (verified against the live database, 2026-08-17):
+  * `posts.id` and `posts.position` are **both `1..10`**, so code that confuses the two renders correctly anyway. Neither the screen nor a snapshot test can tell them apart on this data.
+  * Every post's `topic` is `'Alltag'`, so C4's `${level.cefr} · ${post.topic}` renders byte-identical to the hardcoded `B1 · Alltag` it replaces.
+  * **Rule:** no Stage C task is verified by looking at the screen. Each is verified by changing a value in the database, reloading, watching the screen follow, and reverting. See the acceptance criteria in `.claude/specs/5-stage-c-content-on-screen.md`.
+* **`content.postsByLevel`, not `content.posts`:**
+  * `loadContent()` returns `{ levels, postsByLevel, dictionary }` — posts keyed by level id, chosen in B1 so an empty level is distinguishable from a withheld one. There is no flat `content.posts`. Select a level first, then read its posts.
 
 ---
 
@@ -102,49 +107,80 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 ### Stage C: Switch Components to Database Data
 
-- [ ] **C1. Update Dashboard to Render Database Posts**
+> **Ships as one commit.** C1–C6 are listed separately for review, not for landing separately. The original split (C1+C2, then C3+C4) does not work: C1 hands `Reader` a database row while `Reader` still does `TEXTS[post.t]`, and a database row has no `.t` — `TEXTS[undefined]` crashes the reader. There is no intermediate state in which the app works.
+
+- [x] **C1. Update Dashboard to Render Database Posts**
   * **Target Files:** `src/components/Dashboard.jsx` & `src/App.jsx`
+  * **Select the level first.** There is no `content.posts` (see Known Traps). In `App.jsx`, derive `level = content?.levels?.[0] ?? null` and `posts = level ? content.postsByLevel[level.id] ?? [] : []`, and pass both down. The first level by position is the only level the dashboard shows; real progression is Feature 2.
   * **Refactor Mappings:**
-    * `POSTS.map` → `content.posts.map`
-    * `p.n` → `p.position`
+    * `POSTS.map` → `posts.map` (prop, not import)
+    * `key={p.n}` → `key={p.id}`
+    * `completed.includes(p.n)` → `completed.includes(p.id)`
+    * `Post {p.n}` → `Post {p.position}`
     * `openPost(p.n)` → `openPost(p.id)`
   * **App.jsx Refactor:**
-    * Rename `active` state variable to `activePostId`.
+    * Rename `active` → `activePostId` (and `setActive` → `setActivePostId`); change its initial value from `8` to `null` — it holds a `posts.id` now, and nothing is open until a card is clicked.
     * Remove fallback `|| POSTS[0]` at `App.jsx:278` (a missing post is now a real error, not a default fallback).
-  * **Done when:** All 10 cards render with correct titles and blurbs, and changing a blurb in the DB updates the dashboard on reload without a rebuild.
+  * **Done when:** All 10 cards render with correct titles and blurbs; changing a blurb in the DB updates the dashboard on reload without a rebuild; and opening the 8th card opens *Die Wohnungssuche* (proving an id, not a position, was passed — the two coincide in the seed).
 
-- [ ] **C2. De-hardcode Dynamic Post Counts**
+- [x] **C2. De-hardcode Dynamic Post Counts**
   * **Action:** Thread `levels.post_count` through from `content.levels` to:
     * `App.jsx:280`
     * `Dashboard.jsx:22`
     * `Dashboard.jsx:110`
     * `Dashboard.jsx:121`
     * `FinishModal.jsx:50`
-  * **Done when:** No hardcoded post count remains in `src/components/`, and setting `post_count` to `9` in the database makes the UI display `9` everywhere consistently.
+  * Guard the division: `post_count` is `0` for a level with no posts, so `pctLabel` must not divide by zero.
+  * **Done when:** No hardcoded post count remains in `src/components/`, and setting `post_count` to `9` in the database makes the UI display `9` everywhere consistently — including the recalculated percentage and progress bar.
 
-- [ ] **C3. Refactor Reader to Read Database Post Bodies**
+- [x] **C2b. De-hardcode Level Labels**
+  * **Added 2026-08-17** (spec Goal 3). Not in the original roadmap, but the same class of content as the counts beside it, and it would otherwise survive E1 unnoticed.
+  * **Target File:** `src/components/Dashboard.jsx`
+  * `B1 · Level 1` (`Dashboard.jsx:49`) → `${level.cefr} · Level ${level.position}`
+  * `Level 1: B1 Foundation` (`Dashboard.jsx:110`) → `Level ${level.position}: ${level.name}`
+  * `"Guten Tag, Anna."` stays — that is Feature 4.
+  * **Done when:** Renaming the level in the database changes both labels on reload.
+
+- [x] **C3. Refactor Reader to Read Database Post Bodies**
   * **Target File:** `src/components/Reader.jsx`
   * **Refactor:**
     * Delete `TEXTS[post.t]` static lookup (`Reader.jsx:36`).
-    * Read `post.body` directly, splitting on `\n\n` as before.
+    * Read `post.body` directly, splitting on `\n\n` as before. (`supabase/README.md` confirms `posts.body` stores paragraphs blank-line separated.)
+    * `post.n` → `post.position` at `Reader.jsx:68`, `:101` and `:123`. Keeping the saved-word label as `'Post ' + post.position + ': ' + post.title` preserves `VocabBank`'s grouping.
+  * The bundled `DICT` fallback (`Reader.jsx:10`) **stays** until E1, per B2. Note it becomes unreachable once C5 gates rendering on a loaded library, so E1 is then a pure deletion.
   * **Done when:** Editing a post's body in the database changes what the reader shows after a reload, with no code change.
 
-- [ ] **C4. Refactor Reader Header Metadata**
+- [x] **C4. Refactor Reader Header Metadata**
   * **Target File:** `src/components/Reader.jsx`
   * **Refactor:**
-    * Change hardcoded `"B1 - Alltag"` (`Reader.jsx:121`) to `${level.cefr} - ${post.topic}`.
-  * **Done when:** Changing `posts.topic` in the database changes the eyebrow text dynamically.
+    * Change hardcoded `"B1 · Alltag"` (`Reader.jsx:121`) to `${level.cefr} · ${post.topic}`. Requires threading `level` into `Reader`.
+  * **Done when:** Changing `posts.topic` in the database changes the eyebrow text dynamically. *This cannot be verified any other way* — every seeded topic is `Alltag`, so the output is identical before and after.
+
+- [x] **C5. Loading Indication** *(moved forward from D1, 2026-08-17)*
+  * **Why here:** once the bundled fallback stops being rendered, a signed-in reader has no posts between sign-in and the library arriving. Leaving that gap unhandled means shipping a visibly empty dashboard.
+  * **Action:** while a signed-in, non-recovering reader has `contentStatus` of `'idle'` or `'loading'`, show a loading indication instead of the dashboard. `contentStatus` already exists from B1 and is currently unread — this is its first reader, so drop its `eslint-disable-next-line no-unused-vars`.
+  * Shows on sign-in **and** on every reload of a stored session; that is accepted.
+  * Must not fire for `PASSWORD_RECOVERY` — the existing `recovering` gate already prevents the fetch, and the indication must not appear either.
+  * **Done when:** Signing in shows a loading indication before the dashboard, the dashboard is never painted without its posts, and a recovery link shows the reset screen with no indication at all.
+
+- [x] **C6. Error State with Retry** *(moved forward from D1, 2026-08-17)*
+  * **Action:** when `contentStatus` is `'error'`, render a **generic** message that the library could not be loaded, plus a working **Retry** control that re-attempts the fetch without a page reload.
+  * Generic by decision — it does not distinguish offline from any other cause.
+  * Only reachable at sign-in or reload; a mid-reading failure is out of scope, since the library is fetched once before anything renders and never re-requested while reading.
+  * Do **not** gate the blank/loading screen on `contentStatus !== 'ready'` — that turns a failure into a permanently dead screen. Gate loading on `'idle' | 'loading'` and give `'error'` its own screen.
+  * **Done when:** Signing in with the network disabled shows the generic message and never a blank screen, empty dashboard, or uncaught crash; and Retry, once the network is restored, loads the library and shows the dashboard with no page reload.
 
 ---
 
-### Stage D: Make Network Failure & Loading Visible
+### Stage D: Empty States *(largely absorbed into Stage C)*
 
-- [ ] **D1. Implement UI Network States**
-  * **Required States for Content-Dependent Screens:**
-    * `loading`: Follow the `authReady` blank-background pattern at `App.jsx:284`. The `contentStatus` machine it needs (`'idle' | 'loading' | 'ready' | 'error'`) already exists from B1 and is currently unread.
-    * `error`: Render a user-friendly error message with a working **Retry** button.
-    * `empty`: Handle empty levels gracefully (e.g., `"No posts in this level yet"` for locked/empty levels).
-  * **Done when:** Killing network connection in DevTools and signing in produces a readable error message with a working Retry button (never a white screen or uncaught crash).
+> **Mostly absorbed into Stage C on 2026-08-17.** `loading` and `error` moved to C5 and C6, because removing the bundled fallback in Stage C creates the gap they cover — shipping C without them means shipping a visibly empty dashboard. Only the empty case is left here, and it is **deferred**, not merely pending.
+
+- [ ] **D1. Empty Level State** *(deferred — no trigger yet)*
+  * **State:** `empty` — a level that holds no posts should say so (e.g. `"No posts in this level yet"`) rather than showing an empty grid.
+  * **Why deferred:** level 2 (`b1-momentum`) is seeded as an empty shell, but nothing in the app navigates to it — the dashboard shows the first level only, and level switching does not exist. The state is currently unreachable, so building it now would ship untestable UI.
+  * **Unblocked by:** whichever feature makes a second level reachable (level switching, or progression from Feature 2).
+  * **Done when:** A reachable level holding no posts shows the empty message instead of an empty grid.
 
 ---
 
@@ -171,13 +207,16 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 ## 📦 Suggested Commit Breakdown
 
-Implement changes in 5 atomic, independently working commits:
+Implement changes in 4 atomic, independently working commits:
 
-1. `feat(content): add fetch API in src/lib/content.js and verify RLS policies` (`A1`, `A2`)
-2. `feat(state): integrate database content state and dictionary map into App` (`B1`, `B2`)
-3. `refactor(dashboard): wire database posts and dynamic post counts` (`C1`, `C2`)
-4. `refactor(reader): render post body and topic metadata from database` (`C3`, `C4`)
-5. `fix(ui): add loading/error/empty network states and purge src/data.js` (`D1`, `E1`, `E2`, `E3`)
+1. `feat(content): add fetch API in src/lib/content.js and verify RLS policies` (`A1`, `A2`) ✅
+2. `feat(state): integrate database content state and dictionary map into App` (`B1`, `B2`) ✅
+3. `refactor(content): render dashboard and reader from the database` (`C1`, `C2`, `C2b`, `C3`, `C4`, `C5`, `C6`)
+4. `chore(content): purge src/data.js and cover database rendering with tests` (`E1`, `E2`, `E3`)
+
+**Revised 2026-08-17.** The original plan split Stage C across two commits — dashboard first, reader second. That does not work: after the dashboard commit, `App` hands `Reader` a database row while `Reader` still looks up prose as `TEXTS[post.t]`, and a database row has no `.t`. The reader would crash on every post. Since the roadmap promises independently *working* commits, Stage C is indivisible and lands as one.
+
+`D1` no longer appears here: `loading` and `error` moved into commit 3, and the `empty` state is deferred until a level with no posts is reachable at all.
 
 ---
 

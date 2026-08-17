@@ -2,13 +2,17 @@
 
 Postgres schema for Lesener, on Supabase project `mxkyojmuodcksvgddgke`.
 
-The React app talks to **part** of this. On sign-in it reads `levels`, `posts` and
-`dictionary_entries`, and the translation shown when a reader taps a German word
-comes from the database — correcting one is a row edit, not a rebuild. Everything
-else on screen still comes from `src/data.js`: the post list, the blurbs, the
-prose, the counts. Progress and saved words are still `useState` and reach no
-table at all, so `reading_sessions`, `reading_progress` and `saved_words` remain
-empty and the level gate has never opened for anybody.
+The React app **reads** this. On sign-in it fetches `levels`, `posts` and
+`dictionary_entries`, and everything a reader sees of the library now comes from
+those tables: the post list, the titles, the blurbs, the prose, the topic and
+level labels, the counts, and the translation shown when a word is tapped.
+Correcting any of them is a row edit, not a rebuild. `src/data.js` still exists
+but nothing renders from it — only its dictionary survives, as an unreachable
+fallback, and it goes when that is removed.
+
+Nothing is **written** yet. Progress and saved words are still `useState` and
+reach no table at all, so `reading_sessions`, `reading_progress` and
+`saved_words` remain empty and the level gate has never opened for anybody.
 
 ## Layout
 
