@@ -1,33 +1,21 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/lib/supabase', () => ({
-  supabase: { from: vi.fn() },
+  supabase: {
+    from: vi.fn(),
+  },
 }));
 
 import { supabase } from '../src/lib/supabase';
 import { fetchLevels, fetchPosts, loadContent, toDictionaryMap } from '../src/lib/content';
-
-// postgrest-js builders are thenables, not promises: every filter returns the
-// builder and awaiting it runs the request. This is the smallest stand-in that
-// behaves the same way.
-function builder(result, calls) {
-  const b = {
-    select: (columns) => (calls.select.push(columns), b),
-    eq: (column, value) => (calls.eq.push([column, value]), b),
-    order: (column) => (calls.order.push(column), b),
-    then: (resolve, reject) => Promise.resolve(result).then(resolve, reject),
-  };
-  return b;
-}
+import { stubSupabase } from './helpers/supabase';
 
 let calls;
 
-function stub(results) {
-  calls = { from: [], select: [], eq: [], order: [] };
-  supabase.from.mockImplementation((table) => {
-    calls.from.push(table);
-    return builder(results[table], calls);
-  });
+function stub(tables) {
+  const stubbed = stubSupabase(tables);
+  calls = stubbed.calls;
+  supabase.from.mockImplementation(stubbed.from);
 }
 
 beforeEach(() => {
@@ -60,33 +48,16 @@ describe('loading the whole library', () => {
   ];
 
   function stubLibrary() {
-    calls = { from: [], select: [], eq: [], order: [] };
     const postsByLevel = {
       1: [{ id: 1, level_id: 1, title: 'Der Alltag in Berlin' }, { id: 2, level_id: 1, title: 'Einkaufen am Samstag' }],
       2: [], // Locked: published rows exist, the gate withholds them.
     };
 
-    supabase.from.mockImplementation((table) => {
-      calls.from.push(table);
-      if (table === 'posts') {
-        // from() is called afresh per level, so each builder closes over the
-        // one level id its .eq() was given.
-        let levelId = null;
-        const b = {
-          select: (c) => (calls.select.push(c), b),
-          order: (c) => (calls.order.push(c), b),
-          eq: (column, value) => (calls.eq.push([column, value]), (levelId = value), b),
-          then: (res, rej) => Promise.resolve({ data: postsByLevel[levelId] ?? [], error: null }).then(res, rej),
-        };
-        return b;
-      }
-      return builder(
-        {
-          levels: { data: levels, error: null },
-          dictionary_entries: { data: [{ term: 'herausforderung', translation: 'challenge' }], error: null },
-        }[table],
-        calls,
-      );
+    stub({
+      levels: { data: levels, error: null },
+      dictionary_entries: { data: [{ term: 'herausforderung', translation: 'challenge' }], error: null },
+      // Answered per builder, so each level's request sees its own level id.
+      posts: ({ level_id }) => ({ data: postsByLevel[level_id] ?? [], error: null }),
     });
   }
 
@@ -120,6 +91,60 @@ describe('loading the whole library', () => {
     const { dictionary } = await loadContent();
 
     expect(dictionary.get('herausforderung')).toBe('challenge');
+  });
+});
+
+describe('a token the API says was issued in the future', () => {
+  // The bug this guards against: signing in showed the error screen every time,
+  // and Try again always worked. PostgREST had rejected the freshly minted token
+  // with PGRST303 because its own clock was a fraction behind the clock of the
+  // service that issued it. Nothing was wrong but the timing, so the request is
+  // worth making a second time — unlike every other failure here.
+  const skewed = { data: null, error: { code: 'PGRST303', message: 'JWT issued at future' } };
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('waits out the skew and asks again, rather than failing the reader', async () => {
+    vi.useFakeTimers();
+
+    let attempts = 0;
+    stub({
+      levels: () => (++attempts === 1 ? skewed : { data: [{ id: 1, position: 1 }], error: null }),
+    });
+
+    const loading = fetchLevels();
+    await vi.advanceTimersByTimeAsync(2000);
+
+    await expect(loading).resolves.toEqual([{ id: 1, position: 1 }]);
+    expect(attempts).toBe(2);
+  });
+
+  it('gives up if the second attempt is refused too', async () => {
+    vi.useFakeTimers();
+
+    stub({ levels: () => skewed });
+
+    const loading = fetchLevels();
+    await vi.advanceTimersByTimeAsync(2000);
+
+    await expect(loading).rejects.toThrow('Could not load levels [PGRST303]: JWT issued at future');
+  });
+
+  // A retry is only right for the skew. Repeating a query that was refused for
+  // any other reason delays the error screen without changing it — and would
+  // repeat a write-shaped failure nobody asked to repeat.
+  it('does not retry a failure of any other kind', async () => {
+    let attempts = 0;
+    stub({
+      levels: () => (
+        attempts++, { data: null, error: { code: '42501', message: 'permission denied for table levels' } }
+      ),
+    });
+
+    await expect(fetchLevels()).rejects.toThrow('permission denied');
+    expect(attempts).toBe(1);
   });
 });
 

@@ -1,13 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { DICT } from '../data';
 import { clean } from '../utils';
 import ThemeToggle from './ThemeToggle';
-
-// The compiled-in dictionary, as a Map for the same reason the database one is
-// a Map: a plain object answers for names it was never given — "constructor",
-// "toString" — with a function, which would be shown to a reader as though it
-// were a translation. Built once; DICT never changes.
-const BUNDLED = new Map(Object.entries(DICT));
 
 export default function Reader({ post, level, dict, saved, session, onSaveWord, onFinish, goDashboard, dark, toggleTheme }) {
   const [open, setOpen] = useState(null);
@@ -22,14 +15,16 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
 
   const savedSet = useMemo(() => new Set(saved.map((w) => w.de.toLowerCase())), [saved]);
 
-  // The database dictionary is authoritative the moment it arrives. Until then
-  // — while it is in flight, and if the request failed — the bundled copy
-  // stands in, so nobody taps a word and is told there is no translation for it
-  // when there is one. The bundle goes when the screens stop reading it.
-  const translate = useMemo(() => {
-    const source = dict ?? BUNDLED;
-    return (term) => source.get(term) ?? '—';
-  }, [dict]);
+  // The database dictionary is the only dictionary. There is no fallback and no
+  // need for one: App shows the loading and error screens until the library has
+  // arrived, so this screen never renders without `dict`. A word that is not in
+  // it has no translation — the dash is the whole answer.
+  //
+  // `dict` is a Map rather than a plain object because the keys are arbitrary
+  // German words. An object answers for names it was never given —
+  // "constructor", "toString" — with a function, which a reader would be shown
+  // as though it were a translation.
+  const translate = useMemo(() => (term) => dict.get(term) ?? '—', [dict]);
 
   const paragraphs = useMemo(
     () =>

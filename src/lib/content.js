@@ -11,18 +11,48 @@ import { supabase } from './supabase';
 // Callers must wait for a session rather than treating an empty list as "no
 // content yet".
 
+// PostgREST rejects a token whose `iat` is ahead of its own clock, with
+// PGRST303 "JWT issued at future". The service that issues the token and the
+// service that validates it do not share a clock to the millisecond, so a
+// token is briefly unusable in the moment after it is minted — which is exactly
+// when the library is asked for, because signing in is what triggers the
+// request. It cured itself on the reader pressing Retry a second later, which is
+// the entire content of the bug: nothing was wrong except the timing.
+//
+// Nothing on this side can align the two clocks, so the only cure available here
+// is to wait out the skew and ask again.
+const CLOCK_SKEW = 'PGRST303';
+const SKEW_WAIT_MS = 1500;
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // supabase-js resolves rather than rejects on a failed query, so an unchecked
 // call silently yields `data: null` and the caller carries on with nothing.
 // Turning that into a throw is what makes a failure reach anybody at all.
-async function rows(builder, what) {
-  const { data, error } = await builder;
+//
+// `build` is a function rather than a builder because a retry has to issue a
+// fresh request, and an already-awaited builder is not a request that can be
+// made twice.
+async function rows(build, what) {
+  let retried = false;
 
-  if (error) {
+  for (;;) {
+    const { data, error } = await build();
+
+    if (!error) return data ?? [];
+
+    // Once only, and only for the skew. Anything else — a revoked grant, a
+    // genuinely expired token, an offline network — is reported immediately
+    // rather than sat on for a second and a half first.
+    if (error.code === CLOCK_SKEW && !retried) {
+      retried = true;
+      await wait(SKEW_WAIT_MS);
+      continue;
+    }
+
     const code = error.code ? ` [${error.code}]` : '';
     throw new Error(`Could not load ${what}${code}: ${error.message}`);
   }
-
-  return data ?? [];
 }
 
 // Every level, locked ones included: the dashboard names the level being worked
@@ -31,10 +61,11 @@ async function rows(builder, what) {
 // "0 of 10" without exposing a single post row.
 export function fetchLevels() {
   return rows(
-    supabase
-      .from('levels')
-      .select('id, slug, name, cefr, position, post_count')
-      .order('position', { ascending: true }),
+    () =>
+      supabase
+        .from('levels')
+        .select('id, slug, name, cefr, position, post_count')
+        .order('position', { ascending: true }),
     'levels',
   );
 }
@@ -43,11 +74,12 @@ export function fetchLevels() {
 // may be locked. levels.post_count tells the two apart without another query.
 export function fetchPosts(levelId) {
   return rows(
-    supabase
-      .from('posts')
-      .select('id, level_id, position, slug, title, blurb, topic, body, published_at')
-      .eq('level_id', levelId)
-      .order('position', { ascending: true }),
+    () =>
+      supabase
+        .from('posts')
+        .select('id, level_id, position, slug, title, blurb, topic, body, published_at')
+        .eq('level_id', levelId)
+        .order('position', { ascending: true }),
     `posts for level ${levelId}`,
   );
 }
@@ -57,7 +89,7 @@ export function fetchPosts(levelId) {
 // so paging it would buy nothing and cost a round trip per tap.
 export function fetchDictionary() {
   return rows(
-    supabase.from('dictionary_entries').select('term, translation, part_of_speech'),
+    () => supabase.from('dictionary_entries').select('term, translation, part_of_speech'),
     'dictionary entries',
   );
 }

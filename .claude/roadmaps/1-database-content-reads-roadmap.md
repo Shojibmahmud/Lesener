@@ -2,7 +2,7 @@
 
 > **Agent Goal:** Replace static imports from `src/data.js` (`TEXTS`, `DICT`, `POSTS`) with live Supabase database queries against `public.posts`, `public.levels`, and `public.dictionary_entries`.
 
-> **Line references** in this document were last refreshed after Stage B. They shift constantly — the password-reset work moved every `App.jsx` reference by ~40 lines, and Stage B itself moved them again by ~20 within a single session — so confirm one with `grep` before trusting it. Treat the surrounding quoted code, not the number, as the real identifier.
+> **Line references** in this document were last refreshed after Stage E (2026-08-18). They shift constantly — the password-reset work moved every `App.jsx` reference by ~40 lines, and Stage B moved them again by ~20 within a single session — so confirm one with `grep` before trusting it. Treat the surrounding quoted code, not the number, as the real identifier. References to code Stage E deleted are marked *(gone)* rather than renumbered: there is no line to point at any more, and silently dropping them would hide what the task actually did.
 
 > **Stage C was revised on 2026-08-17**, after `.claude/specs/5-stage-c-content-on-screen.md` was written. Three changes: the loading and error states moved forward from D1 into Stage C, the level's own labels came into scope, and the C1–C4 commit split was found to be unshippable and merged. The behaviour spec is authoritative where it and this roadmap disagree.
 
@@ -47,11 +47,17 @@ The following architectural decisions are locked and must be strictly followed:
   * `grep -rn "of 10\|all 10\|10 - doneCount" src/components/` returns nothing, and `pctLabel` divides by `postCount` rather than a literal.
   * **Rule:** the count belongs to the level row. A new literal `10` in a count, a percentage or an unlock line is a regression — and it will look correct, because the seeded level genuinely holds 10 posts. Change `levels.post_count` in the database and reload to tell the difference.
 * **Data Seed Artifacts:**
-  * Fixing `Reader.jsx:36` fixes the structural lookup, not mismatched post prose. The seed faithfully copied `data.js`'s 2-body alternation pattern for posts 3–10. Correcting prose is Feature 7 (performed via an SQL `UPDATE`, not a code edit).
+  * Fixing the body lookup (`Reader.jsx:31`) fixes the structure, not mismatched post prose. The seed faithfully copied `data.js`'s 2-body alternation pattern for posts 3–10. Correcting prose is Feature 7 (performed via an SQL `UPDATE`, not a code edit).
 * **The Seed Data Hides Wiring Mistakes** (verified against the live database, 2026-08-17):
   * `posts.id` and `posts.position` are **both `1..10`**, so code that confuses the two renders correctly anyway. Neither the screen nor a snapshot test can tell them apart on this data.
   * Every post's `topic` is `'Alltag'`, so C4's `${level.cefr} · ${post.topic}` renders byte-identical to the hardcoded `B1 · Alltag` it replaces.
   * **Rule:** no Stage C task is verified by looking at the screen. Each is verified by changing a value in the database, reloading, watching the screen follow, and reverting. See the acceptance criteria in `.claude/specs/5-stage-c-content-on-screen.md`.
+* **A Freshly Issued Token Is Briefly Unusable (`PGRST303`)** *(found after Stage E shipped, 2026-08-18):*
+  * PostgREST rejects a token whose `iat` is ahead of its own clock, with `PGRST303` "JWT issued at future". The service that mints the token and the service that validates it do not share a clock to the millisecond, so a token is unusable for a moment after it is issued — which is exactly when the library is requested, because signing in is what triggers the fetch.
+  * It presented as the error screen on **every** sign-in, cured by pressing Retry. The edge logs showed the giveaway: two requests sent in the same millisecond, one `200` and one `401`, validated against instances whose clocks differ.
+  * `rows()` (`src/lib/content.js:36`) therefore waits `SKEW_WAIT_MS` and asks once more, but **only** for `PGRST303`. It takes a builder-returning function rather than a builder, because a retry has to issue a fresh request.
+  * **Rule:** do not generalise that retry to other error codes. A revoked grant or an offline network must still reach the error screen immediately rather than being sat on for a second and a half first. Covered by three cases in `tests/content.test.js`.
+  * **Not catchable by the tests:** they stub the database, so no token is ever validated. The cause came from the browser console, forwarded into the `npm run dev` output.
 * **`content.postsByLevel`, not `content.posts`:**
   * `loadContent()` returns `{ levels, postsByLevel, dictionary }` — posts keyed by level id, chosen in B1 so an empty level is distinguishable from a withheld one. There is no flat `content.posts`. Select a level first, then read its posts.
 
@@ -85,19 +91,19 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 - [x] **B1. Implement Content State & Lifecycle Machine in `App.jsx`**
   * **State Schema:**
-    * `content` = `null` | `{ levels, postsByLevel, dictionary }` — the shape `loadContent()` already returns (`src/lib/content.js:86`). `postsByLevel` is keyed by level id rather than a flat `posts` array so that an empty result can be told apart from a withheld one by comparing its length against `levels.post_count`.
+    * `content` = `null` | `{ levels, postsByLevel, dictionary }` — the shape `loadContent()` already returns (`src/lib/content.js:112`). `postsByLevel` is keyed by level id rather than a flat `posts` array so that an empty result can be told apart from a withheld one by comparing its length against `levels.post_count`.
     * `contentStatus` = `'idle'` | `'loading'` | `'ready'` | `'error'`
   * **Lifecycle Behavior:**
     * Trigger fetch when `user` transitions to non-null.
     * Clear content on `SIGNED_OUT`.
-  * **Already done in A1:** the fetch effect (`App.jsx:150-180`) triggers on `userId` and clears on sign-out.
-  * **Closed gap:** `App.jsx:91` sets `user` for *every* auth event, `PASSWORD_RECOVERY` included, so a recovery link used to fetch the whole library. The effect is now gated on `!userId || recovering`, where `recovering` is seeded from the URL — the session arrives before the `PASSWORD_RECOVERY` event does, so a flag set in that branch (`App.jsx:97`) would be too late.
+  * **Already done in A1:** the fetch effect (`App.jsx:155-183`) triggers on `userId` and clears on sign-out.
+  * **Closed gap:** `App.jsx:96` sets `user` for *every* auth event, `PASSWORD_RECOVERY` included, so a recovery link used to fetch the whole library. The effect is now gated on `!userId || recovering`, where `recovering` is seeded from the URL — the session arrives before the `PASSWORD_RECOVERY` event does, so a flag set in that branch (`App.jsx:102`) would be too late.
   * **Done when:** Signing out and back in refetches content, and the `PASSWORD_RECOVERY` branch fetches nothing. *Covered by `tests/content-lifecycle.test.jsx`; the gate was mutation-checked by removing it and confirming both recovery cases fail.*
 
 - [x] **B2. Shape Dictionary Data Structure**
-  * **Transformation:** Convert raw dictionary array into a JavaScript `Map` keyed by `term` (`src/lib/content.js:72`). The compiled-in `DICT` is wrapped in a `Map` too (`Reader.jsx:10`) so the fallback path cannot answer for inherited names either.
+  * **Transformation:** Convert raw dictionary array into a JavaScript `Map` keyed by `term` (`src/lib/content.js:104`). The compiled-in `DICT` was wrapped in a `Map` too (`Reader.jsx:10`, *gone* — deleted in E1) so the fallback path cannot answer for inherited names either.
   * *Rationale for a `Map` over a plain object:* a plain object inherits `Object.prototype`, so a word that cleans to `constructor`, `toString` or `valueOf` looks up to a function — truthy, and rendered as if it were a translation. A `Map` has no inherited keys.
-  * **Component Update (`Reader.jsx:43`):**
+  * **Component Update (`Reader.jsx:27`):**
     * Old: `DICT[c.toLowerCase()] || '-'`
     * New: `dict.get(c.toLowerCase()) ?? '-'`
   * **Fallback while `content` is `null`:** `Reader` keeps the bundled `DICT` as its fallback for the in-flight and failed cases, so Stage B stays visually identical to today. The bundle is retired in E1, not here. (Post *bodies* still come from `TEXTS` until C3 regardless — after this task the reader is deliberately half-wired: bundled prose, database translations.)
@@ -120,7 +126,7 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
     * `openPost(p.n)` → `openPost(p.id)`
   * **App.jsx Refactor:**
     * Rename `active` → `activePostId` (and `setActive` → `setActivePostId`); change its initial value from `8` to `null` — it holds a `posts.id` now, and nothing is open until a card is clicked.
-    * Remove fallback `|| POSTS[0]` at `App.jsx:278` (a missing post is now a real error, not a default fallback).
+    * Remove fallback `|| POSTS[0]` at `App.jsx:278` (*gone*; the unfallback'd lookup is now `App.jsx:294`) (a missing post is now a real error, not a default fallback).
   * **Done when:** All 10 cards render with correct titles and blurbs; changing a blurb in the DB updates the dashboard on reload without a rebuild; and opening the 8th card opens *Die Wohnungssuche* (proving an id, not a position, was passed — the two coincide in the seed).
 
 - [x] **C2. De-hardcode Dynamic Post Counts**
@@ -136,24 +142,24 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 - [x] **C2b. De-hardcode Level Labels**
   * **Added 2026-08-17** (spec Goal 3). Not in the original roadmap, but the same class of content as the counts beside it, and it would otherwise survive E1 unnoticed.
   * **Target File:** `src/components/Dashboard.jsx`
-  * `B1 · Level 1` (`Dashboard.jsx:49`) → `${level.cefr} · Level ${level.position}`
-  * `Level 1: B1 Foundation` (`Dashboard.jsx:110`) → `Level ${level.position}: ${level.name}`
+  * `B1 · Level 1` (`Dashboard.jsx:61`) → `${level.cefr} · Level ${level.position}`
+  * `Level 1: B1 Foundation` (`Dashboard.jsx:122`) → `Level ${level.position}: ${level.name}`
   * `"Guten Tag, Anna."` stays — that is Feature 4.
   * **Done when:** Renaming the level in the database changes both labels on reload.
 
 - [x] **C3. Refactor Reader to Read Database Post Bodies**
   * **Target File:** `src/components/Reader.jsx`
   * **Refactor:**
-    * Delete `TEXTS[post.t]` static lookup (`Reader.jsx:36`).
+    * Delete `TEXTS[post.t]` static lookup (`Reader.jsx:36`, *gone*; the body is read at `Reader.jsx:31`).
     * Read `post.body` directly, splitting on `\n\n` as before. (`supabase/README.md` confirms `posts.body` stores paragraphs blank-line separated.)
-    * `post.n` → `post.position` at `Reader.jsx:68`, `:101` and `:123`. Keeping the saved-word label as `'Post ' + post.position + ': ' + post.title` preserves `VocabBank`'s grouping.
-  * The bundled `DICT` fallback (`Reader.jsx:10`) **stays** until E1, per B2. Note it becomes unreachable once C5 gates rendering on a loaded library, so E1 is then a pure deletion.
+    * `post.n` → `post.position` at `Reader.jsx:96` and `:120`. Keeping the saved-word label as `'Post ' + post.position + ': ' + post.title` preserves `VocabBank`'s grouping.
+  * The bundled `DICT` fallback (`Reader.jsx:10`, *gone*) **stayed** until E1, per B2. Note it becomes unreachable once C5 gates rendering on a loaded library, so E1 is then a pure deletion.
   * **Done when:** Editing a post's body in the database changes what the reader shows after a reload, with no code change.
 
 - [x] **C4. Refactor Reader Header Metadata**
   * **Target File:** `src/components/Reader.jsx`
   * **Refactor:**
-    * Change hardcoded `"B1 · Alltag"` (`Reader.jsx:121`) to `${level.cefr} · ${post.topic}`. Requires threading `level` into `Reader`.
+    * Change hardcoded `"B1 · Alltag"` (`Reader.jsx:117`) to `${level.cefr} · ${post.topic}`. Requires threading `level` into `Reader`.
   * **Done when:** Changing `posts.topic` in the database changes the eyebrow text dynamically. *This cannot be verified any other way* — every seeded topic is `Alltag`, so the output is identical before and after.
 
 - [x] **C5. Loading Indication** *(moved forward from D1, 2026-08-17)*
@@ -188,11 +194,11 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 ### Stage E: Cleanup, Tests, & Documentation Update
 
-- [ ] **E1. Delete Legacy Static Data File**
+- [x] **E1. Delete Legacy Static Data File**
   * **Action:** Delete `src/data.js`.
   * **Done when:** Running `grep -rn "TEXTS\|DICT\|POSTS" src/` returns zero occurrences and `npm run build` passes.
 
-- [ ] **E2. Implement Tests & Mocks**
+- [x] **E2. Implement Tests & Mocks**
   * **Helper:** Create a Supabase query-builder mock in `tests/helpers/` (a thenable supporting `from().select().eq().order()`).
   * **Tests to cover:**
     * Dictionary lookup hit and miss.
@@ -226,8 +232,8 @@ Implement changes in 5 atomic, independently working commits:
 ## 🔮 Subsequent Roadmap Context
 
 * **Feature 2 — Persist Reading Progress (`reading_sessions` → `reading_progress`):**
-  * Retires hardcoded `useState([1,2,3,4,5,6,7])` at `App.jsx:43`. Depends on `posts.id` established in Feature 1.
+  * Retires hardcoded `useState([1, 2, 3, 4, 5, 6, 7])` at `App.jsx:48`. Depends on `posts.id` established in Feature 1.
 * **Feature 3 — Persist Vocabulary Bank (`saved_words`):**
-  * Retires hardcoded words at `App.jsx:45-49`, which key saved words to the display string `'Post 1: Der Alltag in Berlin'` rather than to a `post_id`.
+  * Retires hardcoded words at `App.jsx:50-54`, which key saved words to the display string `'Post 1: Der Alltag in Berlin'` rather than to a `post_id`.
 * **Feature 4 — Real Profile (`display_name`, `theme`):**
-  * Retires hardcoded `"Guten Tag, Anna."` at `Dashboard.jsx:108`.
+  * Retires hardcoded `"Guten Tag, Anna."` at `Dashboard.jsx:120`.

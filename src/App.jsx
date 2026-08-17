@@ -27,9 +27,9 @@ export default function App() {
   const [authForgot, setAuthForgot] = useState(Boolean(linkError));
   const [authMessage, setAuthMessage] = useState(linkError ? { kind: 'error', text: linkError } : null);
   const [menuOpen, setMenuOpen] = useState(false);
-  // The library. Every post, blurb, count and level label on screen comes from
-  // here now; the bundled src/data.js is still imported by Reader for its
-  // dictionary fallback, and is deleted once that goes too.
+  // The library. Every post, blurb, body, count, level label and translation on
+  // screen comes from here — it is the only source there is, now that the
+  // bundled copy has been deleted.
   const [content, setContent] = useState(null);
   // Tracked here rather than inferred from `content` being null, which cannot
   // tell "still arriving" from "never asked for" from "asked and failed".
@@ -384,7 +384,7 @@ export default function App() {
           key={activePostId}
           post={post}
           level={level}
-          dict={content?.dictionary ?? null}
+          dict={content.dictionary}
           saved={saved}
           session={session}
           onSaveWord={saveWord}
