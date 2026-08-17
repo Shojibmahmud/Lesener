@@ -172,15 +172,17 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 ---
 
-### Stage D: Empty States *(largely absorbed into Stage C)*
+### Stage D: Empty States *(complete — mostly absorbed into Stage C)*
 
-> **Mostly absorbed into Stage C on 2026-08-17.** `loading` and `error` moved to C5 and C6, because removing the bundled fallback in Stage C creates the gap they cover — shipping C without them means shipping a visibly empty dashboard. Only the empty case is left here, and it is **deferred**, not merely pending.
+> **Mostly absorbed into Stage C on 2026-08-17.** `loading` and `error` moved to C5 and C6, because removing the bundled fallback in Stage C creates the gap they cover — shipping C without them means shipping a visibly empty dashboard. The empty case stayed here and shipped separately; the stage is now closed.
 
-- [ ] **D1. Empty Level State** *(deferred — no trigger yet)*
+- [x] **D1. Empty Level State** *(deferral lifted and shipped, 2026-08-17)*
   * **State:** `empty` — a level that holds no posts should say so (e.g. `"No posts in this level yet"`) rather than showing an empty grid.
-  * **Why deferred:** level 2 (`b1-momentum`) is seeded as an empty shell, but nothing in the app navigates to it — the dashboard shows the first level only, and level switching does not exist. The state is currently unreachable, so building it now would ship untestable UI.
-  * **Unblocked by:** whichever feature makes a second level reachable (level switching, or progression from Feature 2).
-  * **Done when:** A reachable level holding no posts shows the empty message instead of an empty grid.
+  * **Behaviour shipped:** `Dashboard.jsx` derives `isEmpty = posts.length === 0` and, when set, replaces the grid with a card-styled panel reading *"No posts in this level yet."* It also **drops the progress claims** — the `— N of M posts completed` clause, the percentage, the progress bar and the unlock line — rather than rendering them as zero. See `.claude/specs/6-stage-d-empty-states.md`.
+  * **Why the deferral was lifted:** the original note said the state was unreachable because nothing navigates to level 2. The first half holds — `App.jsx:285` still hardcodes `content.levels[0]` and level switching does not exist. But level 1's *posts* can be unpublished: `private.has_level_access` returns true unconditionally for `position <= 1` (`20260810103130_rls_policies.sql:62`), while `posts_select_unlocked` also demands `published_at is not null` (`:106`). Setting them null withholds every post from a level that still reports `post_count: 10`, which is exactly this state — reachable and revertible with one `UPDATE`.
+  * **Why it mattered more than an empty grid:** `postCount` comes from `level.post_count`, not `posts.length` (`App.jsx:289`), so the unfixed screen asserted ten posts existed while showing none.
+  * **Trap for level switching:** `posts.length === 0` means *absent or unpublished* only because the shown level is never access-gated. A **locked** level reports a post count while handing over nothing, and "none yet" would be a lie about it. Whichever feature makes a second level reachable must tell the two apart — see the comment above `isEmpty` in `Dashboard.jsx`.
+  * **Done when:** A reachable level holding no posts shows the empty message instead of an empty grid. *Met: six cases in `tests/content-lifecycle.test.jsx` (`emptyLevel()` fixture, `post_count: 10` against zero posts), mutation-checked by forcing `isEmpty = false` — three fail. Confirmed in a running build: with level 1 unpublished, `<main>` held only the greeting, `Level 1: B1 Foundation`, and the message; republishing restored all ten cards and the full progress header.*
 
 ---
 
@@ -198,25 +200,26 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
     * Error handling on failed fetch.
   * **Done when:** `npm test` passes, and tests fail if field mappings are intentionally broken.
 
-- [ ] **E3. Update Supabase Documentation**
+- [x] **E3. Update Supabase Documentation** *(landed with commit `a6986aa`, not the cleanup commit)*
   * **File:** `supabase/README.md`
   * **Action:** Update opening line (`"The React app does not talk to any of this yet"`) to accurately reflect live database reads.
-  * **Done when:** `supabase/README.md` accurately describes actual application behavior.
+  * **Done when:** `supabase/README.md` accurately describes actual application behavior. *Met: the opening now describes the live reads, and `grep -n "does not talk" supabase/README.md` is empty. One further inaccuracy was found and corrected during the D1 pass — the `level_progress` bullet claimed the dashboard renders from that view, but `grep -rn "level_progress" src/` returns nothing; counts come from `levels.post_count` and local `useState`.*
 
 ---
 
 ## 📦 Suggested Commit Breakdown
 
-Implement changes in 4 atomic, independently working commits:
+Implement changes in 5 atomic, independently working commits:
 
 1. `feat(content): add fetch API in src/lib/content.js and verify RLS policies` (`A1`, `A2`) ✅
 2. `feat(state): integrate database content state and dictionary map into App` (`B1`, `B2`) ✅
-3. `refactor(content): render dashboard and reader from the database` (`C1`, `C2`, `C2b`, `C3`, `C4`, `C5`, `C6`)
-4. `chore(content): purge src/data.js and cover database rendering with tests` (`E1`, `E2`, `E3`)
+3. `refactor(content): render dashboard and reader from the database` (`C1`, `C2`, `C2b`, `C3`, `C4`, `C5`, `C6`) ✅
+4. `feat(content): tell the reader when a level has no posts` (`D1`) — *on `feature/6-stage-d-empty-states`, not yet committed*
+5. `chore(content): purge src/data.js and cover database rendering with tests` (`E1`, `E2`)
 
 **Revised 2026-08-17.** The original plan split Stage C across two commits — dashboard first, reader second. That does not work: after the dashboard commit, `App` hands `Reader` a database row while `Reader` still looks up prose as `TEXTS[post.t]`, and a database row has no `.t`. The reader would crash on every post. Since the roadmap promises independently *working* commits, Stage C is indivisible and lands as one.
 
-`D1` no longer appears here: `loading` and `error` moved into commit 3, and the `empty` state is deferred until a level with no posts is reachable at all.
+**Revised again 2026-08-17, after D1 shipped.** `loading` and `error` went into commit 3 as planned. `D1` gained its own commit rather than being dropped: the deferral was lifted once the empty state turned out to be reachable on level 1 (see Stage D). `E3` left commit 5 — commit `a6986aa` already brought `supabase/README.md` up to date, so the documentation task was satisfied there rather than in the cleanup commit.
 
 ---
 

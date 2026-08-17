@@ -19,6 +19,17 @@ const library = () => ({
   dictionary: new Map([['alltag', 'everyday life']]),
 });
 
+// A level that hands over no posts while still recording that it holds ten —
+// what the reader sees when the posts exist but are unpublished. The mismatch is
+// the whole point: post_count is deliberately non-zero, so any figure derived
+// from it that survives onto the screen is describing a library that is not
+// there. Cases below assert that none of them do.
+const emptyLevel = () => ({
+  levels: [{ id: 1, slug: 'b1-foundation', name: 'B1 Foundation', cefr: 'B1', position: 1, post_count: 10 }],
+  postsByLevel: { 1: [] },
+  dictionary: new Map([['alltag', 'everyday life']]),
+});
+
 async function mountApp(hash = '', loadContentImpl) {
   vi.resetModules();
   window.location.hash = hash;
@@ -121,6 +132,83 @@ describe('when a reader signs in', () => {
     await emit('SIGNED_IN', session);
 
     expect(loadContent).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('when the level holds no posts', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    window.location.hash = '';
+  });
+
+  it('says so, rather than showing an empty grid', async () => {
+    const { emit } = await mountApp('', () => Promise.resolve(emptyLevel()));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/no posts in this level yet/i)).toBeInTheDocument();
+  });
+
+  // The half that was actually wrong. An empty grid is unhelpful; a grid with
+  // nothing in it under a header promising ten posts is a false statement, and
+  // the reader has no way to tell it is the content that is missing.
+  it('makes no claim about a post count it cannot show', async () => {
+    const { emit } = await mountApp('', () => Promise.resolve(emptyLevel()));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.queryByText(/posts completed/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/unlocks when all/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/of 10/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^\d+%$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/to Level 2/)).not.toBeInTheDocument();
+  });
+
+  it('still names the level, so the reader knows which one is empty', async () => {
+    const { emit } = await mountApp('', () => Promise.resolve(emptyLevel()));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/B1 Foundation/)).toBeInTheDocument();
+  });
+
+  // Not a full-screen takeover. Reusing the failure shell here would strand a
+  // reader with no way to reach their saved words or sign out.
+  it('leaves the rest of the dashboard reachable', async () => {
+    const { emit } = await mountApp('', () => Promise.resolve(emptyLevel()));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+    expect(screen.getByText('Saved')).toBeInTheDocument();
+  });
+
+  it('is not treated as a failure, and offers nothing to retry', async () => {
+    const { emit } = await mountApp('', () => Promise.resolve(emptyLevel()));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.queryByText(/try again/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/couldn’t load your library/i)).not.toBeInTheDocument();
+  });
+
+  // A library that has not arrived is also one with no posts in it. The two mean
+  // opposite things and must never look alike, so the empty message has to wait
+  // for the fetch to actually settle.
+  it('shows nothing of itself while the library is still arriving', async () => {
+    let release;
+    const { emit } = await mountApp('', () => new Promise((resolve) => { release = resolve; }));
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/loading your library/i)).toBeInTheDocument();
+    expect(screen.queryByText(/no posts in this level yet/i)).not.toBeInTheDocument();
+
+    await act(async () => {
+      release(emptyLevel());
+    });
+
+    expect(screen.getByText(/no posts in this level yet/i)).toBeInTheDocument();
   });
 });
 

@@ -23,6 +23,14 @@ export default function Dashboard({
   openPost,
   reviewPost,
 }) {
+  // Nothing was handed over for this level. On the level a reader actually sees
+  // that always means the posts are absent or unpublished — never that they were
+  // withheld, because the first level is not access-gated. A *locked* level is a
+  // different thing wearing the same shape: it reports a post count while
+  // handing over none of them, so "none yet" would be a lie about it. Whichever
+  // feature makes a second level reachable has to tell the two apart rather than
+  // reuse this flag.
+  const isEmpty = posts.length === 0;
   const remainLabel = postCount - doneCount + ' to go';
 
   return (
@@ -111,20 +119,51 @@ export default function Dashboard({
           <div>
             <h1 style={{ font: '400 40px/1.15 var(--serif)', margin: 0, letterSpacing: '-.02em' }}>Guten Tag, Anna.</h1>
             <p style={{ font: '400 15.5px var(--ui)', color: 'var(--muted)', margin: '8px 0 0' }}>
-              Level {level.position}: {level.name} — {doneCount} of {postCount} posts completed.
+              Level {level.position}: {level.name}
+              {/* The count comes from the level's own record, not from the posts
+                  in hand, so with none handed over it would state a library that
+                  is nowhere on screen. The level still gets named: the reader
+                  should know which one is empty. */}
+              {!isEmpty && ` — ${doneCount} of ${postCount} posts completed.`}
             </p>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ font: '700 34px var(--ui)', color: 'var(--ind)', lineHeight: 1 }}>{pctLabel}</div>
-            <div style={{ font: '500 12.5px var(--ui)', color: 'var(--muted)' }}>to Level 2</div>
+          {!isEmpty && (
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ font: '700 34px var(--ui)', color: 'var(--ind)', lineHeight: 1 }}>{pctLabel}</div>
+              <div style={{ font: '500 12.5px var(--ui)', color: 'var(--muted)' }}>to Level 2</div>
+            </div>
+          )}
+        </div>
+        {isEmpty ? (
+          // Deliberately nothing to press. No reader action makes content
+          // appear, and a control that cannot help reads worse than none — the
+          // header still offers the vocabulary bank, the theme and sign-out.
+          // Card styling, not the error screen's: this is part of the dashboard.
+          <div
+            style={{
+              marginTop: 38,
+              background: 'var(--surf)',
+              border: '1px solid var(--line)',
+              borderRadius: 18,
+              padding: '56px 22px',
+              boxShadow: 'var(--shadow)',
+              textAlign: 'center',
+            }}
+          >
+            <p style={{ font: '400 21px/1.3 var(--serif)', margin: 0, letterSpacing: '-.01em' }}>No posts in this level yet.</p>
           </div>
-        </div>
-        <div style={{ marginTop: 22, height: 10, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden' }}>
-          <div style={{ height: '100%', borderRadius: 99, background: 'var(--ind)', transition: 'width .6s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />
-        </div>
-        <p style={{ font: '500 13px var(--ui)', color: 'var(--muted)', margin: '12px 0 0' }}>🔒 Level {level.position + 1} unlocks when all {postCount} posts are read — {remainLabel}</p>
+        ) : (
+          <>
+            <div style={{ marginTop: 22, height: 10, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden' }}>
+              <div style={{ height: '100%', borderRadius: 99, background: 'var(--ind)', transition: 'width .6s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />
+            </div>
+            <p style={{ font: '500 13px var(--ui)', color: 'var(--muted)', margin: '12px 0 0' }}>🔒 Level {level.position + 1} unlocks when all {postCount} posts are read — {remainLabel}</p>
+          </>
+        )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginTop: 38 }}>
+        {/* Left unguarded: with no posts this maps to no children, and dropping
+            its margin too makes it occupy nothing at all. */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginTop: isEmpty ? 0 : 38 }}>
           {posts.map((p) => {
             const isDone = completed.includes(p.id);
             return (

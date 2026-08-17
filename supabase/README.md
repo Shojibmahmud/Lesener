@@ -57,8 +57,9 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
 - **`saved_words`** — the vocabulary bank. Unique per `(user_id, term)`, globally
   rather than per post, matching `Reader.jsx`'s refusal to bank the same word
   twice. `translation` is nullable for words the dictionary doesn't cover.
-- **`level_progress`** — a `security_invoker` view with the per-level figures the
-  dashboard renders.
+- **`level_progress`** — a `security_invoker` view holding the per-level figures.
+  Nothing reads it yet: the dashboard's counts come from `levels.post_count`, and
+  the completed count is still local `useState`. It is there for Feature 2.
 
 ## Level gating
 
