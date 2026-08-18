@@ -8,6 +8,9 @@ export default function Dashboard({
   toggleTheme,
   email,
   level,
+  levels,
+  unlocked,
+  selectLevel,
   posts,
   postCount,
   savedCount,
@@ -23,15 +26,25 @@ export default function Dashboard({
   openPost,
   reviewPost,
 }) {
-  // Nothing was handed over for this level. On the level a reader actually sees
-  // that always means the posts are absent or unpublished — never that they were
-  // withheld, because the first level is not access-gated. A *locked* level is a
-  // different thing wearing the same shape: it reports a post count while
-  // handing over none of them, so "none yet" would be a lie about it. Whichever
-  // feature makes a second level reachable has to tell the two apart rather than
-  // reuse this flag.
-  const isEmpty = posts.length === 0;
+  // Two different nothings, and they must never be worded alike.
+  //
+  // A locked level reports a post count while handing over none of its posts, so
+  // an empty list there means "withheld". An unlocked level with an empty list
+  // means the posts genuinely are not there. Telling a reader "no posts in this
+  // level yet" about a level they simply have not earned is a false statement
+  // about the library; telling them a level "unlocks when..." about one they
+  // already opened is a false statement about them.
+  const isLocked = unlocked ? !unlocked.get(level.id) : false;
+  const isEmpty = !isLocked && posts.length === 0;
+
   const remainLabel = postCount - doneCount + ' to go';
+
+  // C5: only promise a level that exists. The highest level has nothing above
+  // it, so the line would be describing a level nobody wrote.
+  const nextLevel = (levels ?? []).find((l) => l.position === level.position + 1);
+  // And only while it is still shut. At "0 to go" the unlock has already
+  // happened, and a padlock over an open door reads as a bug.
+  const showUnlockLine = Boolean(nextLevel) && (unlocked ? !unlocked.get(nextLevel.id) : true);
 
   return (
     <div style={{ animation: 'fade .35s ease' }}>
@@ -115,6 +128,48 @@ export default function Dashboard({
       </header>
 
       <main style={{ maxWidth: 1180, margin: '0 auto', padding: 40 }}>
+        {/* Every level, locked ones included. A level a reader cannot open yet
+            is still worth seeing — it is what they are working towards, and
+            hiding it makes the progress line above it meaningless. Rendered only
+            when there is more than one, because a single-level switcher offers a
+            choice that does not exist. */}
+        {(levels ?? []).length > 1 && (
+          <div style={{ display: 'flex', gap: 8, marginBottom: 26, flexWrap: 'wrap' }}>
+            {levels.map((l) => {
+              const isOpen = unlocked ? unlocked.get(l.id) : true;
+              const isCurrent = l.id === level.id;
+              return (
+                <button
+                  key={l.id}
+                  className="btng"
+                  onClick={() => selectLevel(l.id)}
+                  disabled={!isOpen}
+                  aria-current={isCurrent ? 'true' : undefined}
+                  title={isOpen ? undefined : `Finish every post in Level ${l.position - 1} to open this`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    padding: '9px 15px',
+                    borderRadius: 11,
+                    border: `1px solid ${isCurrent ? 'var(--ind)' : 'var(--line)'}`,
+                    background: isCurrent ? 'var(--ind-soft)' : 'var(--surf)',
+                    color: isOpen ? (isCurrent ? 'var(--ind)' : 'var(--text)') : 'var(--muted)',
+                    font: '600 13px var(--ui)',
+                    // Greyed and unpressable, not hidden. The cursor is the only
+                    // hint a reader gets before they try it.
+                    opacity: isOpen ? 1 : 0.55,
+                    cursor: isOpen ? 'pointer' : 'not-allowed',
+                  }}
+                >
+                  {!isOpen && <span aria-hidden="true">🔒</span>}
+                  Level {l.position}: {l.name}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24 }}>
           <div>
             <h1 style={{ font: '400 40px/1.15 var(--serif)', margin: 0, letterSpacing: '-.02em' }}>Guten Tag, Anna.</h1>
@@ -130,11 +185,35 @@ export default function Dashboard({
           {!isEmpty && (
             <div style={{ textAlign: 'right' }}>
               <div style={{ font: '700 34px var(--ui)', color: 'var(--ind)', lineHeight: 1 }}>{pctLabel}</div>
-              <div style={{ font: '500 12.5px var(--ui)', color: 'var(--muted)' }}>to Level 2</div>
+              <div style={{ font: '500 12.5px var(--ui)', color: 'var(--muted)' }}>
+                {nextLevel ? `to Level ${nextLevel.position}` : 'of this level'}
+              </div>
             </div>
           )}
         </div>
-        {isEmpty ? (
+        {isLocked ? (
+          // Same shape as the empty panel, deliberately different words. The
+          // reader is told what would open this, which is the one thing the
+          // empty message must never claim.
+          <div
+            style={{
+              marginTop: 38,
+              background: 'var(--surf)',
+              border: '1px solid var(--line)',
+              borderRadius: 18,
+              padding: '56px 22px',
+              boxShadow: 'var(--shadow)',
+              textAlign: 'center',
+            }}
+          >
+            <p style={{ font: '400 21px/1.3 var(--serif)', margin: 0, letterSpacing: '-.01em' }}>
+              🔒 Level {level.position} is locked.
+            </p>
+            <p style={{ font: '400 14px var(--ui)', color: 'var(--muted)', margin: '10px 0 0' }}>
+              Finish every post in Level {level.position - 1} to open it.
+            </p>
+          </div>
+        ) : isEmpty ? (
           // Deliberately nothing to press. No reader action makes content
           // appear, and a control that cannot help reads worse than none — the
           // header still offers the vocabulary bank, the theme and sign-out.
@@ -157,13 +236,15 @@ export default function Dashboard({
             <div style={{ marginTop: 22, height: 10, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden' }}>
               <div style={{ height: '100%', borderRadius: 99, background: 'var(--ind)', transition: 'width .6s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />
             </div>
-            <p style={{ font: '500 13px var(--ui)', color: 'var(--muted)', margin: '12px 0 0' }}>🔒 Level {level.position + 1} unlocks when all {postCount} posts are read — {remainLabel}</p>
+            {showUnlockLine && (
+              <p style={{ font: '500 13px var(--ui)', color: 'var(--muted)', margin: '12px 0 0' }}>🔒 Level {nextLevel.position} unlocks when all {postCount} posts are read — {remainLabel}</p>
+            )}
           </>
         )}
 
         {/* Left unguarded: with no posts this maps to no children, and dropping
             its margin too makes it occupy nothing at all. */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginTop: isEmpty ? 0 : 38 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginTop: isEmpty || isLocked ? 0 : 38 }}>
           {posts.map((p) => {
             const isDone = completed.includes(p.id);
             return (

@@ -118,8 +118,11 @@ describe('the dashboard, rendering what the database returned', () => {
     await signIn();
 
     expect(screen.getByText(/of 5 posts completed/)).toBeInTheDocument();
-    expect(screen.getByText(/all 5 posts are read/)).toBeInTheDocument();
     expect(screen.queryByText(/of 4 posts completed/)).not.toBeInTheDocument();
+    // The unlock line used to be a second witness here. It is gone now, and
+    // rightly: this fixture holds one level, so a line promising Level 2 was
+    // describing a level that does not exist. tests/level-switching.test.jsx
+    // covers when it should and should not appear.
   });
 });
 

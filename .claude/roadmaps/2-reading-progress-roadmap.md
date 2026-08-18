@@ -1,8 +1,8 @@
 # Feature 2 Implementation Roadmap: Persist Reading Progress
 
-> **Agent Goal:** Replace the hardcoded completed-post list (`App.jsx:48`) with progress read from `public.reading_progress` and written as one completed row in `public.reading_sessions` when a reader presses Finish — and let the reader move between levels that genuinely unlock.
+> **Agent Goal:** Replace the hardcoded completed-post list (was `App.jsx:48`; retired in B4) with progress read from `public.reading_progress` and written as one completed row in `public.reading_sessions` when a reader presses Finish — and let the reader move between levels that genuinely unlock.
 
-> **Line references** in this document were last refreshed on 2026-08-18. They shift constantly, so confirm one with `grep` before trusting it. Treat the surrounding quoted code, not the number, as the real identifier.
+> **Line references** in this document were last refreshed on 2026-08-19, after Stages A–D landed. They shift constantly, so confirm one with `grep` before trusting it. Treat the surrounding quoted code, not the number, as the real identifier.
 
 > **No spec exists for this feature yet.** If one is written later in `.claude/specs/`, it is authoritative on observable behaviour and this roadmap is authoritative on how it gets built.
 
@@ -11,7 +11,7 @@
 ## 📌 Context & Motivation
 
 * **Goal:** Persist what a reader has read, so the dashboard's counts, percentage and ✓ Gelesen badges describe the database rather than a literal, and so `private.has_level_access` starts opening Level 2 for a reader who has finished Level 1.
-* **Why:** Progress is currently `useState([1, 2, 3, 4, 5, 6, 7])` (`App.jsx:48`) — it does not survive a reload, is identical for every reader, and flatters a brand-new account with *"7 of 10 posts completed"* and a 70% bar. Every level after the first is unreachable because nothing ever writes a completion, so the level gate never opens. Feature 1 established `posts.id` as the anchor these rows hang from; the schema for both tables has existed since `20260810103010_init_user_schema.sql` and has never been written to.
+* **Why:** Progress *was* `useState([1, 2, 3, 4, 5, 6, 7])` (`App.jsx:48` before this feature; the literal is gone and `completed` now starts empty at `App.jsx:51`) — it did not survive a reload, was identical for every reader, and flattered a brand-new account with *"7 of 10 posts completed"* and a 70% bar. Every level after the first was unreachable because nothing ever wrote a completion, so the level gate never opened. Feature 1 established `posts.id` as the anchor these rows hang from; the schema for both tables has existed since `20260810103010_init_user_schema.sql` and, until Stage A, had never been written to.
 
 ---
 
@@ -29,7 +29,7 @@ The following are locked and must not be revisited mid-build:
 
 3. **All progress queries live in `src/lib/progress.js`**, mirroring `src/lib/content.js`. Application state stays in `App.jsx`. No new state-management dependency.
 
-4. **Both data layers share one query helper.** `rows()` (`src/lib/content.js:36`) carries the `PGRST303` clock-skew retry. It moves to `src/lib/query.js` and both modules import it — a progress layer issuing its own raw queries would reintroduce that bug on the first fetch after sign-in.
+4. **Both data layers share one query helper.** `rows()` (was `src/lib/content.js:36`) carries the `PGRST303` clock-skew retry. It moves to `src/lib/query.js:28` and both modules import it — a progress layer issuing its own raw queries would reintroduce that bug on the first fetch after sign-in.
 
 5. **The dashboard updates optimistically, and the next load is the authority.** A successful write marks the post complete locally so the badge and percentage move at once; the next `fetchProgress()` overrides whatever local state believed.
 
@@ -44,15 +44,15 @@ The following are locked and must not be revisited mid-build:
 * **1. The Finish insert must set `ended_at`.**
   * `reading_sessions_one_open_idx` (`init_user_schema.sql:62`) is unique on `(user_id, post_id)` **where `ended_at is null`**. A row written with `ended_at` null makes the *second* finish on that post fail with a duplicate-key error (`23505`).
   * `ended_at` also feeds the roll-up: the trigger writes `completed_at` as `coalesce(new.ended_at, now())`.
-  * **Rule:** every insert this feature makes sets `ended_at`. A1/A2 exist to prove it.
+  * **Rule:** every insert this feature makes sets `ended_at`. A1/A2 exist to prove it. It must set `started_at` too — see Trap 11.
 * **2. Unlocking Level 2 reveals an empty level.**
   * `b1-momentum` holds **0 posts** (verified against the live database, 2026-08-18). Finishing Level 1 therefore opens a switcher entry onto *"No posts in this level yet."*
   * **Rule:** correct behaviour, and it will read as broken. Do not "fix" it in code — seeding Level 2 is content work, listed under deferred.
 * **3. Locked and empty are the same shape.**
-  * A locked level hands over zero posts because RLS withholds them; an empty level hands over zero because it has none. `Dashboard.jsx:33` derives `isEmpty = posts.length === 0` and its comment already warns that this only means "empty" while the shown level is never access-gated — which stops being true the moment a switcher exists.
+  * A locked level hands over zero posts because RLS withholds them; an empty level hands over zero because it has none. `Dashboard.jsx:38` derives `isEmpty = posts.length === 0` and its comment already warns that this only means "empty" while the shown level is never access-gated — which stops being true the moment a switcher exists.
   * **Rule:** C4 must tell them apart before C3 makes a second level selectable.
 * **4. The unlock line can promise a level that does not exist.**
-  * `Dashboard.jsx:160` renders `🔒 Level {level.position + 1} unlocks when all {postCount} posts are read`. There is no Level 3.
+  * `Dashboard.jsx:240` renders `🔒 Level {nextLevel.position} unlocks when all {postCount} posts are read`, and only while that level is still shut. There is no Level 3.
   * **Rule:** guard on whether a next level exists, not on the number.
 * **5. A fresh account will look like a regression.**
   * Today's placeholder shows 7 of 10 complete for everyone. Afterwards a new reader correctly sees 0 of 10 and an empty bar.
@@ -73,6 +73,14 @@ The following are locked and must not be revisited mid-build:
   * The suite stubs the database, so **RLS, the trigger, the unique index and Trap 1 are all invisible to it**. A completed-session insert that would be refused in production passes every test.
   * This is exactly how `PGRST303` reached the running app with 62 tests green.
   * **Rule:** Stage A is verified against the real database and nowhere else. Do not substitute a test for it, and do not treat Stage A as done because a test resembling it passes.
+* **12. The client cannot tell a locked level from an empty one by its posts.** *(Found building C1, 2026-08-18.)*
+  * `private.has_level_access` asks whether every published post of the preceding level is completed. The database sees every post; the client sees only what RLS handed over, and a **locked** level hands over none — so "all of its posts are completed" is vacuously true of it, and a naive client copy unlocks level 3 for a reader still shut out of level 2.
+  * `levels.post_count` is the distinguisher. It is maintained over every post regardless of publication (`init_content_schema.sql:78`) and a locked level still reports it, so `post_count === 0` means genuinely empty while an empty list under `post_count > 0` means withheld.
+  * **Rule:** a level is open only if the preceding one is *itself* open and all its published posts are completed, with `post_count === 0` as the vacuous case. Does not bite with only two levels — level 1 is never gated — which is why it would have shipped unnoticed.
+* **11. The Finish insert must send `started_at` as well as `ended_at`.** *(Found by A1, 2026-08-18.)*
+  * `reading_sessions` also carries `check (ended_at is null or ended_at >= started_at)` (`init_user_schema.sql:53`). Sending only `ended_at` and letting `started_at` fall back to its `now()` default compares a timestamp the **browser** generated before the request was sent against one **Postgres** evaluated after it arrived. `ended_at` is therefore earlier by at least the network round trip, and the insert fails with `23514` — every time, on the *first* finish, no matter how well the clocks agree. Clock skew only widens the gap; it is not the cause.
+  * Observed live: the browser also ran ~465 ms behind the database, so both effects pushed the same way.
+  * **Rule:** take one `new Date().toISOString()` and send it as **both** `started_at` and `ended_at`, so the constraint compares two readings of a single clock. When Stage B has a genuine open time for the post, send that as `started_at` instead — but it must still come from the browser, never from the column default.
 
 ---
 
@@ -84,24 +92,24 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 > No application code changes and no commit. Use a temporary probe (a `useEffect` in `App.jsx`, as Feature 1's A1 did) or the Supabase SQL editor as the signed-in reader, and read results back with SQL rather than from the client — the client cannot see what RLS hid from it.
 
-- [ ] **A1. Prove a completed session rolls up into progress**
-  * **Action:** As a signed-in test reader, insert into `public.reading_sessions`: a level-1 `post_id`, `percent_read: 100`, `completed: true`, `ended_at: now()`.
+- [x] **A1. Prove a completed session rolls up into progress**
+  * **Action:** As a signed-in test reader, insert into `public.reading_sessions`: a level-1 `post_id`, `percent_read: 100`, `completed: true`, and **both** `started_at` and `ended_at` set from one browser clock reading (Trap 11 — `ended_at` alone fails with `23514`).
   * **Done when:** `select session_count, best_percent_read, completed_at from public.reading_progress where user_id = <reader> and post_id = <post>` returns exactly one row with `session_count = 1`, `best_percent_read = 100` and a non-null `completed_at`.
 
-- [ ] **A2. Prove re-reading the same post does not fail**
+- [x] **A2. Prove re-reading the same post does not fail**
   * **Action:** Repeat A1's insert verbatim for the same post.
   * **Done when:** the second insert returns no error, and the progress row reads back `session_count = 2` with `completed_at` **unchanged** from A1.
   * **STOP CONDITION:** 🛑 a `23505` duplicate-key error means `ended_at` was omitted (Trap 1). Fix the insert before going further — this failure would otherwise only appear the second time a reader re-reads anything.
 
-- [ ] **A3. Prove a reader cannot record progress for anyone else**
+- [x] **A3. Prove a reader cannot record progress for anyone else**
   * **Action:** Attempt an insert with a `user_id` that is not the signed-in reader's.
   * **Done when:** the insert is refused by RLS, and `select count(*) from public.reading_sessions where user_id = <other reader>` is unchanged.
   * **STOP CONDITION:** 🛑 if it succeeds, stop — the write path is unsafe and no amount of client code fixes it.
 
-- [ ] **A4. Prove the level gate actually flips**
+- [x] **A4. Prove the level gate actually flips**
   * **Action:** Insert one published post into `b1-momentum` (level 2) so there is something to withhold. With Level 1 **incomplete**, read level 2's posts as the client. Then complete all ten level-1 posts for the test reader and read again.
   * **Done when:** the client gets `[]` before, and that one post after — with no code change in between.
-  * **Cleanup:** delete the inserted post, and delete the test reader's `reading_sessions` rows via SQL (the client cannot).
+  * **Cleanup:** delete the inserted post, and delete the test reader's `reading_sessions` rows via SQL (the client cannot). **Delete the matching `reading_progress` rows too** — nothing cascades from sessions to progress, and the sync trigger fires only on insert or update, so clearing sessions alone leaves the roll-up intact and Level 2 still unlocked.
   * **STOP CONDITION:** 🛑 if access does not change, the gate does not work and Stage C's switcher would grey levels on a rule the database does not share.
 
 ---
@@ -110,33 +118,33 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 > **Why B and C from the original sketch are merged:** an intermediate stage that reads progress but does not yet write it ships a reader who finishes a post, sees the badge appear, reloads, and finds it gone. Feature 1 learned this the expensive way when its Stage C split had to be undone — the rule is that a stage leaves the app working, and silently forgetting a completed read does not qualify.
 
-- [ ] **B1. Extract the shared query helper**
+- [x] **B1. Extract the shared query helper**
   * **Files:** `src/lib/query.js` (new), `src/lib/content.js`
-  * **Action:** Move `rows()` and the `PGRST303` retry (`content.js:36`) into `src/lib/query.js`; import it in `content.js`.
+  * **Action:** Move `rows()` and the `PGRST303` retry (was `content.js:36`) into `src/lib/query.js:28`; import it in `content.js`.
   * **Done when:** `grep -rn "PGRST303" src/lib/` shows it defined in exactly one file, and `npm test` passes with `tests/content.test.js` unmodified.
 
-- [ ] **B2. Add the progress data layer**
+- [x] **B2. Add the progress data layer**
   * **File:** `src/lib/progress.js` (new)
   * **Action:** `fetchProgress()` → rows of `{ post_id, best_percent_read, completed_at }` for the signed-in reader, via the shared `rows()`. `recordFinish({ postId, percentRead })` → one insert per Decision 2, with `ended_at`.
   * **Done when:** a test asserts `recordFinish` sends `completed: true`, a non-null `ended_at` and the given `percentRead`; and that a failed insert throws rather than resolving (the same rule `rows()` enforces for reads).
 
-- [ ] **B3. Fetch progress with the library**
+- [x] **B3. Fetch progress with the library**
   * **File:** `src/App.jsx` (the content effect, `:155-183`)
   * **Action:** Fetch progress alongside `loadContent()` so one `contentStatus` covers both, and clear it on sign-out exactly as content is cleared.
   * **Done when:** a test shows a progress-fetch failure landing on `ContentError` with a working Retry, and no progress request being made while signed out.
 
-- [ ] **B4. Replace the placeholder completed set**
-  * **File:** `src/App.jsx:48`
+- [x] **B4. Replace the placeholder completed set**
+  * **File:** `src/App.jsx:51` (was `:48`, the literal it replaced)
   * **Action:** Derive the completed set from fetched progress (`completed_at is not null`), keyed by `post_id`.
   * **Done when:** `grep -n "useState(\[1, 2, 3, 4, 5, 6, 7\])" src/App.jsx` returns nothing, and a test with one completed post in the fixture renders exactly one ✓ Gelesen badge on the matching card.
 
-- [ ] **B5. Report the reader's percentage upward**
+- [x] **B5. Report the reader's percentage upward**
   * **File:** `src/components/Reader.jsx` (`progress` at `:7`, updated `:76`; Finish at `:189`)
   * **Action:** Pass the scroll percentage to `onFinish`.
   * **Done when:** a test scrolls the reader, reads the `N% read` header figure, clicks Finish, and asserts the handler received that same number — not `0` and not a hardcoded `100`.
 
-- [ ] **B6. Persist the finish, optimistically**
-  * **File:** `src/App.jsx:272` (`finish`)
+- [x] **B6. Persist the finish, optimistically**
+  * **File:** `src/App.jsx:297` (`finish`)
   * **Action:** Call `recordFinish`, then add the post to the completed set on success. On failure follow Decision 7 — do not mark it complete.
   * **Done when:** a test asserts the badge appears after a successful write with no refetch, and that a failed write leaves the post unmarked while the modal still opens.
 
@@ -144,28 +152,28 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 ### Stage C: Let the Reader Move Between Levels
 
-- [ ] **C1. Derive lock state client-side**
+- [x] **C1. Derive lock state client-side**
   * **File:** `src/lib/levels.js` (new)
-  * **Action:** `isLevelUnlocked(level, levels, postsByLevel, completedIds)` reproducing `private.has_level_access` (`rls_policies.sql:39-86`): `position <= 1` is always open; otherwise every published post of the preceding level must be completed.
+  * **Action:** `isLevelUnlocked(level, levels, postsByLevel, completedIds)` reproducing `private.has_level_access` (`rls_policies.sql:39-84`): `position <= 1` is always open; otherwise every published post of the preceding level must be completed.
   * **Done when:** unit tests cover four cases — level 1 always unlocked; one incomplete post in the preceding level locks; completing it unlocks; and a preceding level with **zero** published posts unlocks vacuously, matching the `not exists` in the migration.
 
-- [ ] **C2. Hold the selected level in state**
-  * **File:** `src/App.jsx:285`
+- [x] **C2. Hold the selected level in state**
+  * **File:** `src/App.jsx:324`
   * **Action:** Replace `content?.levels?.[0]` with a selected level id, defaulting to the first level by position.
   * **Done when:** `grep -n "levels?.\[0\]" src/App.jsx` returns nothing, and a test selecting the second level renders its name in the dashboard header.
 
-- [ ] **C3. Add the switcher**
+- [x] **C3. Add the switcher**
   * **File:** `src/components/Dashboard.jsx`
   * **Action:** List every level, marking locked ones and refusing selection.
   * **Done when:** a test shows the locked level's control carrying `disabled`, clicking it leaving the shown level unchanged, and the same control enabled once the fixture completes the preceding level.
 
-- [ ] **C4. Tell locked apart from empty**
-  * **File:** `src/components/Dashboard.jsx:33`
+- [x] **C4. Tell locked apart from empty**
+  * **File:** `src/components/Dashboard.jsx:38`
   * **Action:** Split `isEmpty` into "no posts here" and "not unlocked yet", each with its own message.
   * **Done when:** two tests — a locked level with zero posts shows the locked explanation and **not** *"No posts in this level yet."*; an unlocked level with zero posts still shows the empty panel (Feature 1's D1 behaviour, unbroken).
 
-- [ ] **C5. Stop promising a level that does not exist**
-  * **File:** `src/components/Dashboard.jsx:160`
+- [x] **C5. Stop promising a level that does not exist**
+  * **File:** `src/components/Dashboard.jsx:240`
   * **Action:** Render the unlock line only when a level with `position + 1` exists.
   * **Done when:** a test on the highest level asserts no `unlocks when all` text is present, while a lower level still shows it.
 
@@ -173,10 +181,10 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
 
 ### Stage D: Cleanup, Tests & Documentation
 
-- [ ] **D1. Retire what the feature replaced**
+- [x] **D1. Retire what the feature replaced**
   * **Done when:** `grep -rn "Placeholder progress\|setCompleted" src/` shows no path that writes progress without going through `recordFinish`, and `npm run lint`, `npm test` and `npm run build` all pass.
 
-- [ ] **D2. Make the suite bite**
+- [x] **D2. Make the suite bite**
   * **Action:** Cover progress rendering, the write payload, lock derivation, and the locked/empty split.
   * **Done when:** `npm test` passes, and each of these mutations fails at least one test — apply, watch it fail, revert:
     a. the completed set keyed by `position` instead of `post_id`,
@@ -185,7 +193,7 @@ Mark progress by changing `[ ]` to `[x]`. Each step contains a checkable **"Done
     d. the locked message replaced by the empty one.
   * **Note:** omitting `ended_at` is deliberately **absent** from this list — no test can catch it (Trap 10). A2 is its only guard.
 
-- [ ] **D3. Update the Supabase documentation**
+- [x] **D3. Update the Supabase documentation**
   * **File:** `supabase/README.md`
   * **Action:** Record that the app now writes `reading_sessions` and reads `reading_progress`, and that the level gate is live.
   * **Done when:** the README describes the write path, and `grep -n "never written\|not written" supabase/README.md` returns nothing that is now false.
@@ -205,7 +213,7 @@ Commit 2 is large because Stage B is indivisible; see the note under Stage B bef
 
 ## 🔮 Subsequent Roadmap Context
 
-* **Feature 3 — Persist Vocabulary Bank (`saved_words`):** retires the hardcoded words at `App.jsx:50-54`, which key saved words to the display string `'Post 1: Der Alltag in Berlin'` rather than to a `post_id`. `saved_words` already carries `select, insert, update, delete` for `authenticated` (`rls_policies.sql:29`) — the only content table where the reader may delete.
-* **Feature 4 — Real Profile (`display_name`, `theme`):** retires `"Guten Tag, Anna."` at `Dashboard.jsx:120`.
+* **Feature 3 — Persist Vocabulary Bank (`saved_words`):** retires the hardcoded words at `App.jsx:60-64`, which key saved words to the display string `'Post 1: Der Alltag in Berlin'` rather than to a `post_id`. `saved_words` already carries `select, insert, update, delete` for `authenticated` (`rls_policies.sql:29`) — the only content table where the reader may delete.
+* **Feature 4 — Real Profile (`display_name`, `theme`):** retires `"Guten Tag, Anna."` at `Dashboard.jsx:175`.
 * **Content authoring for Level 2:** `b1-momentum` holds no posts, so Trap 2 stands until posts are seeded by SQL. Not a code change.
 * **Before launch, unrelated to this feature:** the Supabase project runs with `mailer_autoconfirm = true` and no SMTP sender, which must be reverted before real accounts exist.

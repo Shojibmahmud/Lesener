@@ -10,9 +10,27 @@ Correcting any of them is a row edit, not a rebuild. `src/data.js` still exists
 but nothing renders from it — only its dictionary survives, as an unreachable
 fallback, and it goes when that is removed.
 
-Nothing is **written** yet. Progress and saved words are still `useState` and
-reach no table at all, so `reading_sessions`, `reading_progress` and
-`saved_words` remain empty and the level gate has never opened for anybody.
+The app also **writes**, though only in one place. Pressing *Finish reading*
+inserts a single completed row into `reading_sessions`; the
+`reading_sessions_sync_progress` trigger rolls that up into `reading_progress`,
+and the level gate opens off the result. Nothing else is written: the app never
+touches `reading_progress` directly, and a session is recorded at Finish rather
+than when a post opens, so abandoning a post leaves no trace.
+
+Two columns of that insert are less obvious than they look, and both are proven
+against this database rather than against the test suite, which stubs it:
+
+- **`ended_at` must be set.** `reading_sessions_one_open_idx` is unique on
+  `(user_id, post_id)` *where `ended_at is null`*, so a null there survives the
+  first finish and fails the second with `23505`.
+- **`started_at` must be sent too**, from the same clock reading as `ended_at`.
+  The table checks `ended_at is null or ended_at >= started_at`; letting
+  `started_at` fall back to its `now()` default compares a timestamp the browser
+  made before the request was sent against one Postgres evaluated after it
+  arrived, so `ended_at` is earlier by at least the round trip and every insert
+  fails with `23514`, however well the clocks agree.
+
+`saved_words` is still `useState` and reaches no table — that is Feature 3.
 
 ## Layout
 
@@ -50,7 +68,9 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
 - **`dictionary_entries.term`** is a normalised _surface form_, not a lemma: it has
   to equal `clean(raw).toLowerCase()` from `src/utils.js` or lookups silently miss.
   A check constraint enforces the lowercasing.
-- **`reading_sessions`** — one row per pass through a post.
+- **`reading_sessions`** — one row per pass through a post. The app inserts here
+  and nowhere else in this pair; `INSERT` carries no `DELETE` grant, so a
+  completion cannot be taken back from the client.
 - **`reading_progress`** — trigger-maintained roll-up, one row per (user, post).
   Users have `SELECT` and nothing else, because this table is what the level gate
   reads.
@@ -58,8 +78,9 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
   rather than per post, matching `Reader.jsx`'s refusal to bank the same word
   twice. `translation` is nullable for words the dictionary doesn't cover.
 - **`level_progress`** — a `security_invoker` view holding the per-level figures.
-  Nothing reads it yet: the dashboard's counts come from `levels.post_count`, and
-  the completed count is still local `useState`. It is there for Feature 2.
+  Still unread: the dashboard's counts come from `levels.post_count` for the
+  denominator and from the `reading_progress` rows the app fetches for the
+  numerator, so the view has not been needed.
 
 ## Level gating
 
@@ -73,6 +94,20 @@ This stops bulk content scraping with the publishable key. It is **not** DRM —
 determined client can still insert and complete ten `reading_sessions` rows to open
 the next level. Closing that would mean moving session completion behind an Edge
 Function.
+
+The gate is live: it has opened for a real reader, and the app now greys out
+levels it believes are shut. That client-side judgement is a **copy** of this
+function in `src/lib/levels.js`, written because `private` is not an exposed
+schema and supabase-js therefore cannot call the real one. The copy decides only
+what to disable; this function is still the enforcer. If the rule here changes,
+that file changes with it.
+
+The copy needs one step this function does not. Postgres sees every post, while
+the client sees only what RLS handed over — and a locked level hands over none,
+so "every published post of the preceding level is completed" is vacuously true
+of it. `levels.post_count` tells the two apart: it counts every post regardless
+of publication and is reported even for a locked level, so `post_count = 0` means
+genuinely empty while an empty list under `post_count > 0` means withheld.
 
 ## Running the checks
 

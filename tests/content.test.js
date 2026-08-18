@@ -127,9 +127,15 @@ describe('a token the API says was issued in the future', () => {
     stub({ levels: () => skewed });
 
     const loading = fetchLevels();
-    await vi.advanceTimersByTimeAsync(2000);
+    // Assert before advancing, not after. Draining the timers is what makes the
+    // retry fail, so a handler attached afterwards arrives too late and Node
+    // reports the rejection as unhandled — a passing test that dirties the run.
+    const refused = expect(loading).rejects.toThrow(
+      'Could not load levels [PGRST303]: JWT issued at future',
+    );
 
-    await expect(loading).rejects.toThrow('Could not load levels [PGRST303]: JWT issued at future');
+    await vi.advanceTimersByTimeAsync(2000);
+    await refused;
   });
 
   // A retry is only right for the skew. Repeating a query that was refused for

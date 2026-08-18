@@ -1,4 +1,4 @@
-export default function FinishModal({ doneCount, postCount, pctLabel, session, backToDash, closeModal }) {
+export default function FinishModal({ doneCount, postCount, pctLabel, session, saveFailed, backToDash, closeModal }) {
   const noSession = session.length === 0;
 
   return (
@@ -35,23 +35,29 @@ export default function FinishModal({ doneCount, postCount, pctLabel, session, b
             width: 52,
             height: 52,
             borderRadius: 16,
-            background: 'var(--grn-soft)',
-            color: 'var(--grn)',
+            background: saveFailed ? 'var(--amb-soft, var(--line2))' : 'var(--grn-soft)',
+            color: saveFailed ? 'var(--amb, var(--muted))' : 'var(--grn)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 24,
           }}
         >
-          ✓
+          {saveFailed ? '!' : '✓'}
         </div>
-        <h2 style={{ font: '400 32px/1.15 var(--serif)', margin: '20px 0 6px', letterSpacing: '-.02em' }}>Gut gemacht!</h2>
+        <h2 style={{ font: '400 32px/1.15 var(--serif)', margin: '20px 0 6px', letterSpacing: '-.02em' }}>
+          {saveFailed ? 'Nicht gespeichert' : 'Gut gemacht!'}
+        </h2>
         <p style={{ font: '400 15px/1.6 var(--ui)', color: 'var(--muted)', margin: '0 0 22px' }}>
-          Level progression updated — {doneCount} of {postCount} posts completed.
+          {saveFailed
+            ? 'Your progress couldn’t be saved. Press Finish reading again to try once more.'
+            : `Level progression updated — ${doneCount} of ${postCount} posts completed.`}
         </p>
-        <div style={{ height: 8, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden', marginBottom: 26 }}>
-          <div style={{ height: '100%', background: 'var(--grn)', transition: 'width .8s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />
-        </div>
+        {!saveFailed && (
+          <div style={{ height: 8, borderRadius: 99, background: 'var(--line2)', overflow: 'hidden', marginBottom: 26 }}>
+            <div style={{ height: '100%', background: 'var(--grn)', transition: 'width .8s cubic-bezier(.2,.7,.3,1)', width: pctLabel }} />
+          </div>
+        )}
         <div style={{ font: '600 11.5px var(--ui)', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 12 }}>
           New words this session — {session.length}
         </div>

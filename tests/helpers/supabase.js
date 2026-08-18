@@ -16,10 +16,14 @@
 //
 //   stubSupabase({ posts: ({ level_id }) => ({ data: byLevel[level_id] ?? [], error: null }) })
 //
+// Writes are recorded too: `calls.insert` collects [table, payload] pairs, so
+// a case can assert what an insert actually sent rather than only that it
+// resolved.
+//
 // The function is called at await time rather than at from() time, so it sees
 // every filter the caller applied. A table with no entry resolves empty.
 export function stubSupabase(tables) {
-  const calls = { from: [], select: [], eq: [], order: [] };
+  const calls = { from: [], select: [], eq: [], order: [], insert: [] };
 
   function from(table) {
     calls.from.push(table);
@@ -30,6 +34,10 @@ export function stubSupabase(tables) {
 
     const builder = {
       select: (columns) => (calls.select.push(columns), builder),
+      // Recorded per table, because what a write sent is the whole assertion:
+      // a column left off here is a row the database refuses, and nothing else
+      // in the suite would notice.
+      insert: (payload) => (calls.insert.push([table, payload]), builder),
       eq: (column, value) => (calls.eq.push([column, value]), (filters[column] = value), builder),
       order: (column) => (calls.order.push(column), builder),
       then: (resolve, reject) => {

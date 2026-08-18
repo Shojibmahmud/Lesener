@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase } from './lib/supabase';
 import { loadContent } from './lib/content';
+import { fetchProgress, recordFinish } from './lib/progress';
+import { unlockedLevels } from './lib/levels';
 import { linkError, startedInRecovery } from './lib/recovery';
 import Landing from './components/Landing';
 import AuthScreen from './components/AuthScreen';
@@ -42,11 +44,19 @@ export default function App() {
   // reset screen. Seeded from the URL rather than from the PASSWORD_RECOVERY
   // event, because the session lands first and by then the fetch has begun.
   const [recovering, setRecovering] = useState(startedInRecovery);
-  // Placeholder progress until Feature 2 persists it. These are post ids now,
-  // not positions — they coincide in the seeded library, which is why nothing
-  // here appears to change.
-  const [completed, setCompleted] = useState([1, 2, 3, 4, 5, 6, 7]);
+  // Post ids the reader has finished, read from reading_progress and kept in
+  // step optimistically when they finish another (Decision 5 — the next load is
+  // the authority, not this array). Empty is a truthful starting point: a reader
+  // who has finished nothing has finished nothing.
+  const [completed, setCompleted] = useState([]);
+  // Whether the last Finish failed to reach the database. Decision 7: the modal
+  // still opens, but it says so and the post stays unmarked.
+  const [saveFailed, setSaveFailed] = useState(false);
   const [activePostId, setActivePostId] = useState(null);
+  // Which level the dashboard is showing. Null means "whichever comes first",
+  // resolved below rather than seeded by an effect — the library has not
+  // arrived yet at this point, so there is no id to seed it with.
+  const [selectedLevelId, setSelectedLevelId] = useState(null);
   const [saved, setSaved] = useState([
     { de: 'Herausforderung', en: 'challenge', post: 'Post 1: Der Alltag in Berlin' },
     { de: 'gleichzeitig', en: 'simultaneously', post: 'Post 1: Der Alltag in Berlin' },
@@ -155,6 +165,8 @@ export default function App() {
   useEffect(() => {
     if (!userId || recovering) {
       setContent(null);
+      setCompleted([]);
+      setSelectedLevelId(null);
       setContentStatus('idle');
       return;
     }
@@ -163,10 +175,16 @@ export default function App() {
 
     setContentStatus('loading');
 
-    loadContent()
-      .then((loaded) => {
+    // Together, under one status. A dashboard drawn from the library before the
+    // reader's history arrives would show every card unread for a moment and
+    // then correct itself — which looks exactly like progress being lost.
+    Promise.all([loadContent(), fetchProgress()])
+      .then(([loaded, progress]) => {
         if (cancelled) return;
         setContent(loaded);
+        // completed_at is what separates finishing a post from getting partway
+        // through one. A row exists either way.
+        setCompleted(progress.filter((row) => row.completed_at).map((row) => row.post_id));
         setContentStatus('ready');
       })
       .catch((error) => {
@@ -242,6 +260,9 @@ export default function App() {
     setScreen('reader');
     setActivePostId(postId);
     setSession([]);
+    // A note left over from a previous post's failed save would otherwise
+    // reappear over this one's modal.
+    setSaveFailed(false);
   };
   const retryContent = () => setContentAttempt((n) => n + 1);
   const reviewPost = () => setScreen('vocab');
@@ -269,9 +290,25 @@ export default function App() {
     setSaved((s) => s.filter((x) => !(x.de === de && x.post === post)));
   };
 
-  const finish = () => {
+  // Decision 7: a failed write must not claim success. The post is marked only
+  // once the row is actually in, because a badge that appears and then vanishes
+  // on the next load is worse than one that never appeared. Pressing Finish
+  // again retries.
+  const finish = async (percentRead) => {
+    const postId = activePostId;
+
+    try {
+      await recordFinish({ postId, percentRead });
+      setCompleted((c) => (c.includes(postId) ? c : [...c, postId]));
+      setSaveFailed(false);
+    } catch (error) {
+      setSaveFailed(true);
+      // The reader is told only that it did not save; the cause stays here for
+      // whoever is debugging it.
+      console.error('[lesener] progress could not be saved.', error);
+    }
+
     setShowModal(true);
-    setCompleted((c) => (c.includes(activePostId) ? c : [...c, activePostId]));
   };
   const closeModal = () => setShowModal(false);
   const backToDash = () => {
@@ -279,10 +316,29 @@ export default function App() {
     setShowModal(false);
   };
 
-  // The level a reader is working through. Progression between levels is
-  // Feature 2; until then it is the first level by position, which is what the
-  // dashboard already claimed when it named Level 1 in hardcoded text.
-  const level = content?.levels?.[0] ?? null;
+  // The level a reader is looking at. Falling back to the first by position
+  // rather than storing it up front keeps "nothing chosen yet" and "chose the
+  // first one" the same thing, which is what a reader signing in expects.
+  // Memoised so it is the same array between renders — the lock map below is
+  // keyed on it, and a fresh [] each time would recompute on every keystroke.
+  const levels = useMemo(() => content?.levels ?? [], [content]);
+  const level = levels.find((l) => l.id === selectedLevelId) ?? levels[0] ?? null;
+
+  // Computed once, from data already on hand, and used by the switcher, the
+  // locked-versus-empty decision and the unlock line alike — three answers that
+  // must agree. The database remains the enforcer (Decision 6); this only
+  // decides what to grey out.
+  const unlocked = useMemo(
+    () => unlockedLevels(levels, content?.postsByLevel ?? {}, completed),
+    [levels, content?.postsByLevel, completed],
+  );
+
+  const selectLevel = (levelId) => {
+    // Refused rather than merely discouraged. A disabled control can still be
+    // reached by other means, and the dashboard should not render a level whose
+    // posts the database will not hand over.
+    if (unlocked.get(levelId)) setSelectedLevelId(levelId);
+  };
   const posts = level ? content.postsByLevel[level.id] ?? [] : [];
   // The denormalised counter, not posts.length: a locked level reports how many
   // posts it holds without handing over a single one of them.
@@ -362,6 +418,9 @@ export default function App() {
           toggleTheme={toggleTheme}
           email={user?.email}
           level={level}
+          levels={levels}
+          unlocked={unlocked}
+          selectLevel={selectLevel}
           posts={posts}
           postCount={postCount}
           savedCount={saved.length}
@@ -400,7 +459,7 @@ export default function App() {
       )}
 
       {showModal && (
-        <FinishModal doneCount={done} postCount={postCount} pctLabel={pctLabel} session={session} backToDash={backToDash} closeModal={closeModal} />
+        <FinishModal doneCount={done} postCount={postCount} pctLabel={pctLabel} session={session} saveFailed={saveFailed} backToDash={backToDash} closeModal={closeModal} />
       )}
 
       {showChangePassword && <ChangePasswordModal email={user?.email} onClose={closeChangePassword} />}

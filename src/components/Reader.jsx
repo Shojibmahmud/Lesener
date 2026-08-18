@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { clean } from '../utils';
 import ThemeToggle from './ThemeToggle';
 
@@ -69,10 +69,23 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
     [post, open, savedSet, onSaveWord, translate]
   );
 
-  const onScroll = (e) => {
-    const el = e.target;
+  // A post with nothing to scroll is entirely read the moment it is on screen,
+  // which is why the no-overflow case is 100 rather than 0.
+  const measure = (el) => {
     const max = el.scrollHeight - el.clientHeight;
-    const p = max > 0 ? Math.min(100, Math.round((el.scrollTop / max) * 100)) : 100;
+    return max > 0 ? Math.min(100, Math.round((el.scrollTop / max) * 100)) : 100;
+  };
+
+  // Measured on arrival, not only on scroll. Waiting for a scroll event means a
+  // post short enough not to scroll never fires one, so the header would read
+  // "0% read" for a post the reader can see all of — and pressing Finish would
+  // store that 0 as the percentage they reached.
+  useLayoutEffect(() => {
+    if (scrollRef.current) setProgress(measure(scrollRef.current));
+  }, [post]);
+
+  const onScroll = (e) => {
+    const p = measure(e.target);
     setProgress((prev) => (p !== prev ? p : prev));
   };
 
@@ -186,7 +199,7 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
             ))}
             <button
               className="btnp"
-              onClick={onFinish}
+              onClick={() => onFinish(progress)}
               style={{ marginTop: 16, padding: '16px 28px', borderRadius: 12, background: 'var(--ind)', color: '#fff', font: '600 15px var(--ui)' }}
             >
               Finish reading →

@@ -30,12 +30,18 @@ const emptyLevel = () => ({
   dictionary: new Map([['alltag', 'everyday life']]),
 });
 
-async function mountApp(hash = '', loadContentImpl) {
+async function mountApp(hash = '', loadContentImpl, fetchProgressImpl) {
   vi.resetModules();
   window.location.hash = hash;
 
   const listeners = [];
   const loadContent = vi.fn(loadContentImpl ?? (() => Promise.resolve(library())));
+  // The library and the reader's history arrive together under one status, so a
+  // case that stubs one has to stub the other or it is testing a half-mounted
+  // dashboard. Nothing completed by default: these cases are about the fetch
+  // lifecycle, not about badges.
+  const fetchProgress = vi.fn(fetchProgressImpl ?? (() => Promise.resolve([])));
+  const recordFinish = vi.fn(() => Promise.resolve());
 
   vi.doMock('../src/lib/supabase', () => ({
     supabase: {
@@ -50,6 +56,7 @@ async function mountApp(hash = '', loadContentImpl) {
   }));
 
   vi.doMock('../src/lib/content', () => ({ loadContent }));
+  vi.doMock('../src/lib/progress', () => ({ fetchProgress, recordFinish }));
 
   const { default: App } = await import('../src/App.jsx');
 
@@ -65,7 +72,7 @@ async function mountApp(hash = '', loadContentImpl) {
     });
   }
 
-  return { emit, loadContent };
+  return { emit, loadContent, fetchProgress, recordFinish };
 }
 
 const session = { user: { id: 'reader-1', email: 'reader@example.com' } };
@@ -306,6 +313,70 @@ describe('when the library cannot be obtained', () => {
     await emit('SIGNED_IN', session);
 
     expect(loadContent).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('when the reader’s progress cannot be obtained', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    window.location.hash = '';
+  });
+
+  const refuseProgress = () =>
+    Promise.reject(new Error('Could not load your reading progress [42501]: permission denied'));
+
+  // The library arriving without the history is the dangerous half-success: the
+  // dashboard would render every card unread and quietly tell a reader who has
+  // finished nine posts that they have finished none. One status covers both
+  // fetches precisely so that cannot happen.
+  it('shows the failure rather than a dashboard claiming nothing was read', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { emit } = await mountApp('', undefined, refuseProgress);
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+  });
+
+  it('asks again when the reader presses Retry', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchProgress = vi.fn().mockImplementationOnce(refuseProgress).mockResolvedValue([]);
+    const { emit } = await mountApp('', undefined, fetchProgress);
+
+    await emit('SIGNED_IN', session);
+    expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
+
+    await act(async () => {
+      screen.getByRole('button', { name: /try again/i }).click();
+    });
+
+    expect(fetchProgress).toHaveBeenCalledTimes(2);
+    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+  });
+
+  // `authenticated` holds the grant, not `anon`, so a request made while signed
+  // out does not come back empty — it comes back refused.
+  it('asks for nothing while nobody is signed in', async () => {
+    const { emit, fetchProgress } = await mountApp();
+
+    await emit('INITIAL_SESSION', null);
+
+    expect(fetchProgress).not.toHaveBeenCalled();
+  });
+
+  it('forgets one reader’s progress when the next signs in', async () => {
+    const { emit, fetchProgress } = await mountApp('', undefined, () =>
+      Promise.resolve([{ post_id: 41, best_percent_read: 100, completed_at: '2026-08-18T10:00:00Z' }]),
+    );
+
+    await emit('SIGNED_IN', session);
+    expect(screen.getByText('✓ Gelesen')).toBeInTheDocument();
+
+    await emit('SIGNED_OUT', null);
+    await emit('SIGNED_IN', { user: { id: 'reader-2', email: 'other@example.com' } });
+
+    expect(fetchProgress).toHaveBeenCalledTimes(2);
   });
 });
 
