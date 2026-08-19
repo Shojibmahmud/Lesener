@@ -21,9 +21,17 @@
 // resolved.
 //
 // The function is called at await time rather than at from() time, so it sees
-// every filter the caller applied. A table with no entry resolves empty.
+// every filter the caller applied, and which kind of statement it turned out to
+// be. A table with no entry resolves empty.
+//
+// The second argument matters once one table is read, inserted into and deleted
+// from — saved_words is all three — because keying only on the table name would
+// make every one of them answer the same way:
+//
+//   stubSupabase({ saved_words: (filters, op) =>
+//     op === 'delete' ? { data: [{ id: 7 }], error: null } : { data: rows, error: null } })
 export function stubSupabase(tables) {
-  const calls = { from: [], select: [], eq: [], order: [], insert: [] };
+  const calls = { from: [], select: [], eq: [], order: [], insert: [], delete: [] };
 
   function from(table) {
     calls.from.push(table);
@@ -31,19 +39,34 @@ export function stubSupabase(tables) {
     // Per builder, not per stub: loadContent calls from('posts') once per level,
     // and each of those has to answer for the level id its own .eq() was given.
     const filters = {};
+    let op = 'select';
+    let single = false;
 
     const builder = {
       select: (columns) => (calls.select.push(columns), builder),
       // Recorded per table, because what a write sent is the whole assertion:
       // a column left off here is a row the database refuses, and nothing else
       // in the suite would notice.
-      insert: (payload) => (calls.insert.push([table, payload]), builder),
+      insert: (payload) => ((op = 'insert'), calls.insert.push([table, payload]), builder),
+      // Deleting is recorded the same way, and for a sharper reason: the
+      // saved_words delete policy filters rather than raises, so a delete that
+      // removed nothing still resolves. What it filtered on is the only
+      // evidence that it aimed at the right row.
+      delete: () => ((op = 'delete'), calls.delete.push(table), builder),
+      // Unwraps at await time exactly as postgrest-js does, so code that forgets
+      // .single() is handed an array and fails on the shape rather than passing
+      // by luck.
+      single: () => ((single = true), builder),
       eq: (column, value) => (calls.eq.push([column, value]), (filters[column] = value), builder),
       order: (column) => (calls.order.push(column), builder),
       then: (resolve, reject) => {
         const answer = tables[table];
-        const result = typeof answer === 'function' ? answer(filters) : answer;
-        return Promise.resolve(result ?? { data: [], error: null }).then(resolve, reject);
+        const raw = typeof answer === 'function' ? answer(filters, op) : answer;
+        let result = raw ?? { data: [], error: null };
+        if (single && Array.isArray(result.data)) {
+          result = { ...result, data: result.data[0] ?? null };
+        }
+        return Promise.resolve(result).then(resolve, reject);
       },
     };
 

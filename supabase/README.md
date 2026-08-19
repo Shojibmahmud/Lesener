@@ -30,7 +30,19 @@ against this database rather than against the test suite, which stubs it:
   arrived, so `ended_at` is earlier by at least the round trip and every insert
   fails with `23514`, however well the clocks agree.
 
-`saved_words` is still `useState` and reaches no table — that is Feature 3.
+The vocabulary bank writes `saved_words` too: one row when a reader taps **+**
+in the reader, deleted when they tap 🗑 in the bank, and the whole set read back
+alongside the library on every load. Every table in the schema is now reached by
+the app.
+
+Two things about that write are worth knowing before changing it. The delete
+policy is a `USING` clause, so a row belonging to somebody else is *filtered
+out* rather than rejected — the statement succeeds having removed nothing, and
+`src/lib/vocab.js` counts the returned rows because that is the only way to tell
+the two apart. And a saved word outlives its post: `post_id` is
+`ON DELETE SET NULL`, and an unpublished post is withheld by
+`posts_select_unlocked`, so the bank cannot always look the heading up. It reads
+`post_label` when it cannot.
 
 ## Layout
 
@@ -76,7 +88,24 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
   reads.
 - **`saved_words`** — the vocabulary bank. Unique per `(user_id, term)`, globally
   rather than per post, matching `Reader.jsx`'s refusal to bank the same word
-  twice. `translation` is nullable for words the dictionary doesn't cover.
+  twice. `translation` is nullable for words the dictionary doesn't cover, and is
+  stored as `NULL` rather than as the em dash the reader is shown — otherwise an
+  absent translation could not be told from a real one.
+  Three columns describe one word, and they are not interchangeable:
+  - **`term`** — the lowercase key. What `unique (user_id, term)` and the
+    dictionary both hinge on.
+  - **`surface_form`** — the word as the reader tapped it, and what the bank
+    displays. German capitalises every noun in running text, so this is correct
+    for free — except for a non-noun opening a sentence, which keeps that
+    sentence's capital. A `check (term = lower(surface_form))` keeps the two
+    honest.
+  - **`post_label`** — the post heading as it read at save time. A fallback, not
+    an identity: the bank prefers the live title from the library so a rename
+    reaches it, and reads this only when `post_id` resolves to nothing.
+
+  `session_id` is left null by design. Nothing writes a `reading_sessions` row
+  until the reader presses Finish, and words are saved before that, so there is
+  no session to point at.
 - **`level_progress`** — a `security_invoker` view holding the per-level figures.
   Still unread: the dashboard's counts come from `levels.post_count` for the
   denominator and from the `reading_progress` rows the app fetches for the

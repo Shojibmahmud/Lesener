@@ -30,7 +30,7 @@ const emptyLevel = () => ({
   dictionary: new Map([['alltag', 'everyday life']]),
 });
 
-async function mountApp(hash = '', loadContentImpl, fetchProgressImpl) {
+async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSavedWordsImpl) {
   vi.resetModules();
   window.location.hash = hash;
 
@@ -42,6 +42,12 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl) {
   // lifecycle, not about badges.
   const fetchProgress = vi.fn(fetchProgressImpl ?? (() => Promise.resolve([])));
   const recordFinish = vi.fn(() => Promise.resolve());
+  // The bank is fetched under the same status as the other two, so a case that
+  // stubs the library has to stub this as well or it is testing a dashboard
+  // whose Saved count never arrived.
+  const fetchSavedWords = vi.fn(fetchSavedWordsImpl ?? (() => Promise.resolve([])));
+  const saveWord = vi.fn(() => Promise.resolve());
+  const deleteSavedWord = vi.fn(() => Promise.resolve());
 
   vi.doMock('../src/lib/supabase', () => ({
     supabase: {
@@ -57,6 +63,7 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl) {
 
   vi.doMock('../src/lib/content', () => ({ loadContent }));
   vi.doMock('../src/lib/progress', () => ({ fetchProgress, recordFinish }));
+  vi.doMock('../src/lib/vocab', () => ({ fetchSavedWords, saveWord, deleteSavedWord }));
 
   const { default: App } = await import('../src/App.jsx');
 
@@ -72,7 +79,7 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl) {
     });
   }
 
-  return { emit, loadContent, fetchProgress, recordFinish };
+  return { emit, loadContent, fetchProgress, recordFinish, fetchSavedWords, saveWord, deleteSavedWord };
 }
 
 const session = { user: { id: 'reader-1', email: 'reader@example.com' } };
@@ -377,6 +384,77 @@ describe('when the reader’s progress cannot be obtained', () => {
     await emit('SIGNED_IN', { user: { id: 'reader-2', email: 'other@example.com' } });
 
     expect(fetchProgress).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('the reader’s saved words', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    window.location.hash = '';
+  });
+
+  const savedWord = (over = {}) => ({
+    id: 701,
+    post_id: 41,
+    post_label: 'Post 1: Der Alltag',
+    term: 'herausforderung',
+    surface_form: 'Herausforderung',
+    translation: 'challenge',
+    ...over,
+  });
+
+  it('are fetched with the library, and counted on the dashboard', async () => {
+    const { emit } = await mountApp('', undefined, undefined, () =>
+      Promise.resolve([savedWord(), savedWord({ id: 702, term: 'geduld', surface_form: 'Geduld' })]),
+    );
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('leave a brand-new reader with nothing saved, rather than three words nobody kept', async () => {
+    const { emit } = await mountApp();
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.queryByText('Herausforderung')).not.toBeInTheDocument();
+    expect(screen.queryByText('gleichzeitig')).not.toBeInTheDocument();
+    expect(screen.queryByText('Zusammenhang')).not.toBeInTheDocument();
+  });
+
+  // The count is the only place one reader's words are visible from the
+  // dashboard, and it is what would still be on screen while the next reader's
+  // library loads if `saved` were not cleared with everything else.
+  it('are forgotten when the next reader signs in', async () => {
+    let words = [savedWord(), savedWord({ id: 702, term: 'geduld', surface_form: 'Geduld' })];
+    const { emit } = await mountApp('', undefined, undefined, () => Promise.resolve(words));
+
+    await emit('SIGNED_IN', session);
+    expect(screen.getByText('2')).toBeInTheDocument();
+
+    words = [];
+    await emit('SIGNED_OUT', null);
+    await emit('SIGNED_IN', { user: { id: 'reader-2', email: 'other@example.com' } });
+
+    expect(screen.getByText('0')).toBeInTheDocument();
+    expect(screen.queryByText('2')).not.toBeInTheDocument();
+  });
+
+  it('failing to arrive is a failure of the whole load, with a Retry', async () => {
+    const { emit } = await mountApp('', undefined, undefined, () =>
+      Promise.reject(new Error('Could not load your saved words [42501]: permission denied')),
+    );
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
+  });
+
+  it('are not asked for while nobody is signed in', async () => {
+    const { fetchSavedWords } = await mountApp();
+
+    expect(fetchSavedWords).not.toHaveBeenCalled();
   });
 });
 

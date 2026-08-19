@@ -47,6 +47,11 @@ async function mountApp({ progress = [], recordFinishImpl } = {}) {
   }));
   vi.doMock('../src/lib/content', () => ({ loadContent }));
   vi.doMock('../src/lib/progress', () => ({ fetchProgress, recordFinish }));
+  vi.doMock('../src/lib/vocab', () => ({
+    fetchSavedWords: () => Promise.resolve([]),
+    saveWord: vi.fn(() => Promise.resolve()),
+    deleteSavedWord: vi.fn(() => Promise.resolve()),
+  }));
 
   const { default: App } = await import('../src/App.jsx');
 

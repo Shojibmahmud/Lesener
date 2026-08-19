@@ -2,7 +2,7 @@ import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { clean } from '../utils';
 import ThemeToggle from './ThemeToggle';
 
-export default function Reader({ post, level, dict, saved, session, onSaveWord, onFinish, goDashboard, dark, toggleTheme }) {
+export default function Reader({ post, level, dict, saved, session, onSaveWord, saveWordFailed, onFinish, goDashboard, dark, toggleTheme }) {
   const [open, setOpen] = useState(null);
   const [progress, setProgress] = useState(0);
   const scrollRef = useRef(null);
@@ -13,7 +13,9 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
     return () => document.removeEventListener('click', onDocClick);
   }, []);
 
-  const savedSet = useMemo(() => new Set(saved.map((w) => w.de.toLowerCase())), [saved]);
+  // `term` is already the lowercase key the database stores and the dictionary
+  // is looked up by, so there is nothing left to normalise here.
+  const savedSet = useMemo(() => new Set(saved.map((w) => w.term)), [saved]);
 
   // The database dictionary is the only dictionary. There is no fallback and no
   // need for one: App shows the loading and error screens until the library has
@@ -24,7 +26,11 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
   // German words. An object answers for names it was never given —
   // "constructor", "toString" — with a function, which a reader would be shown
   // as though it were a translation.
-  const translate = useMemo(() => (term) => dict.get(term) ?? '—', [dict]);
+  // Returns the raw lookup, undefined and all. The em dash is applied at each
+  // place a translation is *displayed*, never here: what gets saved has to be
+  // able to say "there is no translation", and a stored dash could not be told
+  // apart from a dictionary entry that genuinely reads as one.
+  const translate = useMemo(() => (term) => dict.get(term), [dict]);
 
   const paragraphs = useMemo(
     () =>
@@ -42,6 +48,7 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
             isOpen,
             isSaved,
             translation,
+            translationLabel: translation ?? '—',
             style: {
               position: 'relative',
               display: 'inline-block',
@@ -60,7 +67,10 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
                 setOpen(null);
                 return;
               }
-              onSaveWord({ de: c, en: translation, post: 'Post ' + post.position + ': ' + post.title });
+              // The surface form as tapped, and the raw translation. App owns
+              // the post and composes the heading; the reader no longer needs
+              // to know how a heading is spelled.
+              onSaveWord({ surfaceForm: c, translation });
               setOpen(null);
             },
           };
@@ -158,7 +168,7 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
                           cursor: 'default',
                         }}
                       >
-                        <span style={{ font: '600 15px var(--ui)', color: 'var(--text)' }}>{t.translation}</span>
+                        <span style={{ font: '600 15px var(--ui)', color: 'var(--text)' }}>{t.translationLabel}</span>
                         <button
                           className="btnp"
                           onClick={t.onSave}
@@ -210,16 +220,24 @@ export default function Reader({ post, level, dict, saved, session, onSaveWord, 
         <aside style={{ borderLeft: '1px solid var(--line)', height: 'calc(100vh - 57px)', overflowY: 'auto', padding: '28px 24px', background: 'var(--surf2)' }}>
           <div style={{ font: '600 11.5px var(--ui)', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--muted)' }}>This session</div>
           <div style={{ font: '400 30px var(--serif)', margin: '6px 0 20px' }}>{sessionCountLabel}</div>
+          {saveWordFailed && (
+            <p
+              role="alert"
+              style={{ font: '400 13.5px/1.7 var(--ui)', color: 'var(--text)', background: 'var(--surf)', border: '1px solid var(--line)', borderRadius: 14, padding: 16, marginBottom: 14 }}
+            >
+              That word couldn’t be saved. Tap <strong style={{ color: 'var(--ind)' }}>+</strong> again to try once more.
+            </p>
+          )}
           {noSession && (
             <p style={{ font: '400 13.5px/1.7 var(--ui)', color: 'var(--muted)', border: '1px dashed var(--line)', borderRadius: 14, padding: 16 }}>
               Tap any word in the text to see its translation, then press <strong style={{ color: 'var(--ind)' }}>+</strong> to keep it.
             </p>
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-            {session.map((s, i) => (
-              <div key={s.de + i} style={{ background: 'var(--surf)', border: '1px solid var(--line)', borderRadius: 12, padding: '11px 13px', animation: 'slideup .28s ease' }}>
-                <div style={{ font: '600 14px var(--ui)' }}>{s.de}</div>
-                <div style={{ font: '400 13px var(--ui)', color: 'var(--muted)', marginTop: 2 }}>{s.en}</div>
+            {session.map((s) => (
+              <div key={s.id} style={{ background: 'var(--surf)', border: '1px solid var(--line)', borderRadius: 12, padding: '11px 13px', animation: 'slideup .28s ease' }}>
+                <div style={{ font: '600 14px var(--ui)' }}>{s.surface_form}</div>
+                <div style={{ font: '400 13px var(--ui)', color: 'var(--muted)', marginTop: 2 }}>{s.translation ?? '—'}</div>
               </div>
             ))}
           </div>

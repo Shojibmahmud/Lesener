@@ -63,10 +63,10 @@ export default function FinishModal({ doneCount, postCount, pctLabel, session, s
         </div>
         {noSession && <p style={{ font: '400 14px var(--ui)', color: 'var(--muted)', margin: '0 0 22px' }}>No new words — you knew them all.</p>}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: 200, overflowY: 'auto', marginBottom: 26 }}>
-          {session.map((s, i) => (
-            <div key={s.de + i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--line2)' }}>
-              <span style={{ font: '600 14.5px var(--ui)' }}>{s.de}</span>
-              <span style={{ font: '400 14px var(--ui)', color: 'var(--muted)' }}>{s.en}</span>
+          {session.map((s) => (
+            <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--line2)' }}>
+              <span style={{ font: '600 14.5px var(--ui)' }}>{s.surface_form}</span>
+              <span style={{ font: '400 14px var(--ui)', color: 'var(--muted)' }}>{s.translation ?? '—'}</span>
             </div>
           ))}
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase } from './lib/supabase';
 import { loadContent } from './lib/content';
 import { fetchProgress, recordFinish } from './lib/progress';
+import { fetchSavedWords, saveWord as persistWord, deleteSavedWord } from './lib/vocab';
 import { unlockedLevels } from './lib/levels';
 import { linkError, startedInRecovery } from './lib/recovery';
 import Landing from './components/Landing';
@@ -57,11 +58,17 @@ export default function App() {
   // resolved below rather than seeded by an effect — the library has not
   // arrived yet at this point, so there is no id to seed it with.
   const [selectedLevelId, setSelectedLevelId] = useState(null);
-  const [saved, setSaved] = useState([
-    { de: 'Herausforderung', en: 'challenge', post: 'Post 1: Der Alltag in Berlin' },
-    { de: 'gleichzeitig', en: 'simultaneously', post: 'Post 1: Der Alltag in Berlin' },
-    { de: 'Zusammenhang', en: 'context', post: 'Post 1: Der Alltag in Berlin' },
-  ]);
+  // Every word this reader has kept, as stored rows — { id, post_id, post_label,
+  // term, surface_form, translation }. Empty is the truthful starting point: the
+  // three literals that used to sit here belonged to nobody and survived no
+  // reload, while claiming "Saved 3" on a brand-new account.
+  const [saved, setSaved] = useState([]);
+  // Whether the last save, or the last removal, failed to reach the database.
+  // Decision 3: the write is awaited, so nothing appears or disappears that a
+  // reload would contradict — but silence would leave a failure looking exactly
+  // like a mis-tap, so each is surfaced where it happened.
+  const [saveWordFailed, setSaveWordFailed] = useState(false);
+  const [removeWordFailed, setRemoveWordFailed] = useState(false);
   const [session, setSession] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -166,6 +173,7 @@ export default function App() {
     if (!userId || recovering) {
       setContent(null);
       setCompleted([]);
+      setSaved([]);
       setSelectedLevelId(null);
       setContentStatus('idle');
       return;
@@ -178,13 +186,14 @@ export default function App() {
     // Together, under one status. A dashboard drawn from the library before the
     // reader's history arrives would show every card unread for a moment and
     // then correct itself — which looks exactly like progress being lost.
-    Promise.all([loadContent(), fetchProgress()])
-      .then(([loaded, progress]) => {
+    Promise.all([loadContent(), fetchProgress(), fetchSavedWords()])
+      .then(([loaded, progress, savedWords]) => {
         if (cancelled) return;
         setContent(loaded);
         // completed_at is what separates finishing a post from getting partway
         // through one. A row exists either way.
         setCompleted(progress.filter((row) => row.completed_at).map((row) => row.post_id));
+        setSaved(savedWords);
         setContentStatus('ready');
       })
       .catch((error) => {
@@ -237,10 +246,14 @@ export default function App() {
     setScreen('dash');
     setShowModal(false);
     setMenuOpen(false);
+    setRemoveWordFailed(false);
   };
   const goVocab = () => {
     setScreen('vocab');
     setMenuOpen(false);
+    // Entering the bank afresh; a note about a removal that failed last time is
+    // no longer about anything the reader can see.
+    setRemoveWordFailed(false);
   };
 
   // The new password is saved by now; signing out globally drops every other
@@ -263,6 +276,7 @@ export default function App() {
     // A note left over from a previous post's failed save would otherwise
     // reappear over this one's modal.
     setSaveFailed(false);
+    setSaveWordFailed(false);
   };
   const retryContent = () => setContentAttempt((n) => n + 1);
   const reviewPost = () => setScreen('vocab');
@@ -282,12 +296,47 @@ export default function App() {
     setMenuOpen((m) => !m);
   };
 
-  const saveWord = (entry) => {
-    setSaved((s) => [...s, entry]);
-    setSession((s) => [...s, entry]);
+  // Awaited, not optimistic. The word joins the bank and the session sidebar
+  // only once its row is actually in — a word that appears and then vanishes on
+  // the next load is the failure this whole approach exists to avoid.
+  //
+  // The heading is composed here, from the post already in scope, and stored
+  // with the word. It is a snapshot, never refreshed: the bank prefers the live
+  // title and reads this only once the post can no longer be found. `post_id`
+  // remains the identity, so this is not the display-string coupling that
+  // keyed the literals this replaced.
+  const saveWord = async ({ surfaceForm, translation }) => {
+    if (!post) return;
+
+    try {
+      const row = await persistWord({
+        postId: post.id,
+        postLabel: 'Post ' + post.position + ': ' + post.title,
+        surfaceForm,
+        translation,
+      });
+      setSaved((s) => [...s, row]);
+      setSession((s) => [...s, row]);
+      setSaveWordFailed(false);
+    } catch (error) {
+      setSaveWordFailed(true);
+      // The reader is told only that it did not save; the cause stays here for
+      // whoever is debugging it.
+      console.error('[lesener] word could not be saved.', error);
+    }
   };
-  const removeWord = (de, post) => {
-    setSaved((s) => s.filter((x) => !(x.de === de && x.post === post)));
+
+  // By id, because that is what identifies a row. The old signature took the
+  // word and its heading string, which could only ever match by coincidence.
+  const removeWord = async (id) => {
+    try {
+      await deleteSavedWord(id);
+      setSaved((s) => s.filter((w) => w.id !== id));
+      setRemoveWordFailed(false);
+    } catch (error) {
+      setRemoveWordFailed(true);
+      console.error('[lesener] word could not be removed.', error);
+    }
   };
 
   // Decision 7: a failed write must not claim success. The post is marked only
@@ -332,6 +381,19 @@ export default function App() {
     () => unlockedLevels(levels, content?.postsByLevel ?? {}, completed),
     [levels, content?.postsByLevel, completed],
   );
+
+  // Every post the reader can currently see, keyed by id, as the heading the
+  // bank groups under. Built from the library rather than stored with the word,
+  // so correcting a post's title reaches the bank on the next load. A word
+  // whose post is missing here — deleted, or unpublished and therefore withheld
+  // by RLS — falls back to the heading stored on the word itself.
+  const postLabels = useMemo(() => {
+    const labels = new Map();
+    Object.values(content?.postsByLevel ?? {}).forEach((list) =>
+      list.forEach((p) => labels.set(p.id, 'Post ' + p.position + ': ' + p.title)),
+    );
+    return labels;
+  }, [content?.postsByLevel]);
 
   const selectLevel = (levelId) => {
     // Refused rather than merely discouraged. A disabled control can still be
@@ -447,6 +509,7 @@ export default function App() {
           saved={saved}
           session={session}
           onSaveWord={saveWord}
+          saveWordFailed={saveWordFailed}
           onFinish={finish}
           goDashboard={goDashboard}
           dark={dark}
@@ -455,7 +518,15 @@ export default function App() {
       )}
 
       {screen === 'vocab' && (
-        <VocabBank dark={dark} toggleTheme={toggleTheme} saved={saved} goDashboard={goDashboard} onRemove={removeWord} />
+        <VocabBank
+          dark={dark}
+          toggleTheme={toggleTheme}
+          saved={saved}
+          postLabels={postLabels}
+          goDashboard={goDashboard}
+          onRemove={removeWord}
+          removeFailed={removeWordFailed}
+        />
       )}
 
       {showModal && (

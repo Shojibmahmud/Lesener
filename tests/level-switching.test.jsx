@@ -44,6 +44,12 @@ async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts
     recordFinish: vi.fn(() => Promise.resolve()),
   }));
 
+  vi.doMock('../src/lib/vocab', () => ({
+    fetchSavedWords: () => Promise.resolve([]),
+    saveWord: vi.fn(() => Promise.resolve()),
+    deleteSavedWord: vi.fn(() => Promise.resolve()),
+  }));
+
   const { default: App } = await import('../src/App.jsx');
   await act(async () => { render(<App />); });
   await act(async () => { listeners.forEach((cb) => cb('SIGNED_IN', session)); });

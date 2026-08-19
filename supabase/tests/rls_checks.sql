@@ -103,15 +103,36 @@ insert into results (name, expected, actual)
   from public.reading_progress rp join public.posts p on p.id = rp.post_id where p.slug = 'beim-arzt';
 
 -- vocabulary
-insert into public.saved_words (user_id, post_id, term, translation)
-  values ((select auth.uid()), (select id from public.posts where slug='der-alltag-in-berlin'), 'herausforderung', 'challenge');
+insert into public.saved_words (user_id, post_id, term, surface_form, post_label, translation)
+  values ((select auth.uid()), (select id from public.posts where slug='der-alltag-in-berlin'),
+          'herausforderung', 'Herausforderung', 'Post 1: Der Alltag in Berlin', 'challenge');
 insert into results (name, expected, actual)
   select 'A: saved word visible to owner', '1', count(*)::text from public.saved_words;
 
+-- The bank renders surface_form, not term: the reader met a capitalised noun and
+-- must get it back capitalised.
+insert into results (name, expected, actual)
+  select 'A: surface_form round-trips', 'Herausforderung', coalesce(max(surface_form),'NULL')
+  from public.saved_words where term = 'herausforderung';
+insert into results (name, expected, actual)
+  select 'A: post_label round-trips', 'Post 1: Der Alltag in Berlin', coalesce(max(post_label),'NULL')
+  from public.saved_words where term = 'herausforderung';
+
+-- surface_form must lower() to term, or the bank could show one word while the
+-- dictionary and the uniqueness constraint key on another.
 do $$
 begin
-  insert into public.saved_words (user_id, term, translation)
-    values ((select auth.uid()), 'herausforderung', 'challenge again');
+  insert into public.saved_words (user_id, term, surface_form, post_label)
+    values ((select auth.uid()), 'haus', 'Baum', 'Post 1: x');
+  insert into results (name, expected, actual) values ('A: surface_form/term mismatch rejected','rejected','NOT REJECTED');
+exception when others then
+  insert into results (name, expected, actual) values ('A: surface_form/term mismatch rejected','rejected','rejected');
+end $$;
+
+do $$
+begin
+  insert into public.saved_words (user_id, term, surface_form, post_label, translation)
+    values ((select auth.uid()), 'herausforderung', 'Herausforderung', 'Post 1: x', 'challenge again');
   insert into results (name, expected, actual) values ('A: duplicate term rejected','rejected','NOT REJECTED');
 exception when others then
   insert into results (name, expected, actual) values ('A: duplicate term rejected','rejected','rejected');
@@ -120,8 +141,8 @@ end $$;
 -- terms are normalised surface forms; a mixed-case row would never match a lookup
 do $$
 begin
-  insert into public.saved_words (user_id, term, translation)
-    values ((select auth.uid()), 'GROSS', 'big');
+  insert into public.saved_words (user_id, term, surface_form, post_label, translation)
+    values ((select auth.uid()), 'GROSS', 'GROSS', 'Post 1: x', 'big');
   insert into results (name, expected, actual) values ('A: uppercase term rejected','rejected','NOT REJECTED');
 exception when others then
   insert into results (name, expected, actual) values ('A: uppercase term rejected','rejected','rejected');
@@ -142,8 +163,8 @@ insert into results (name, expected, actual)
 
 do $$
 begin
-  insert into public.saved_words (user_id, term, translation)
-    values ('11111111-1111-1111-1111-111111111111', 'geduld', 'patience');
+  insert into public.saved_words (user_id, term, surface_form, post_label, translation)
+    values ('11111111-1111-1111-1111-111111111111', 'geduld', 'Geduld', 'Post 2: x', 'patience');
   insert into results (name, expected, actual) values ('B: cannot write a row owned by A','blocked','NOT BLOCKED');
 exception when others then
   insert into results (name, expected, actual) values ('B: cannot write a row owned by A','blocked','blocked');
@@ -151,14 +172,46 @@ end $$;
 
 -- the WITH CHECK half of the update policy: owning a row must not let you
 -- hand it to somebody else
-insert into public.saved_words (user_id, term, translation)
-  values ((select auth.uid()), 'geduld', 'patience');
+insert into public.saved_words (user_id, term, surface_form, post_label, translation)
+  values ((select auth.uid()), 'geduld', 'Geduld', 'Post 2: x', 'patience');
 do $$
 begin
   update public.saved_words set user_id = '11111111-1111-1111-1111-111111111111' where term = 'geduld';
   insert into results (name, expected, actual) values ('B: cannot reassign own row to A','blocked','NOT BLOCKED');
 exception when others then
   insert into results (name, expected, actual) values ('B: cannot reassign own row to A','blocked','blocked');
+end $$;
+
+-- Deleting is the only destructive grant a reader holds, and the policy is a
+-- USING clause: somebody else's row is filtered out, not rejected. So a delete
+-- that touches nothing still succeeds, and the client cannot tell the two apart
+-- without counting what came back.
+do $$
+declare v_deleted int;
+begin
+  with d as (
+    delete from public.saved_words
+     where user_id = '11111111-1111-1111-1111-111111111111'
+     returning 1
+  ) select count(*) into v_deleted from d;
+  insert into results (name, expected, actual)
+    values ('B: deleting A rows removes nothing', '0', v_deleted::text);
+  insert into results (name, expected, actual)
+    values ('B: that delete raised no error', 'no error', 'no error');
+exception when others then
+  insert into results (name, expected, actual)
+    values ('B: that delete raised no error', 'no error', 'RAISED ' || sqlstate);
+end $$;
+
+
+do $$
+declare v_deleted int;
+begin
+  with d as (
+    delete from public.saved_words where term = 'geduld' returning 1
+  ) select count(*) into v_deleted from d;
+  insert into results (name, expected, actual)
+    values ('B: deleting own row removes it', '1', v_deleted::text);
 end $$;
 
 -- ---------- as anon ----------
@@ -194,5 +247,13 @@ exception when others then
 end $$;
 
 reset role;
+
+-- Checked as postgres, deliberately. The same count run as user B is vacuously
+-- zero -- RLS hides A's rows from B whether or not B's delete removed them --
+-- so asserting it there would prove nothing and pass forever.
+insert into results (name, expected, actual)
+  select 'A saved word survived B''s delete (as postgres)', '1', count(*)::text
+  from public.saved_words where user_id = '11111111-1111-1111-1111-111111111111';
+
 select n, name, expected, actual, (expected = actual) as ok from results order by n;
 rollback;
