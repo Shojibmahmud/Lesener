@@ -15,13 +15,25 @@ begin;
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
                         email_confirmed_at, created_at, updated_at,
                         raw_app_meta_data, raw_user_meta_data)
+-- A carries a full set of names; B carries none, and is the only proof that a
+-- metadata-less sign-up still produces a profile rather than failing. C and D
+-- exist for the trigger's cleaning behaviour: C's name is padded and its
+-- surname empty, D's name is 80 characters. Neither may cost its owner an
+-- account -- see the block below the grants.
 values
   ('00000000-0000-0000-0000-000000000000','11111111-1111-1111-1111-111111111111',
    'authenticated','authenticated','a@lesener.test','x', now(), now(), now(),
-   '{"provider":"email"}'::jsonb, '{"display_name":"Anna"}'::jsonb),
+   '{"provider":"email"}'::jsonb,
+   '{"display_name":"Anna","first_name":"Anna","last_name":"Schneider"}'::jsonb),
   ('00000000-0000-0000-0000-000000000000','22222222-2222-2222-2222-222222222222',
    'authenticated','authenticated','b@lesener.test','x', now(), now(), now(),
-   '{"provider":"email"}'::jsonb, '{}'::jsonb);
+   '{"provider":"email"}'::jsonb, '{}'::jsonb),
+  ('00000000-0000-0000-0000-000000000000','33333333-3333-3333-3333-333333333333',
+   'authenticated','authenticated','c@lesener.test','x', now(), now(), now(),
+   '{"provider":"email"}'::jsonb, '{"first_name":"  Shojib  ","last_name":""}'::jsonb),
+  ('00000000-0000-0000-0000-000000000000','44444444-4444-4444-4444-444444444444',
+   'authenticated','authenticated','d@lesener.test','x', now(), now(), now(),
+   '{"provider":"email"}'::jsonb, jsonb_build_object('first_name', repeat('a', 80)));
 
 -- give level 2 content so the gate has something to hide
 insert into public.posts (level_id, position, slug, title, blurb, topic, body, published_at)
@@ -33,6 +45,35 @@ create temp table results (n serial, name text, expected text, actual text);
 grant all on results to authenticated, anon;
 grant all on sequence results_n_seq to authenticated, anon;
 
+-- ---------- the sign-up trigger (as postgres) ----------
+-- Read as postgres deliberately: these are four different people's profiles and
+-- no single reader could see them all.
+--
+-- The trigger cleans its input rather than judging it. Raising inside it would
+-- abort the auth.users insert and therefore the whole account, so a padded or
+-- over-long name has to be absorbed. The check constraints police the update
+-- path instead, where a client owns the statement and can say it was refused.
+-- Nothing in the JS suite can reach any of this.
+insert into results (name, expected, actual)
+  select 'C: padded first_name trimmed by trigger', 'Shojib', coalesce(first_name,'NULL')
+  from public.profiles where id = '33333333-3333-3333-3333-333333333333';
+insert into results (name, expected, actual)
+  select 'C: empty last_name stored as null', 'NULL', coalesce(last_name,'NULL')
+  from public.profiles where id = '33333333-3333-3333-3333-333333333333';
+insert into results (name, expected, actual)
+  select 'D: account created despite an 80-char name', '1', count(*)::text
+  from public.profiles where id = '44444444-4444-4444-4444-444444444444';
+insert into results (name, expected, actual)
+  select 'D: over-long first_name truncated to 60', '60', coalesce(char_length(first_name)::text,'NULL')
+  from public.profiles where id = '44444444-4444-4444-4444-444444444444';
+insert into results (name, expected, actual)
+  select 'B: metadata-less sign-up still makes a profile', '1', count(*)::text
+  from public.profiles where id = '22222222-2222-2222-2222-222222222222';
+insert into results (name, expected, actual)
+  select 'B: metadata-less profile has no names', 'NULL/NULL',
+         coalesce(first_name,'NULL')||'/'||coalesce(last_name,'NULL')
+  from public.profiles where id = '22222222-2222-2222-2222-222222222222';
+
 -- ---------- as user A ----------
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
@@ -43,6 +84,52 @@ insert into results (name, expected, actual)
   select 'A: profile auto-created', '1', count(*)::text from public.profiles;
 insert into results (name, expected, actual)
   select 'A: display_name from metadata', 'Anna', coalesce(max(display_name),'NULL') from public.profiles;
+insert into results (name, expected, actual)
+  select 'A: first_name from metadata', 'Anna', coalesce(max(first_name),'NULL') from public.profiles;
+insert into results (name, expected, actual)
+  select 'A: last_name from metadata', 'Schneider', coalesce(max(last_name),'NULL') from public.profiles;
+
+-- A positive control, and it earns its place: without it, "B cannot rename A"
+-- at the end would pass just as happily if the update policy let nobody rename
+-- anybody. Renamed back afterwards so the later assertion still expects 'Anna'.
+update public.profiles set first_name = 'Annalena' where id = (select auth.uid());
+insert into results (name, expected, actual)
+  select 'A: can rename self', 'Annalena', coalesce(max(first_name),'NULL') from public.profiles;
+update public.profiles set first_name = 'Anna' where id = (select auth.uid());
+
+do $$
+begin
+  update public.profiles set first_name = ' Anna ' where id = (select auth.uid());
+  insert into results (name, expected, actual)
+    values ('A: padded rename refused', '23514', 'accepted');
+exception when check_violation then
+  insert into results (name, expected, actual)
+    values ('A: padded rename refused', '23514', sqlstate);
+end $$;
+
+do $$
+begin
+  update public.profiles set first_name = repeat('a', 61) where id = (select auth.uid());
+  insert into results (name, expected, actual)
+    values ('A: over-long rename refused', '23514', 'accepted');
+exception when check_violation then
+  insert into results (name, expected, actual)
+    values ('A: over-long rename refused', '23514', sqlstate);
+end $$;
+
+-- 60 characters, 180 bytes. This is the whole reason the constraint counts
+-- characters rather than bytes: a byte cap would refuse a Bengali name at a
+-- third of the length it allows a Latin one.
+do $$
+begin
+  update public.profiles set first_name = repeat('অ', 60) where id = (select auth.uid());
+  insert into results (name, expected, actual)
+    values ('A: 60-char Bengali name accepted', 'accepted', 'accepted');
+exception when check_violation then
+  insert into results (name, expected, actual)
+    values ('A: 60-char Bengali name accepted', 'accepted', sqlstate);
+end $$;
+update public.profiles set first_name = 'Anna' where id = (select auth.uid());
 insert into results (name, expected, actual)
   select 'A: levels visible', '2', count(*)::text from public.levels;
 insert into results (name, expected, actual)
@@ -157,6 +244,23 @@ insert into results (name, expected, actual)
   select 'B: sees no progress rows', '0', count(*)::text from public.reading_progress;
 insert into results (name, expected, actual)
   select 'B: sees only own profile', '1', count(*)::text from public.profiles;
+
+-- profiles_update_own is a USING clause, so A's row is filtered out rather than
+-- rejected: this succeeds having changed nothing. Whether it really changed
+-- nothing is asserted as postgres at the end -- from here the check would be
+-- vacuous, because RLS hides A's row from B either way.
+do $$
+declare affected int;
+begin
+  update public.profiles set first_name = 'Stolen'
+   where id = '11111111-1111-1111-1111-111111111111';
+  get diagnostics affected = row_count;
+  insert into results (name, expected, actual)
+    values ('B: rename of A changes no rows, raises nothing', '0', affected::text);
+exception when others then
+  insert into results (name, expected, actual)
+    values ('B: rename of A changes no rows, raises nothing', '0', 'error '||sqlstate);
+end $$;
 insert into results (name, expected, actual)
   select 'B: L2 still locked (A unlocking is not shared)', '0', count(*)::text
   from public.posts p join public.levels l on l.id = p.level_id where l.slug = 'b1-momentum';
@@ -254,6 +358,9 @@ reset role;
 insert into results (name, expected, actual)
   select 'A saved word survived B''s delete (as postgres)', '1', count(*)::text
   from public.saved_words where user_id = '11111111-1111-1111-1111-111111111111';
+insert into results (name, expected, actual)
+  select 'A''s name survived B''s rename (as postgres)', 'Anna', coalesce(first_name,'NULL')
+  from public.profiles where id = '11111111-1111-1111-1111-111111111111';
 
 select n, name, expected, actual, (expected = actual) as ok from results order by n;
 rollback;

@@ -40,6 +40,8 @@ export default function AuthScreen({
   initialForgot = false,
   initialMessage = null,
 }) {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [forgot, setForgot] = useState(initialForgot);
@@ -83,8 +85,15 @@ export default function AuthScreen({
     setBusy(true);
 
     const credentials = { email: email.trim(), password };
+    // The names ride along as sign-up metadata, which is where the database's
+    // own trigger has been looking for them since the schema was written. They
+    // are therefore subject to every branch below: a sign-up that does not
+    // create an account does not record a name either, which is what we want.
     const { data, error: authError } = isUp
-      ? await supabase.auth.signUp(credentials)
+      ? await supabase.auth.signUp({
+          ...credentials,
+          options: { data: { first_name: firstName.trim(), last_name: lastName.trim() } },
+        })
       : await supabase.auth.signInWithPassword(credentials);
 
     if (authError) {
@@ -151,6 +160,51 @@ export default function AuthScreen({
         </p>
       )}
     </>
+  );
+
+  // Sign-up only: somebody signing in has already told us who they are, and the
+  // reset form deliberately asks for nothing but an address.
+  //
+  // No extracted component. PasswordField exists because its reveal toggle is
+  // behaviour; these two share only styling, and the style objects already carry
+  // that. maxLength matches the database's 60-character limit — it counts UTF-16
+  // code units rather than characters, so on astral-plane input it is stricter
+  // than the column, never looser, and cannot produce a value the check refuses.
+  const nameInputs = (
+    <div style={{ display: 'flex', gap: 12 }}>
+      <div style={{ flex: 1 }}>
+        <label htmlFor="auth-first-name" style={labelStyle}>
+          First name
+        </label>
+        <input
+          id="auth-first-name"
+          type="text"
+          required
+          autoComplete="given-name"
+          maxLength={60}
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          disabled={busy}
+          style={{ ...inputStyle, marginBottom: 16 }}
+        />
+      </div>
+      <div style={{ flex: 1 }}>
+        <label htmlFor="auth-last-name" style={labelStyle}>
+          Last name
+        </label>
+        <input
+          id="auth-last-name"
+          type="text"
+          required
+          autoComplete="family-name"
+          maxLength={60}
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          disabled={busy}
+          style={{ ...inputStyle, marginBottom: 16 }}
+        />
+      </div>
+    </div>
   );
 
   const emailInput = (
@@ -249,6 +303,7 @@ export default function AuthScreen({
 
               <form onSubmit={submit}>
                 {messages}
+                {isUp && nameInputs}
                 {emailInput}
                 <PasswordField
                   id="auth-password"

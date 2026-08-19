@@ -32,8 +32,12 @@ against this database rather than against the test suite, which stubs it:
 
 The vocabulary bank writes `saved_words` too: one row when a reader taps **+**
 in the reader, deleted when they tap 🗑 in the bank, and the whole set read back
-alongside the library on every load. Every table in the schema is now reached by
-the app.
+alongside the library on every load.
+
+The dashboard greets the reader by name from `profiles`, read alongside the
+library and written back when they edit it. That was the last table the app had
+never touched, so every table in the schema is now reached by it — only the
+`level_progress` view is still unread.
 
 Two things about that write are worth knowing before changing it. The delete
 policy is a `USING` clause, so a row belonging to somebody else is *filtered
@@ -80,6 +84,29 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
 - **`dictionary_entries.term`** is a normalised _surface form_, not a lemma: it has
   to equal `clean(raw).toLowerCase()` from `src/utils.js` or lookups silently miss.
   A check constraint enforces the lowercasing.
+- **`profiles`** — one row per account, created by the `on_auth_user_created`
+  trigger rather than by the client, which holds no insert path and should never
+  be given one. `first_name` and `last_name` come from the metadata sign-up
+  passes as `options.data`; `display_name` is read by the same trigger but
+  nothing sends or shows it yet.
+
+  Both names are **nullable on purpose**. A `not null` column here would make
+  the trigger raise on a sign-up carrying no metadata, and a trigger that raises
+  on an `auth.users` insert does not produce a bad profile — it fails account
+  creation outright.
+
+  Their check constraints refuse a padded, empty or over-60-character value, and
+  count **characters, not bytes**: a 25-character Bengali name is already over
+  60 bytes in UTF-8, so an `octet_length` cap would refuse real names in one
+  script while allowing a 60-character name in another. Those constraints police
+  the *update* path, where the client owns the statement and can report a
+  refusal. The trigger cleans its input instead — `nullif(left(btrim(...), 60), '')`
+  — for the reason above.
+
+  A reader may clear their surname but not their first name. The dashboard falls
+  back to a nameless greeting, and that is a guard against a null which should be
+  unreachable, not a state anyone should be able to choose; the rule is enforced
+  in `src/lib/profile.js`, since a nullable column cannot express it.
 - **`reading_sessions`** — one row per pass through a post. The app inserts here
   and nowhere else in this pair; `INSERT` carries no `DELETE` grant, so a
   completion cannot be taken back from the client.
@@ -107,9 +134,9 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
   until the reader presses Finish, and words are saved before that, so there is
   no session to point at.
 - **`level_progress`** — a `security_invoker` view holding the per-level figures.
-  Still unread: the dashboard's counts come from `levels.post_count` for the
-  denominator and from the `reading_progress` rows the app fetches for the
-  numerator, so the view has not been needed.
+  The one object still unread: the dashboard's counts come from
+  `levels.post_count` for the denominator and from the `reading_progress` rows
+  the app fetches for the numerator, so the view has not been needed.
 
 ## Level gating
 

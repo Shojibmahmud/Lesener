@@ -25,7 +25,11 @@ const started = (postId, percent) => ({ post_id: postId, best_percent_read: perc
 
 const session = { user: { id: 'reader-1', email: 'reader@example.com' } };
 
-async function mountApp({ progress = [], recordFinishImpl } = {}) {
+// The signed-in reader's profile. A name has to be present for the dashboard
+// greeting to carry one, and every one of these tests goes through it.
+const READER = { id: 'reader-1', first_name: 'Anna', last_name: 'Schneider' };
+
+async function mountApp({ progress = [], recordFinishImpl, profile = READER } = {}) {
   vi.resetModules();
   window.location.hash = '';
 
@@ -51,6 +55,11 @@ async function mountApp({ progress = [], recordFinishImpl } = {}) {
     fetchSavedWords: () => Promise.resolve([]),
     saveWord: vi.fn(() => Promise.resolve()),
     deleteSavedWord: vi.fn(() => Promise.resolve()),
+  }));
+
+  vi.doMock('../src/lib/profile', () => ({
+    fetchProfile: () => Promise.resolve(profile),
+    updateProfileName: vi.fn(() => Promise.resolve(profile)),
   }));
 
   const { default: App } = await import('../src/App.jsx');

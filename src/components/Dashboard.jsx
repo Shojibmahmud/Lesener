@@ -1,12 +1,35 @@
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 
+// The avatar's letter. `charAt(0)` is wrong here in two ways, both found by
+// looking at a running build rather than at a test: on a Bengali name it takes
+// the bare consonant and leaves its vowel sign behind — শোহাব came out as শ —
+// and on anything outside the basic plane it returns half a surrogate pair,
+// which renders as an empty box. Segmenting by grapheme gets the whole visible
+// character in both cases. Intl.Segmenter is the right tool and is everywhere
+// the app runs; the fallback is for a runtime that lacks it, and takes a whole
+// code point, which is still never half a character.
+function firstLetter(source) {
+  const text = source.trim();
+  if (!text) return '?';
+
+  const cluster =
+    typeof Intl !== 'undefined' && Intl.Segmenter
+      ? [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text)][0].segment
+      : [...text][0];
+
+  // Scripts without letter case, Bengali among them, return the cluster
+  // unchanged — which is the correct answer, not a failure to capitalise.
+  return cluster.toUpperCase();
+}
+
 // `level` and `posts` are never missing here: App shows the loading and error
 // screens instead of this one until the library has arrived.
 export default function Dashboard({
   dark,
   toggleTheme,
   email,
+  profile,
   level,
   levels,
   unlocked,
@@ -23,9 +46,22 @@ export default function Dashboard({
   signOut,
   askDelete,
   askChangePassword,
+  askEditName,
   openPost,
   reviewPost,
 }) {
+  // Sign-up requires both names and the accounts that predate it were given
+  // one, so a nameless reader should not exist. These fallbacks are a guard
+  // rather than a state anyone should reach: without them a missing name would
+  // put the word "undefined" in the largest type on the page. The greeting drops
+  // the name entirely rather than leaving a gap, so it stays a whole sentence.
+  const firstName = profile?.first_name ?? '';
+  const greeting = firstName ? `Grüß Gott, ${firstName}.` : 'Grüß Gott.';
+  const initial = firstLetter(firstName || email || '?');
+  // The surname is genuinely optional — every backfilled reader has none, since
+  // an email address does not carry one — so this must not render a stray space.
+  const fullName = [firstName, profile?.last_name].filter(Boolean).join(' ');
+
   // Two different nothings, and they must never be worded alike.
   //
   // A locked level reports a post count while handing over none of its posts, so
@@ -78,7 +114,7 @@ export default function Dashboard({
             onClick={toggleMenu}
             style={{ width: 36, height: 36, borderRadius: 99, background: 'var(--ind)', color: '#fff', font: '700 13px var(--ui)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            A
+            {initial}
           </button>
           {menuOpen && (
             <div
@@ -98,10 +134,16 @@ export default function Dashboard({
             >
               <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line2)' }}>
                 <div style={{ font: '500 11.5px var(--ui)', color: 'var(--muted)', letterSpacing: '.05em', textTransform: 'uppercase' }}>Signed in as</div>
-                <div style={{ font: '600 14px var(--ui)', marginTop: 4, overflowWrap: 'anywhere' }}>{email}</div>
+                {fullName && (
+                  <div style={{ font: '600 14px var(--ui)', marginTop: 4, overflowWrap: 'anywhere' }}>{fullName}</div>
+                )}
+                <div style={{ font: `${fullName ? '400' : '600'} 13px var(--ui)`, color: fullName ? 'var(--muted)' : 'var(--text)', marginTop: 4, overflowWrap: 'anywhere' }}>{email}</div>
               </div>
               <button className="rowh" onClick={goVocab} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)' }}>
                 Vocabulary bank
+              </button>
+              <button className="rowh" onClick={askEditName} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)' }}>
+                Edit your name
               </button>
               <button className="rowh" onClick={askChangePassword} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '12px 16px', font: '500 14px var(--ui)' }}>
                 Change password
@@ -172,7 +214,7 @@ export default function Dashboard({
 
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24 }}>
           <div>
-            <h1 style={{ font: '400 40px/1.15 var(--serif)', margin: 0, letterSpacing: '-.02em' }}>Guten Tag, Anna.</h1>
+            <h1 style={{ font: '400 40px/1.15 var(--serif)', margin: 0, letterSpacing: '-.02em' }}>{greeting}</h1>
             <p style={{ font: '400 15.5px var(--ui)', color: 'var(--muted)', margin: '8px 0 0' }}>
               Level {level.position}: {level.name}
               {/* The count comes from the level's own record, not from the posts

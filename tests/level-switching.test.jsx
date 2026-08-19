@@ -19,7 +19,11 @@ const levelOnePosts = [post(101, 1, 'Der Alltag'), post(102, 2, 'Die Suche')];
 
 const session = { user: { id: 'reader-1', email: 'reader@example.com' } };
 
-async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts, 9: [] }, completed = [] } = {}) {
+// The signed-in reader's profile. A name has to be present for the dashboard
+// greeting to carry one, and every one of these tests goes through it.
+const READER = { id: 'reader-1', first_name: 'Anna', last_name: 'Schneider' };
+
+async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts, 9: [] }, completed = [], profile = READER } = {}) {
   vi.resetModules();
   window.location.hash = '';
 
@@ -48,6 +52,11 @@ async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts
     fetchSavedWords: () => Promise.resolve([]),
     saveWord: vi.fn(() => Promise.resolve()),
     deleteSavedWord: vi.fn(() => Promise.resolve()),
+  }));
+
+  vi.doMock('../src/lib/profile', () => ({
+    fetchProfile: () => Promise.resolve(profile),
+    updateProfileName: vi.fn(() => Promise.resolve(profile)),
   }));
 
   const { default: App } = await import('../src/App.jsx');

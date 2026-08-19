@@ -30,7 +30,11 @@ const emptyLevel = () => ({
   dictionary: new Map([['alltag', 'everyday life']]),
 });
 
-async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSavedWordsImpl) {
+// The signed-in reader's profile. A name has to be present for the dashboard
+// greeting to carry one, and every one of these tests goes through it.
+const READER = { id: 'reader-1', first_name: 'Anna', last_name: 'Schneider' };
+
+async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSavedWordsImpl, fetchProfileImpl) {
   vi.resetModules();
   window.location.hash = hash;
 
@@ -48,6 +52,10 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSave
   const fetchSavedWords = vi.fn(fetchSavedWordsImpl ?? (() => Promise.resolve([])));
   const saveWord = vi.fn(() => Promise.resolve());
   const deleteSavedWord = vi.fn(() => Promise.resolve());
+  // Who is reading, fetched under the same status as the other three. A case
+  // that stubs the library has to stub this too, or it is testing a dashboard
+  // that never learned whose it is.
+  const fetchProfile = vi.fn(fetchProfileImpl ?? (() => Promise.resolve(READER)));
 
   vi.doMock('../src/lib/supabase', () => ({
     supabase: {
@@ -65,6 +73,11 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSave
   vi.doMock('../src/lib/progress', () => ({ fetchProgress, recordFinish }));
   vi.doMock('../src/lib/vocab', () => ({ fetchSavedWords, saveWord, deleteSavedWord }));
 
+  vi.doMock('../src/lib/profile', () => ({
+    fetchProfile,
+    updateProfileName: vi.fn(() => Promise.resolve(READER)),
+  }));
+
   const { default: App } = await import('../src/App.jsx');
 
   await act(async () => {
@@ -79,7 +92,7 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSave
     });
   }
 
-  return { emit, loadContent, fetchProgress, recordFinish, fetchSavedWords, saveWord, deleteSavedWord };
+  return { emit, loadContent, fetchProgress, recordFinish, fetchSavedWords, saveWord, deleteSavedWord, fetchProfile };
 }
 
 const session = { user: { id: 'reader-1', email: 'reader@example.com' } };
@@ -108,13 +121,13 @@ describe('when a reader signs in', () => {
     await emit('SIGNED_IN', session);
 
     expect(screen.getByText(/loading your library/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Grüß Gott/)).not.toBeInTheDocument();
 
     await act(async () => {
       release(library());
     });
 
-    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+    expect(screen.getByText(/Grüß Gott/)).toBeInTheDocument();
     expect(screen.queryByText(/loading your library/i)).not.toBeInTheDocument();
   });
 
@@ -193,7 +206,7 @@ describe('when the level holds no posts', () => {
 
     await emit('SIGNED_IN', session);
 
-    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+    expect(screen.getByText(/Grüß Gott/)).toBeInTheDocument();
     expect(screen.getByText('Saved')).toBeInTheDocument();
   });
 
@@ -246,7 +259,7 @@ describe('when the library cannot be obtained', () => {
     await emit('SIGNED_IN', session);
 
     expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Grüß Gott/)).not.toBeInTheDocument();
   });
 
   // Generic by decision: a reader can do nothing differently whether the cause
@@ -281,7 +294,7 @@ describe('when the library cannot be obtained', () => {
     });
 
     expect(loadContent).toHaveBeenCalledTimes(2);
-    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+    expect(screen.getByText(/Grüß Gott/)).toBeInTheDocument();
   });
 
   // A library that arrives holding no levels is a successful request that
@@ -343,7 +356,7 @@ describe('when the reader’s progress cannot be obtained', () => {
     await emit('SIGNED_IN', session);
 
     expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Grüß Gott/)).not.toBeInTheDocument();
   });
 
   it('asks again when the reader presses Retry', async () => {
@@ -359,7 +372,7 @@ describe('when the reader’s progress cannot be obtained', () => {
     });
 
     expect(fetchProgress).toHaveBeenCalledTimes(2);
-    expect(screen.getByText(/Guten Tag/)).toBeInTheDocument();
+    expect(screen.getByText(/Grüß Gott/)).toBeInTheDocument();
   });
 
   // `authenticated` holds the grant, not `anon`, so a request made while signed
@@ -455,6 +468,66 @@ describe('the reader’s saved words', () => {
     const { fetchSavedWords } = await mountApp();
 
     expect(fetchSavedWords).not.toHaveBeenCalled();
+  });
+});
+
+describe('the reader’s name', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    window.location.hash = '';
+  });
+
+  it('is fetched with the library and greets them on the dashboard', async () => {
+    const { emit } = await mountApp();
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByText('Grüß Gott, Anna.')).toBeInTheDocument();
+  });
+
+  // The profile rides under the same status as the library for the same reason
+  // the other three do: a dashboard drawn before it arrives greets nobody and
+  // then corrects itself, which reads as the name being lost.
+  it('failing to arrive is a failure of the whole load, with a Retry', async () => {
+    const { emit } = await mountApp('', undefined, undefined, undefined, () =>
+      Promise.reject(new Error('Could not load your profile [42501]: permission denied')),
+    );
+
+    await emit('SIGNED_IN', session);
+
+    expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
+    expect(screen.queryByText(/Grüß Gott/)).not.toBeInTheDocument();
+  });
+
+  it('is not asked for while nobody is signed in', async () => {
+    const { fetchProfile } = await mountApp();
+
+    expect(fetchProfile).not.toHaveBeenCalled();
+  });
+
+  // This asserts the greeting follows whoever is signed in. It does NOT prove
+  // that `profile` is cleared in the content effect's reset — removing
+  // setProfile(null) leaves this case green, checked by mutation on 2026-08-19.
+  // The reason is the same one recorded for `saved` in the Feature 3 roadmap:
+  // every moment in which one reader's name could be seen by the next is
+  // already covered by another screen. SIGNED_OUT routes to Landing in the same
+  // event, and the next reader sees ContentLoading until all four fetches
+  // resolve — by which time setProfile has run with their own row. The clearing
+  // is kept regardless, because it is what holds the day somebody makes the
+  // dashboard reachable before the library arrives.
+  it('greets whoever is signed in, not whoever was before', async () => {
+    let who = { id: 'reader-1', first_name: 'Anna', last_name: 'Schneider' };
+    const { emit } = await mountApp('', undefined, undefined, undefined, () => Promise.resolve(who));
+
+    await emit('SIGNED_IN', session);
+    expect(screen.getByText('Grüß Gott, Anna.')).toBeInTheDocument();
+
+    who = { id: 'reader-2', first_name: 'Shojib', last_name: 'Mahmud' };
+    await emit('SIGNED_OUT', null);
+    await emit('SIGNED_IN', { user: { id: 'reader-2', email: 'other@example.com' } });
+
+    expect(screen.getByText('Grüß Gott, Shojib.')).toBeInTheDocument();
+    expect(screen.queryByText('Grüß Gott, Anna.')).not.toBeInTheDocument();
   });
 });
 

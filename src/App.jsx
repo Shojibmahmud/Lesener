@@ -3,6 +3,7 @@ import { supabase } from './lib/supabase';
 import { loadContent } from './lib/content';
 import { fetchProgress, recordFinish } from './lib/progress';
 import { fetchSavedWords, saveWord as persistWord, deleteSavedWord } from './lib/vocab';
+import { fetchProfile } from './lib/profile';
 import { unlockedLevels } from './lib/levels';
 import { linkError, startedInRecovery } from './lib/recovery';
 import Landing from './components/Landing';
@@ -14,6 +15,7 @@ import VocabBank from './components/VocabBank';
 import FinishModal from './components/FinishModal';
 import DeleteModal from './components/DeleteModal';
 import ChangePasswordModal from './components/ChangePasswordModal';
+import EditNameModal from './components/EditNameModal';
 import ContentLoading from './components/ContentLoading';
 import ContentError from './components/ContentError';
 
@@ -63,6 +65,9 @@ export default function App() {
   // three literals that used to sit here belonged to nobody and survived no
   // reload, while claiming "Saved 3" on a brand-new account.
   const [saved, setSaved] = useState([]);
+  // Who is reading. Loaded with the library so the dashboard is never drawn
+  // before it knows whose it is.
+  const [profile, setProfile] = useState(null);
   // Whether the last save, or the last removal, failed to reach the database.
   // Decision 3: the write is awaited, so nothing appears or disappears that a
   // reload would contradict — but silence would leave a failure looking exactly
@@ -73,6 +78,7 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showEditName, setShowEditName] = useState(false);
 
   // Finishing a reset signs out globally, which fires the same SIGNED_OUT event
   // as pressing Log out. This is how the listener tells the two apart.
@@ -121,6 +127,7 @@ export default function App() {
         setScreen('reset');
         setMenuOpen(false);
         setShowChangePassword(false);
+        setShowEditName(false);
         return;
       }
 
@@ -132,6 +139,7 @@ export default function App() {
         setShowModal(false);
         setShowDelete(false);
         setShowChangePassword(false);
+        setShowEditName(false);
         setSession([]);
 
         if (resetCompleted.current) {
@@ -174,6 +182,7 @@ export default function App() {
       setContent(null);
       setCompleted([]);
       setSaved([]);
+      setProfile(null);
       setSelectedLevelId(null);
       setContentStatus('idle');
       return;
@@ -186,14 +195,15 @@ export default function App() {
     // Together, under one status. A dashboard drawn from the library before the
     // reader's history arrives would show every card unread for a moment and
     // then correct itself — which looks exactly like progress being lost.
-    Promise.all([loadContent(), fetchProgress(), fetchSavedWords()])
-      .then(([loaded, progress, savedWords]) => {
+    Promise.all([loadContent(), fetchProgress(), fetchSavedWords(), fetchProfile()])
+      .then(([loaded, progress, savedWords, readerProfile]) => {
         if (cancelled) return;
         setContent(loaded);
         // completed_at is what separates finishing a post from getting partway
         // through one. A row exists either way.
         setCompleted(progress.filter((row) => row.completed_at).map((row) => row.post_id));
         setSaved(savedWords);
+        setProfile(readerProfile);
         setContentStatus('ready');
       })
       .catch((error) => {
@@ -291,6 +301,11 @@ export default function App() {
     setMenuOpen(false);
   };
   const closeChangePassword = () => setShowChangePassword(false);
+  const askEditName = () => {
+    setShowEditName(true);
+    setMenuOpen(false);
+  };
+  const closeEditName = () => setShowEditName(false);
   const toggleMenu = (e) => {
     e.stopPropagation();
     setMenuOpen((m) => !m);
@@ -479,6 +494,7 @@ export default function App() {
           dark={dark}
           toggleTheme={toggleTheme}
           email={user?.email}
+          profile={profile}
           level={level}
           levels={levels}
           unlocked={unlocked}
@@ -495,6 +511,7 @@ export default function App() {
           signOut={signOut}
           askDelete={askDelete}
           askChangePassword={askChangePassword}
+          askEditName={askEditName}
           openPost={openPost}
           reviewPost={reviewPost}
         />
@@ -534,6 +551,12 @@ export default function App() {
       )}
 
       {showChangePassword && <ChangePasswordModal email={user?.email} onClose={closeChangePassword} />}
+
+      {/* The greeting behind this updates from `profile`, so handing the stored
+          row straight back is what makes the change visible without a refetch. */}
+      {showEditName && (
+        <EditNameModal profile={profile} onSaved={setProfile} onClose={closeEditName} />
+      )}
 
       {/* TODO: erasing the account needs auth.admin.deleteUser, which the
           publishable key cannot call — it belongs behind an Edge Function.

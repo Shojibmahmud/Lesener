@@ -181,7 +181,7 @@ describe('when the database itself refuses', () => {
     await signIn({ ...ok, levels: refusal });
 
     expect(screen.getByText(/couldn’t load your library/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Guten Tag/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Grüß Gott/)).not.toBeInTheDocument();
   });
 
   it('loads the library when the reader retries and the database answers', async () => {

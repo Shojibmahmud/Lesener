@@ -31,7 +31,7 @@
 //   stubSupabase({ saved_words: (filters, op) =>
 //     op === 'delete' ? { data: [{ id: 7 }], error: null } : { data: rows, error: null } })
 export function stubSupabase(tables) {
-  const calls = { from: [], select: [], eq: [], order: [], insert: [], delete: [] };
+  const calls = { from: [], select: [], eq: [], order: [], insert: [], update: [], delete: [] };
 
   function from(table) {
     calls.from.push(table);
@@ -48,6 +48,11 @@ export function stubSupabase(tables) {
       // a column left off here is a row the database refuses, and nothing else
       // in the suite would notice.
       insert: (payload) => ((op = 'insert'), calls.insert.push([table, payload]), builder),
+      // Updating is recorded like an insert, and for the delete's reason too:
+      // profiles_update_own is a USING clause, so an update aimed at somebody
+      // else's row resolves having changed nothing. What it sent and what it
+      // filtered on are the only evidence it aimed at the right one.
+      update: (payload) => ((op = 'update'), calls.update.push([table, payload]), builder),
       // Deleting is recorded the same way, and for a sharper reason: the
       // saved_words delete policy filters rather than raises, so a delete that
       // removed nothing still resolves. What it filtered on is the only
