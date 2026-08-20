@@ -161,6 +161,43 @@ export default function App() {
       if (authSession && !unreadLinkError.current) {
         setScreen((s) => (s === 'landing' || s === 'auth' ? 'dash' : s));
       }
+
+      // Noticing an account that was deleted somewhere else.
+      //
+      // A JWT is stateless. Deleting the account revokes the stored sessions so
+      // this device can never renew — but the token it already holds keeps
+      // working until it expires, and PostgREST goes on answering with it.
+      // Measured 2026-08-20 against a token whose account had just been
+      // deleted: /rest/v1/levels returned 200 with the whole library and
+      // /rest/v1/profiles returned []. So without this check the other device
+      // does not sit harmlessly on a stale screen — it renders a fully working
+      // dashboard, nameless, with every post unread. Exactly the thing that is
+      // not allowed to appear.
+      //
+      // INITIAL_SESSION covers the tab being reloaded; SIGNED_IN covers it
+      // being brought back to the front, which re-fires the event. Together
+      // they are every moment this app learns a session exists.
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && authSession) {
+        supabase.auth
+          .getUser()
+          .then(({ error }) => {
+            // Only an answer from the server counts. A deleted account replies
+            // 403 `user_not_found` (measured, same date); a reader in a tunnel
+            // gets a fetch failure carrying no status, and must not be signed
+            // out by it. Hence a status test rather than `if (error)`.
+            if (error?.status === 401 || error?.status === 403) {
+              supabase.auth.signOut({ scope: 'local' });
+            }
+          })
+          // supabase-js normally reports a failure as `error` rather than by
+          // throwing, but it does throw when fetch itself does. Swallowing that
+          // is the correct handling — a reader who cannot reach the server is
+          // exactly the one who must not be signed out — but without this the
+          // rejection escapes as an unhandled promise, printing a red error in
+          // the console during the one situation the check exists to survive
+          // quietly. Measured: one unhandled rejection per dropped request.
+          .catch(() => {});
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -239,6 +276,17 @@ export default function App() {
   const signOut = () => {
     setMenuOpen(false);
     supabase.auth.signOut();
+  };
+  // The account is already gone by the time this runs, so the scope is not a
+  // preference. A bare signOut() posts to /logout with a token naming a user
+  // who no longer exists; 'local' drops the stored session without asking the
+  // server about an account it has already erased, and stops supabase-js
+  // refreshing against a dead token afterwards.
+  //
+  // The listener's SIGNED_OUT branch does the navigating, as it does for an
+  // ordinary sign-out — there is no separate route out of a deleted account.
+  const finishDelete = () => {
+    supabase.auth.signOut({ scope: 'local' });
   };
   const openAuth = (tab) => {
     dismissLinkError();
@@ -558,10 +606,9 @@ export default function App() {
         <EditNameModal profile={profile} onSaved={setProfile} onClose={closeEditName} />
       )}
 
-      {/* TODO: erasing the account needs auth.admin.deleteUser, which the
-          publishable key cannot call — it belongs behind an Edge Function.
-          Until that exists this only signs out; nothing is deleted. */}
-      {showDelete && <DeleteModal closeDelete={closeDelete} onConfirm={signOut} />}
+      {/* The modal owns the deletion itself and tells the reader it happened.
+          All that is left for App is what follows the acknowledgement. */}
+      {showDelete && <DeleteModal closeDelete={closeDelete} onConfirm={finishDelete} />}
     </div>
   );
 }

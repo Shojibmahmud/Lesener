@@ -20,6 +20,11 @@ insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
 -- exist for the trigger's cleaning behaviour: C's name is padded and its
 -- surname empty, D's name is 80 characters. Neither may cost its owner an
 -- account -- see the block below the grants.
+--
+-- E exists to be deleted. Nothing else reads it, and no assertion about anybody
+-- else depends on it, so the delete at the end of this file cannot disturb the
+-- rest of the run. It is given a row in every per-user table because the whole
+-- question is whether removing one auth user removes all four.
 values
   ('00000000-0000-0000-0000-000000000000','11111111-1111-1111-1111-111111111111',
    'authenticated','authenticated','a@lesener.test','x', now(), now(), now(),
@@ -33,7 +38,11 @@ values
    '{"provider":"email"}'::jsonb, '{"first_name":"  Shojib  ","last_name":""}'::jsonb),
   ('00000000-0000-0000-0000-000000000000','44444444-4444-4444-4444-444444444444',
    'authenticated','authenticated','d@lesener.test','x', now(), now(), now(),
-   '{"provider":"email"}'::jsonb, jsonb_build_object('first_name', repeat('a', 80)));
+   '{"provider":"email"}'::jsonb, jsonb_build_object('first_name', repeat('a', 80))),
+  ('00000000-0000-0000-0000-000000000000','55555555-5555-5555-5555-555555555555',
+   'authenticated','authenticated','e@lesener.test','x', now(), now(), now(),
+   '{"provider":"email"}'::jsonb,
+   '{"first_name":"Erika","last_name":"Falk"}'::jsonb);
 
 -- give level 2 content so the gate has something to hide
 insert into public.posts (level_id, position, slug, title, blurb, topic, body, published_at)
@@ -44,6 +53,36 @@ from generate_series(1,3) g;
 create temp table results (n serial, name text, expected text, actual text);
 grant all on results to authenticated, anon;
 grant all on sequence results_n_seq to authenticated, anon;
+
+-- ---------- E's footprint, for the cascade check (as postgres) ----------
+-- Only two rows are written. E's profile comes from the sign-up trigger and E's
+-- reading_progress row from reading_sessions_sync_progress, and both are left to
+-- arrive on their own: a fixture that inserted them by hand would be building a
+-- footprint the app could never produce.
+insert into public.reading_sessions (user_id, post_id, percent_read, completed, ended_at)
+select '55555555-5555-5555-5555-555555555555',
+       (select id from public.posts order by id limit 1), 100, true, now();
+
+insert into public.saved_words (user_id, post_id, post_label, term, surface_form, translation)
+select '55555555-5555-5555-5555-555555555555',
+       (select id from public.posts order by id limit 1),
+       'Post 1: fixture', 'wohnung', 'Wohnung', 'flat';
+
+-- A positive control, and it earns its place for the same reason the rename
+-- control below does: without it, the four zeroes at the end of this file would
+-- pass just as happily against rows that were never created.
+insert into results (name, expected, actual)
+  select 'E: profile before delete', '1', count(*)::text
+  from public.profiles where id = '55555555-5555-5555-5555-555555555555';
+insert into results (name, expected, actual)
+  select 'E: session before delete', '1', count(*)::text
+  from public.reading_sessions where user_id = '55555555-5555-5555-5555-555555555555';
+insert into results (name, expected, actual)
+  select 'E: progress before delete', '1', count(*)::text
+  from public.reading_progress where user_id = '55555555-5555-5555-5555-555555555555';
+insert into results (name, expected, actual)
+  select 'E: saved word before delete', '1', count(*)::text
+  from public.saved_words where user_id = '55555555-5555-5555-5555-555555555555';
 
 -- ---------- the sign-up trigger (as postgres) ----------
 -- Read as postgres deliberately: these are four different people's profiles and
@@ -361,6 +400,41 @@ insert into results (name, expected, actual)
 insert into results (name, expected, actual)
   select 'A''s name survived B''s rename (as postgres)', 'Anna', coalesce(first_name,'NULL')
   from public.profiles where id = '11111111-1111-1111-1111-111111111111';
+
+-- ---------- the cascade (as postgres) ----------
+-- One statement. Nothing below auth.users is deleted by hand, because a check
+-- that removed the child rows itself would pass against a schema with no
+-- cascade at all -- which is the one thing this block exists to rule out.
+--
+-- Counted as postgres for the reason above: the same counts run as another
+-- reader are vacuously zero, since RLS hides E's rows from them either way.
+--
+-- Note also what does NOT happen here. reading_sessions_sync_progress is an
+-- `after insert or update` trigger, so removing E's sessions cannot re-insert
+-- E's progress row; if it ever gained a delete branch, this delete would abort
+-- on the foreign key and these four rows are what would catch it.
+delete from auth.users where id = '55555555-5555-5555-5555-555555555555';
+
+insert into results (name, expected, actual)
+  select 'E: profile after delete', '0', count(*)::text
+  from public.profiles where id = '55555555-5555-5555-5555-555555555555';
+insert into results (name, expected, actual)
+  select 'E: session after delete', '0', count(*)::text
+  from public.reading_sessions where user_id = '55555555-5555-5555-5555-555555555555';
+insert into results (name, expected, actual)
+  select 'E: progress after delete', '0', count(*)::text
+  from public.reading_progress where user_id = '55555555-5555-5555-5555-555555555555';
+insert into results (name, expected, actual)
+  select 'E: saved word after delete', '0', count(*)::text
+  from public.saved_words where user_id = '55555555-5555-5555-5555-555555555555';
+
+-- The other half of the promise: erasing one reader erases nobody else.
+insert into results (name, expected, actual)
+  select 'A''s profile survived E''s deletion', 'Anna', coalesce(first_name,'NULL')
+  from public.profiles where id = '11111111-1111-1111-1111-111111111111';
+insert into results (name, expected, actual)
+  select 'A''s saved word survived E''s deletion', '1', count(*)::text
+  from public.saved_words where user_id = '11111111-1111-1111-1111-111111111111';
 
 select n, name, expected, actual, (expected = actual) as ok from results order by n;
 rollback;

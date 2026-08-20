@@ -52,6 +52,7 @@ the two apart. And a saved word outlives its post: `post_id` is
 
 ```
 migrations/   applied in filename order; append-only history
+functions/    Edge Functions; deployed by MCP, source of truth lives here
 tests/        RLS and trigger behaviour checks
 ```
 
@@ -65,6 +66,44 @@ same name.
 
 If you add the CLI later (`brew install supabase/tap/supabase`), `supabase link`
 followed by `supabase migration list` should show these already applied.
+
+## Edge Functions
+
+Same rule as migrations, for the same reason. A function is authored here at
+`functions/<name>/index.ts` and deployed to the remote project through the MCP
+server (`deploy_edge_function`) with `verify_jwt: true`. **The file in this repo
+is the source of truth**, and nothing reconciles it with what is deployed — so
+edit here first and redeploy, never the other way round.
+
+There is one, and it exists because the browser cannot do its job:
+
+- **`delete-account`** — erases the caller's own account. `auth.admin.deleteUser`
+  needs the service-role key, which must never reach the bundle, and there is no
+  client-side fallback either: `authenticated` holds no `delete` grant on
+  `profiles`, `reading_sessions` or `reading_progress`, so three of the four
+  tables refuse before RLS is consulted. One admin call erases the whole
+  footprint through the cascade below.
+
+  It takes a JSON body of `{ password }` and **nothing else**. The user id comes
+  from the caller's JWT and never from the body — a service-role function that
+  deleted whichever id it was handed would let any signed-in reader erase
+  anybody. Three gates, all needed: the gateway proves the token was issued by
+  this project, `auth.getUser()` proves it still names a live user, and
+  `signInWithPassword` proves the caller knows the password.
+
+  **`verify_jwt` is weaker than it sounds** (measured 2026-08-20): a request
+  whose bearer token is the *publishable key* passes the gateway, because that
+  key is a token this project issued. Since that key ships in the browser
+  bundle, the gateway alone would admit anyone. `auth.getUser()` is what
+  actually establishes that a reader is signed in, and may not be removed.
+
+  **There is no limit on password attempts, and the app promises none.** The
+  plan was to lean on the auth service's rate limit; 140 consecutive wrong
+  passwords through this endpoint were measured without a single refusal, while
+  a *direct* sign-in is refused at about the thirty-fifth. The limit buckets by
+  the address a request actually arrives from, and an `x-forwarded-for` from an
+  untrusted hop is rightly ignored. A real limit would need a per-account
+  counter, which nothing in this schema stores.
 
 ## Model
 

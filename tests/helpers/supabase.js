@@ -30,8 +30,22 @@
 //
 //   stubSupabase({ saved_words: (filters, op) =>
 //     op === 'delete' ? { data: [{ id: 7 }], error: null } : { data: rows, error: null } })
-export function stubSupabase(tables) {
-  const calls = { from: [], select: [], eq: [], order: [], insert: [], update: [], delete: [] };
+// Edge Functions are the second argument, because they are not tables and share
+// nothing with the builder above: `functions.invoke` resolves straight to
+// { data, error } with no chaining in between.
+//
+//   stubSupabase({}, { 'delete-account': { data: { deleted: true }, error: null } })
+//
+// A failing invocation is what most cases need, and supabase-js does not put the
+// function's own JSON in the error -- it puts a generic "non-2xx status code"
+// message there and hides the body behind error.context. So a stubbed failure
+// has to carry a context whose .json() resolves to the payload, or the code
+// under test would be reading something the real client never returns:
+//
+//   { data: null, error: { message: 'Edge Function returned a non-2xx status code',
+//                          context: { status: 401, json: async () => ({ error: 'wrong_password' }) } } }
+export function stubSupabase(tables, fns = {}) {
+  const calls = { from: [], select: [], eq: [], order: [], insert: [], update: [], delete: [], invoke: [] };
 
   function from(table) {
     calls.from.push(table);
@@ -78,5 +92,17 @@ export function stubSupabase(tables) {
     return builder;
   }
 
-  return { from, calls };
+  // Recorded like a write, and for the same reason: what the invocation sent is
+  // the whole assertion. A password left out of the body is a delete the server
+  // refuses, and nothing else in the suite would notice.
+  const functions = {
+    invoke: (name, options) => {
+      calls.invoke.push([name, options]);
+      const answer = fns[name];
+      const raw = typeof answer === 'function' ? answer(options) : answer;
+      return Promise.resolve(raw ?? { data: null, error: null });
+    },
+  };
+
+  return { from, functions, calls };
 }

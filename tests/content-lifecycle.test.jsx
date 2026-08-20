@@ -65,6 +65,11 @@ async function mountApp(hash = '', loadContentImpl, fetchProgressImpl, fetchSave
           return { data: { subscription: { unsubscribe: () => {} } } };
         },
         signOut: vi.fn().mockResolvedValue({ error: null }),
+        // App asks whether the reader still exists whenever it learns of a
+        // session, so an account deleted on another device cannot go on
+        // showing a dashboard here. These tests are all about live readers,
+        // so it answers yes; delete-account.test.jsx covers the other reply.
+        getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } }, error: null }),
       },
     },
   }));
