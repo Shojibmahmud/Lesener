@@ -1,4 +1,7 @@
 :root {
+  /* --bg is duplicated in index.html's inline <style>, which paints the canvas
+     before this file exists. Change one and change the other; theme-boot.test.js
+     fails if they drift. */
   --bg: #FDFBF7;
   --surf: #FFFFFF;
   --surf2: #F7F4ED;
@@ -20,6 +23,7 @@
 }
 
 [data-theme="dark"] {
+  /* Also duplicated in index.html -- see the note on the light --bg above. */
   --bg: #0F172A;
   --surf: #16213A;
   --surf2: #1B2740;

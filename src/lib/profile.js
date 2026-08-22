@@ -18,7 +18,7 @@ import { rows } from './query';
 // state ready for exactly that.
 export async function fetchProfile() {
   const data = await rows(
-    () => supabase.from('profiles').select('id, first_name, last_name'),
+    () => supabase.from('profiles').select('id, first_name, last_name, theme'),
     'your profile',
   );
 
@@ -59,7 +59,12 @@ export async function updateProfileName({ firstName, lastName }) {
     .from('profiles')
     .update({ first_name: first, last_name: last || null })
     .eq('id', userId)
-    .select('id, first_name, last_name');
+    // theme is asked for here even though a name edit cannot change it. App.jsx
+    // hands this row straight to setProfile, so what comes back does not update
+    // the loaded profile -- it replaces it. A narrower list here would quietly
+    // drop the theme out of application state the moment somebody renamed
+    // themselves. The two selects in this file widen together, always.
+    .select('id, first_name, last_name, theme');
 
   if (error) {
     const code = error.code ? ` [${error.code}]` : '';
@@ -68,6 +73,46 @@ export async function updateProfileName({ firstName, lastName }) {
 
   if (!data || data.length === 0) {
     throw new Error('Could not save your name: nothing was updated.');
+  }
+
+  return data[0];
+}
+
+// The reader's chosen appearance, kept on the account so it follows them between
+// browsers. localStorage is still the device's own copy and still what paints the
+// first frame (index.html, src/utils.js); this is what makes the two agree on the
+// next device.
+//
+// No value check here, and the asymmetry with updateProfileName is the point:
+// check (theme in ('light','dark')) has been on the column since the schema was
+// created, so the database already refuses anything else -- proven in
+// supabase/tests/rls_checks.sql. The empty-first-name rule lives in this file only
+// because the schema cannot express it.
+export async function updateProfileTheme(theme) {
+  const { data: session, error: sessionError } = await supabase.auth.getSession();
+  const userId = session?.session?.user?.id;
+
+  if (sessionError || !userId) {
+    throw new Error('Could not save your theme: no signed-in reader.');
+  }
+
+  // profiles_update_own is a USING clause, so somebody else's row is filtered out
+  // rather than rejected and the statement succeeds having changed nothing.
+  // Reading back what was updated is the only way to tell the two apart -- the
+  // same reasoning as updateProfileName.
+  const { data, error } = await supabase
+    .from('profiles')
+    .update({ theme })
+    .eq('id', userId)
+    .select('id, theme');
+
+  if (error) {
+    const code = error.code ? ` [${error.code}]` : '';
+    throw new Error(`Could not save your theme${code}: ${error.message}`);
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error('Could not save your theme: nothing was updated.');
   }
 
   return data[0];

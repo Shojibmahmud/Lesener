@@ -9,6 +9,42 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+    <style>
+      /* The page background, and only that, inlined so it exists before any
+         stylesheet does. Setting data-theme below is not enough on its own: the
+         attribute says which theme, and until src/index.css has loaded nothing
+         says what that theme looks like. In dev there is no stylesheet link at
+         all -- Vite injects the CSS from main.jsx -- so the browser paints its
+         own white canvas first, which is exactly the flash this is here to stop.
+
+         color-scheme comes along for the ride: it is what makes the browser's
+         own surfaces -- the canvas behind the page, scrollbars, form controls --
+         match rather than sit bright against a dark page.
+
+         These two colours are copied from --bg in src/index.css and cannot
+         reference it. tests/theme-boot.test.js checks they still agree. */
+      :root { color-scheme: light; background-color: #FDFBF7; }
+      :root[data-theme="dark"] { color-scheme: dark; background-color: #0F172A; }
+    </style>
+    <script>
+      // Stamps the theme onto <html> before the first paint. Nothing in React can
+      // be this early: main.jsx is a module, so the browser defers it until the
+      // document has been parsed, and the app's own read runs later still. Every
+      // moment after this one is a white flash that a dark reader sees on every
+      // single load.
+      //
+      // Inline and bare on purpose -- a `src` or `type="module"` script is
+      // deferred and would be too late. The key is duplicated from src/utils.js;
+      // see the comment there.
+      try {
+        var t = localStorage.getItem('lesener-theme');
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.setAttribute('data-theme', t);
+        }
+      } catch (e) {
+        /* localStorage unavailable -- the app falls back to light */
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

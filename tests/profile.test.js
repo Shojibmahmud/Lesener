@@ -8,7 +8,7 @@ vi.mock('../src/lib/supabase', () => ({
 }));
 
 import { supabase } from '../src/lib/supabase';
-import { fetchProfile, updateProfileName } from '../src/lib/profile';
+import { fetchProfile, updateProfileName, updateProfileTheme } from '../src/lib/profile';
 import { stubSupabase } from './helpers/supabase';
 
 let calls;
@@ -19,7 +19,7 @@ function stub(tables) {
   supabase.from.mockImplementation(stubbed.from);
 }
 
-const ROW = { id: 'reader-1', first_name: 'Shojib', last_name: 'Mahmud' };
+const ROW = { id: 'reader-1', first_name: 'Shojib', last_name: 'Mahmud', theme: 'dark' };
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -32,7 +32,7 @@ describe('fetchProfile', () => {
     await fetchProfile();
 
     expect(calls.from).toEqual(['profiles']);
-    expect(calls.select[0]).toBe('id, first_name, last_name');
+    expect(calls.select[0]).toBe('id, first_name, last_name, theme');
   });
 
   // RLS scopes the row to the signed-in reader, so the query filters by nothing.
@@ -159,6 +159,80 @@ describe('updateProfileName', () => {
     await expect(updateProfileName({ firstName: 'Shojib', lastName: 'Mahmud' })).rejects.toThrow(
       /no signed-in reader/,
     );
+    expect(calls.update).toEqual([]);
+  });
+});
+
+const THEME_ROW = { id: 'reader-1', theme: 'dark' };
+
+describe('updateProfileTheme', () => {
+  it('sends the theme at the reader’s own row', async () => {
+    signedIn();
+    stub({ profiles: { data: [THEME_ROW], error: null } });
+
+    await updateProfileTheme('dark');
+
+    expect(calls.update[0][0]).toBe('profiles');
+    expect(sent()).toEqual({ theme: 'dark' });
+    expect(calls.eq).toEqual([['id', 'reader-1']]);
+  });
+
+  // Only the two columns the caller could act on. Reading the row back is what
+  // separates "saved" from "filtered out and silently ignored"; reading the whole
+  // profile back would invite somebody to feed it to setProfile, and this write is
+  // fire-and-forget, so its result never becomes application state.
+  it('reads back only what it wrote', async () => {
+    signedIn();
+    stub({ profiles: { data: [THEME_ROW], error: null } });
+
+    await updateProfileTheme('dark');
+
+    expect(calls.select[0]).toBe('id, theme');
+  });
+
+  it('hands back the stored row', async () => {
+    signedIn();
+    stub({ profiles: { data: [THEME_ROW], error: null } });
+
+    await expect(updateProfileTheme('dark')).resolves.toEqual(THEME_ROW);
+  });
+
+  // The deliberate asymmetry with updateProfileName, which refuses a blank first
+  // name before making a request. There is a check constraint on this column and
+  // there is none on "first_name is not empty", so this module validates exactly
+  // the rule the schema cannot. A guard here would be a second opinion on a
+  // question the database has already answered -- see rls_checks.sql, which proves
+  // 'system' and 'Dark' are both refused.
+  it('does not second-guess the check constraint', async () => {
+    signedIn();
+    stub({ profiles: { data: null, error: { code: '23514', message: 'violates check constraint' } } });
+
+    await expect(updateProfileTheme('system')).rejects.toThrow(/23514/);
+    expect(sent()).toEqual({ theme: 'system' });
+  });
+
+  // profiles_update_own filters rather than raises, so an update that changed
+  // nothing resolves without an error. Counting what came back is the only way to
+  // tell "saved" from "aimed at somebody else's row".
+  it('throws when the update changed nothing', async () => {
+    signedIn();
+    stub({ profiles: { data: [], error: null } });
+
+    await expect(updateProfileTheme('dark')).rejects.toThrow(/nothing was updated/i);
+  });
+
+  it('throws with the database’s code when the update fails', async () => {
+    signedIn();
+    stub({ profiles: { data: null, error: { code: '42501', message: 'permission denied' } } });
+
+    await expect(updateProfileTheme('dark')).rejects.toThrow(/Could not save your theme \[42501\]/);
+  });
+
+  it('refuses to write when nobody is signed in', async () => {
+    supabase.auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
+    stub({ profiles: { data: [THEME_ROW], error: null } });
+
+    await expect(updateProfileTheme('dark')).rejects.toThrow(/no signed-in reader/);
     expect(calls.update).toEqual([]);
   });
 });

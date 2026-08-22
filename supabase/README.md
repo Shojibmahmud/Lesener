@@ -146,6 +146,31 @@ levels ──< posts ──< reading_sessions ──< saved_words >── dictio
   back to a nameless greeting, and that is a guard against a null which should be
   unreachable, not a state anyone should be able to choose; the rule is enforced
   in `src/lib/profile.js`, since a nullable column cannot express it.
+
+  **`profiles.theme`** holds the reader's light/dark choice, and there are only
+  those two: `check (theme in ('light','dark'))`. The client never writes anything
+  else and does not validate the value on its way out — that constraint is the
+  rule, and `tests/rls_checks.sql` proves it refuses both `'system'` and `'Dark'`.
+
+  **Null means "not asked yet", not "follow the device".** The comment above the
+  column in `20260810103010_init_user_schema.sql:12` says otherwise, and it is
+  superseded by this paragraph: it describes a tri-state that was designed, never
+  built, and refused outright in Feature 6. Nothing in the client has ever read
+  `prefers-color-scheme`. The migration file is an append-only record of what was
+  applied and is not edited to match — see *Applying changes* above — so the stale
+  sentence stays where it is and this is the correction.
+
+  Null should also be rare. The column was unwritten on every row until Feature 6,
+  and the client now adopts whatever theme the reader's device is showing into it
+  on their first sign-in, so an account stops being null after one visit and the
+  reader is never reset to light. From then on the account's value wins wherever
+  they sign in.
+
+  `localStorage` is still the device's own copy and is still what paints the first
+  frame — `index.html` stamps `data-theme` from it before React boots, which is
+  what stops a dark reader seeing a white flash on every load. It is also the only
+  store a signed-out visitor has. The account is what carries the choice to the
+  next browser.
 - **`reading_sessions`** — one row per pass through a post. The app inserts here
   and nowhere else in this pair; `INSERT` carries no `DELETE` grant, so a
   completion cannot be taken back from the client.

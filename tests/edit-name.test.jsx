@@ -50,6 +50,12 @@ async function mountApp(updateImpl) {
   vi.doMock('../src/lib/profile', () => ({
     fetchProfile: () => Promise.resolve(READER),
     updateProfileName,
+    // Every READER fixture below is deliberately theme-less, so these suites
+    // all take the adopt-and-write path incidentally -- free coverage of the
+    // commonest state in the database. Without this export the factory would
+    // hand App an undefined, and the throw would surface as a content-error
+    // screen in five suites that have nothing to do with themes.
+    updateProfileTheme: vi.fn(() => Promise.resolve()),
   }));
 
   const { default: App } = await import('../src/App.jsx');

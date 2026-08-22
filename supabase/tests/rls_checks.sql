@@ -169,6 +169,58 @@ exception when check_violation then
     values ('A: 60-char Bengali name accepted', 'accepted', sqlstate);
 end $$;
 update public.profiles set first_name = 'Anna' where id = (select auth.uid());
+
+-- ---------- theme (as user A) ----------
+-- theme has carried its check constraint since init_user_schema.sql:13 and
+-- nothing has ever written it: every profiles row in the live project reads
+-- null. These are the first proof that anything can write it, that the
+-- constraint refuses everything else, and -- with B's attempt further down --
+-- that one reader cannot set another's.
+--
+-- The starting-null assertion is a positive control and earns its place the
+-- same way the rename control above does: without it, "can set own theme" would
+-- pass just as happily against a column that already read 'dark'.
+insert into results (name, expected, actual)
+  select 'A: theme starts null', 'NULL', coalesce(theme,'NULL')
+  from public.profiles where id = (select auth.uid());
+
+update public.profiles set theme = 'dark' where id = (select auth.uid());
+insert into results (name, expected, actual)
+  select 'A: can set own theme', 'dark', coalesce(theme,'NULL')
+  from public.profiles where id = (select auth.uid());
+
+-- The client sends no validation of its own, deliberately: this constraint is
+-- what refuses a bad value, exactly as the schema refuses a padded name above.
+-- If either of these two rows ever reads 'accepted', profile.js needs a guard.
+do $$
+begin
+  update public.profiles set theme = 'system' where id = (select auth.uid());
+  insert into results (name, expected, actual)
+    values ('A: unknown theme refused', '23514', 'accepted');
+exception when check_violation then
+  insert into results (name, expected, actual)
+    values ('A: unknown theme refused', '23514', sqlstate);
+end $$;
+
+-- Case matters, and a capitalisation bug in the client is far likelier than an
+-- invented third state.
+do $$
+begin
+  update public.profiles set theme = 'Dark' where id = (select auth.uid());
+  insert into results (name, expected, actual)
+    values ('A: theme is case-sensitive', '23514', 'accepted');
+exception when check_violation then
+  insert into results (name, expected, actual)
+    values ('A: theme is case-sensitive', '23514', sqlstate);
+end $$;
+
+-- Restored, so B's attempt further down is measured against null rather than
+-- against a value this block happened to leave behind.
+update public.profiles set theme = null where id = (select auth.uid());
+insert into results (name, expected, actual)
+  select 'A: theme restored to null', 'NULL', coalesce(theme,'NULL')
+  from public.profiles where id = (select auth.uid());
+
 insert into results (name, expected, actual)
   select 'A: levels visible', '2', count(*)::text from public.levels;
 insert into results (name, expected, actual)
@@ -291,6 +343,19 @@ insert into results (name, expected, actual)
 do $$
 declare affected int;
 begin
+  update public.profiles set theme = 'dark'
+   where id = '11111111-1111-1111-1111-111111111111';
+  get diagnostics affected = row_count;
+  insert into results (name, expected, actual)
+    values ('B: theme write on A changes no rows, raises nothing', '0', affected::text);
+exception when others then
+  insert into results (name, expected, actual)
+    values ('B: theme write on A changes no rows, raises nothing', '0', 'raised ' || sqlstate);
+end $$;
+
+do $$
+declare affected int;
+begin
   update public.profiles set first_name = 'Stolen'
    where id = '11111111-1111-1111-1111-111111111111';
   get diagnostics affected = row_count;
@@ -399,6 +464,9 @@ insert into results (name, expected, actual)
   from public.saved_words where user_id = '11111111-1111-1111-1111-111111111111';
 insert into results (name, expected, actual)
   select 'A''s name survived B''s rename (as postgres)', 'Anna', coalesce(first_name,'NULL')
+  from public.profiles where id = '11111111-1111-1111-1111-111111111111';
+insert into results (name, expected, actual)
+  select 'A''s theme survived B''s write (as postgres)', 'NULL', coalesce(theme,'NULL')
   from public.profiles where id = '11111111-1111-1111-1111-111111111111';
 
 -- ---------- the cascade (as postgres) ----------

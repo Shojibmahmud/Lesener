@@ -3,9 +3,10 @@ import { supabase } from './lib/supabase';
 import { loadContent } from './lib/content';
 import { fetchProgress, recordFinish } from './lib/progress';
 import { fetchSavedWords, saveWord as persistWord, deleteSavedWord } from './lib/vocab';
-import { fetchProfile } from './lib/profile';
+import { fetchProfile, updateProfileTheme } from './lib/profile';
 import { unlockedLevels } from './lib/levels';
 import { linkError, startedInRecovery } from './lib/recovery';
+import { THEME_KEY } from './utils';
 import Landing from './components/Landing';
 import AuthScreen from './components/AuthScreen';
 import NewPassword from './components/NewPassword';
@@ -19,10 +20,25 @@ import EditNameModal from './components/EditNameModal';
 import ContentLoading from './components/ContentLoading';
 import ContentError from './components/ContentError';
 
-const THEME_KEY = 'lesener-theme';
+// Read synchronously so the very first render already agrees with the attribute
+// index.html stamped before paint. Seeding to 'light' and correcting in an effect
+// would paint one frame showing the light glyph over an already-dark page -- a
+// flash fix that moved the bug rather than removing it.
+//
+// Validated rather than trusted: getItem returns whatever is in the store, and a
+// hand-edited 'blue' would otherwise reach setAttribute and leave `dark` false
+// over a page rendered in the light palette.
+function readStoredTheme() {
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    return stored === 'light' || stored === 'dark' ? stored : 'light';
+  } catch {
+    return 'light';
+  }
+}
 
 export default function App() {
-  const [theme, setThemeState] = useState('light');
+  const [theme, setThemeState] = useState(readStoredTheme);
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   // A recovery link grants a real session, so without seeding the screen from
@@ -90,25 +106,66 @@ export default function App() {
   // and forward them to the dashboard, silently binning the explanation.
   const unreadLinkError = useRef(Boolean(linkError));
 
-  const setTheme = useCallback((t) => {
+  // Read by the profile effect below, which must not depend on `theme`: that
+  // would re-fetch the library, the progress, the saved words and the profile on
+  // every toggle. Without the ref it would close over a stale one instead, and
+  // nothing lints for that -- .oxlintrc.json carries no exhaustive-deps rule.
+  const themeRef = useRef(theme);
+
+  // Applies a theme without telling the account. Used by the mount effect and by
+  // the reconciliation, because neither is a choice the reader just made, and
+  // writing the account's own value back to it would be a round trip that can
+  // only ever confirm what is already there.
+  //
+  // Deliberately not called applyTheme-and-save: the account write lives in
+  // chooseTheme alone. A flag argument would fail silently -- the screen would
+  // still change, localStorage would still update, and the only symptom would
+  // appear on a different device the next day.
+  const applyTheme = useCallback((t) => {
     document.documentElement.setAttribute('data-theme', t);
     try {
       localStorage.setItem(THEME_KEY, t);
     } catch {
       /* localStorage unavailable — theme just won't persist */
     }
+    themeRef.current = t;
     setThemeState(t);
   }, []);
 
+  // The account's answer wins where it has one -- that is the whole feature. It is
+  // null on every account made before this existed, and adopting the device's
+  // current theme into it is what stops any account staying null after one
+  // sign-in. Nothing visible happens in that branch: the only evidence it ran is
+  // the row itself.
+  const reconcileTheme = useCallback(
+    (readerProfile) => {
+      // No row means nothing to reconcile against and nothing to write to -- an
+      // update would reach the database and come back "nothing was updated" for a
+      // reader who has done nothing wrong.
+      if (!readerProfile) return;
+
+      const device = themeRef.current;
+
+      if (readerProfile.theme) {
+        if (readerProfile.theme !== device) applyTheme(readerProfile.theme);
+        return;
+      }
+
+      updateProfileTheme(device).catch((error) => {
+        console.error('[lesener] theme could not be saved to your account.', error);
+      });
+    },
+    [applyTheme],
+  );
+
+  // index.html already stamped the attribute before the first paint and useState
+  // seeded from the same read, so on a normal load this changes nothing. It runs
+  // anyway for two cases it is the only cover for: the attribute is still correct
+  // if that inline script is ever removed, and a device with nothing stored gets
+  // its default written down rather than staying empty until the first toggle.
   useEffect(() => {
-    let t = 'light';
-    try {
-      t = localStorage.getItem(THEME_KEY) || 'light';
-    } catch {
-      /* localStorage unavailable — fall back to light */
-    }
-    setTheme(t);
-  }, [setTheme]);
+    applyTheme(readStoredTheme());
+  }, [applyTheme]);
 
   // supabase-js fires INITIAL_SESSION on subscribe, so this covers restoring a
   // stored session on reload as well as every later sign-in and sign-out.
@@ -235,6 +292,12 @@ export default function App() {
     Promise.all([loadContent(), fetchProgress(), fetchSavedWords(), fetchProfile()])
       .then(([loaded, progress, savedWords, readerProfile]) => {
         if (cancelled) return;
+        // Before setContent, and that ordering is load-bearing: React batches this
+        // into the same render that sets contentStatus 'ready', so a reader whose
+        // account disagrees with their device sees the change happen on the loading
+        // screen rather than as a repaint under a dashboard they were already
+        // looking at.
+        reconcileTheme(readerProfile);
         setContent(loaded);
         // completed_at is what separates finishing a post from getting partway
         // through one. A row exists either way.
@@ -254,10 +317,29 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [userId, recovering, contentAttempt]);
+  }, [userId, recovering, contentAttempt, reconcileTheme]);
 
   const dark = theme === 'dark';
-  const toggleTheme = () => setTheme(dark ? 'light' : 'dark');
+
+  // The reader's own choice, and the only thing in the app that writes the theme
+  // to the account. Not awaited: the toggle has to feel instant, the local half
+  // has already succeeded, and a failure costs the reader nothing they can see on
+  // the device in front of them. Contrast saveWord and finish below, which are
+  // awaited because they create data the reader would otherwise believe exists.
+  const chooseTheme = (t) => {
+    applyTheme(t);
+
+    // A recovery session holds a real user id but is not an ordinary session --
+    // no library, no progress, no words and no profile are loaded for it -- so it
+    // does not get to write a preference into an account this app instance has
+    // never read.
+    if (!userId || recovering) return;
+
+    updateProfileTheme(t).catch((error) => {
+      console.error('[lesener] theme could not be saved to your account.', error);
+    });
+  };
+  const toggleTheme = () => chooseTheme(dark ? 'light' : 'dark');
 
   // Any deliberate move away means the explanation has been read, so the normal
   // "you have a session, go to the dashboard" behaviour can resume.
