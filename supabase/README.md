@@ -6,9 +6,9 @@ The React app **reads** this. On sign-in it fetches `levels`, `posts` and
 `dictionary_entries`, and everything a reader sees of the library now comes from
 those tables: the post list, the titles, the blurbs, the prose, the topic and
 level labels, the counts, and the translation shown when a word is tapped.
-Correcting any of them is a row edit, not a rebuild. `src/data.js` still exists
-but nothing renders from it — only its dictionary survives, as an unreachable
-fallback, and it goes when that is removed.
+Correcting any of them is a row edit, not a rebuild. `src/data.js` is gone: it
+was retired once everything rendered from these tables, and nothing in `src/`
+holds a post body or a dictionary any more.
 
 The app also **writes**, though only in one place. Pressing *Finish reading*
 inserts a single completed row into `reading_sessions`; the
@@ -243,10 +243,70 @@ get_advisors(type: "security")     -- must be empty
 get_advisors(type: "performance")  -- "unused index" INFOs are expected while traffic is zero
 ```
 
+## Authoring content
+
+Content is **written as files in this repo and applied as data**, not typed into
+the database and not carried in a migration. The files are the record; the tables
+are a serving copy.
+
+```
+src/assets/posts/level-01/NN-L1-<slug>.md   one file per post, frontmatter + prose
+src/assets/dictionary/de-en.tsv             one file for the whole dictionary
+```
+
+The `content-authoring` skill (`.claude/skills/content-authoring/`) holds the
+rules and three scripts: `check_posts.py` validates the prose against what
+`Reader.jsx` and `clean()` will do to it, `term_gap.py` reports dictionary
+coverage and prints a worklist, and `build_seed_sql.py` generates idempotent SQL.
+That SQL is applied with MCP `execute_sql` — **not** `apply_migration`, because a
+prose correction is data and should not accumulate in migration history.
+
+Two rules that are not negotiable:
+
+- **Posts are updated in place, keyed on `(level_id, position)`.** Never delete
+  and reinsert. `reading_sessions.post_id` and `reading_progress.post_id` are
+  `on delete cascade`, so a delete erases every reader's history for that post and
+  can re-lock the next level for somebody who had finished it. Keying on `id`
+  would also be wrong: `posts.id` equals `posts.position` today only by accident
+  of the original seed.
+- **Retire a post by unpublishing it** (`published_at = null`), not by deleting it.
+
+Level 1 was written this way in Feature 13: ten posts of 450–500 words and 1,440
+dictionary rows covering every word in them. Applying the whole thing twice is a
+no-op — proven by hashing `posts` and `dictionary_entries` before and after.
+
+### The thousand-row ceiling
+
+**PostgREST returns at most 1000 rows per response, and says so only in a header.**
+The reply is a `206` carrying `Content-Range: 0-999/1440` and an array of exactly
+a thousand; supabase-js reports no error, so a caller that does not page is handed
+a silently truncated table.
+
+Seeding Level 1 crossed that line on the first try. `src/lib/content.js` asked for
+the whole dictionary in one request, 440 terms never arrived, and the reader
+showed an em dash for words that were plainly in the database. Which words failed
+looked random, and that part is worth understanding: the query carried no
+`ORDER BY`, so rows came back in heap order, and the upsert had rewritten all 117
+pre-existing rows and moved them to the end of the heap. A row's `id` predicted
+nothing.
+
+`fetchDictionary` now pages under `order('id')`. The sort is not decoration — 
+paging across requests without a stable one lets a row cross the page boundary
+between two calls and never be returned.
+
+Note that roadmap 1 put this ceiling at ~5,000 rows and planned to revisit the
+single fetch there. That estimate was wrong by a factor of five. **Any table this
+app reads whole is subject to the same cap**, so a growing `levels` or `posts`
+would hit it the same way.
+
 ## Known gaps
 
-- `src/data.js` only ever contained two bodies, alternated across all ten posts.
-  The seed reproduces that faithfully, so **posts 3–10 carry placeholder prose that
-  does not match their titles**. Real content is needed before launch.
 - `b1-momentum` (level 2) is seeded as an empty shell so the dashboard's "to Level
   2" copy has something to point at.
+- **The German in Level 1 has been read by nobody but the model that wrote it.**
+  Accepted knowingly: a wrong sentence in a learning app teaches the error, and
+  the mitigation is that correcting one is a file edit and a re-run.
+- `dictionary_entries.display_form` does not exist. `de-en.tsv` already carries a
+  canonical spelling per term (`u-bahn` → `U-Bahn`), so the column and the vocab
+  bank change from roadmap 3 can be done without re-authoring 1,440 rows.
+- `part_of_speech` is still null on every row. Nothing reads it.

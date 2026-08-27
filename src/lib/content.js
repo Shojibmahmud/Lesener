@@ -41,14 +41,43 @@ export function fetchPosts(levelId) {
   );
 }
 
-// The whole dictionary in one request. It is small (a few hundred rows at B1)
-// and the reader needs an arbitrary word from it the moment a reader taps one,
-// so paging it would buy nothing and cost a round trip per tap.
-export function fetchDictionary() {
-  return rows(
-    () => supabase.from('dictionary_entries').select('term, translation, part_of_speech'),
-    'dictionary entries',
-  );
+// PostgREST refuses to return more than 1000 rows in one response, and it does
+// so silently as far as supabase-js is concerned: the reply is a 206 carrying
+// `Content-Range: 0-999/1440` and an array of exactly 1000, with no error. This
+// was measured against the live project after Level 1 was seeded, and it is why
+// the whole dictionary can no longer be had in a single request.
+//
+// The failure it caused is worth remembering, because nothing looked broken. A
+// tapped word simply answered with an em dash, and *which* words did that
+// appeared random -- the query carried no ORDER BY, so rows came back in heap
+// order, and re-seeding had rewritten the older rows and moved them to the end
+// of the heap. A word's id said nothing about whether the reader would get it.
+//
+// Paging therefore needs a sort that does not move, or a row could shift across
+// the page boundary between two requests and be skipped. `id` is the primary
+// key: unique, never null, never rewritten by an update.
+const DICT_PAGE = 1000;
+
+export async function fetchDictionary() {
+  const all = [];
+
+  for (let from = 0; ; from += DICT_PAGE) {
+    const page = await rows(
+      () =>
+        supabase
+          .from('dictionary_entries')
+          .select('term, translation, part_of_speech')
+          .order('id', { ascending: true })
+          .range(from, from + DICT_PAGE - 1),
+      `dictionary entries ${from}-${from + DICT_PAGE - 1}`,
+    );
+
+    all.push(...page);
+
+    // A short page is the only signal that the end has been reached; a full one
+    // is ambiguous, so an exactly-1000-row dictionary costs one empty request.
+    if (page.length < DICT_PAGE) return all;
+  }
 }
 
 // Keyed by `term`, which the schema constrains to lowercase so it matches what

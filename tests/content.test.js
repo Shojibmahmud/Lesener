@@ -7,7 +7,13 @@ vi.mock('../src/lib/supabase', () => ({
 }));
 
 import { supabase } from '../src/lib/supabase';
-import { fetchLevels, fetchPosts, loadContent, toDictionaryMap } from '../src/lib/content';
+import {
+  fetchDictionary,
+  fetchLevels,
+  fetchPosts,
+  loadContent,
+  toDictionaryMap,
+} from '../src/lib/content';
 import { stubSupabase } from './helpers/supabase';
 
 let calls;
@@ -151,6 +157,63 @@ describe('a token the API says was issued in the future', () => {
 
     await expect(fetchLevels()).rejects.toThrow('permission denied');
     expect(attempts).toBe(1);
+  });
+});
+
+// PostgREST returns at most 1000 rows per response, as a 206 with no error, so
+// a dictionary larger than that arrives silently truncated. Level 1 alone holds
+// 1440 terms, and before this was paged a tapped word whose row fell past the
+// cap answered with an em dash for no visible reason.
+describe('fetching a dictionary larger than one page', () => {
+  // A page of exactly 1000 rows, so the stub reproduces the cap rather than
+  // merely being long.
+  const page = (start, count) =>
+    Array.from({ length: count }, (_, i) => ({
+      term: 'w' + (start + i),
+      translation: 't' + (start + i),
+    }));
+
+  it('keeps asking until a short page comes back', async () => {
+    stub({
+      dictionary_entries: ({ __range }) => {
+        const [from] = __range;
+        const remaining = Math.max(0, 1440 - from);
+        return { data: page(from, Math.min(1000, remaining)), error: null };
+      },
+    });
+
+    const entries = await fetchDictionary();
+
+    expect(entries).toHaveLength(1440);
+    expect(calls.range).toEqual([
+      [0, 999],
+      [1000, 1999],
+    ]);
+  });
+
+  // The whole point of the paging: a term past the first page has to arrive.
+  it('returns terms that fall beyond the first page', async () => {
+    stub({
+      dictionary_entries: ({ __range }) =>
+        __range[0] === 0
+          ? { data: page(0, 1000), error: null }
+          : { data: [{ term: 'wecker', translation: 'alarm clock' }], error: null },
+    });
+
+    const map = toDictionaryMap(await fetchDictionary());
+
+    expect(map.get('wecker')).toBe('alarm clock');
+  });
+
+  // Paging across requests is only safe under a sort that cannot move. Without
+  // this, a row rewritten between two requests could cross the page boundary
+  // and never be returned at all.
+  it('pages under a stable sort', async () => {
+    stub({ dictionary_entries: { data: [], error: null } });
+
+    await fetchDictionary();
+
+    expect(calls.order).toContain('id');
   });
 });
 

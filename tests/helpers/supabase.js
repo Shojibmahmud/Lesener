@@ -45,7 +45,7 @@
 //   { data: null, error: { message: 'Edge Function returned a non-2xx status code',
 //                          context: { status: 401, json: async () => ({ error: 'wrong_password' }) } } }
 export function stubSupabase(tables, fns = {}) {
-  const calls = { from: [], select: [], eq: [], order: [], insert: [], update: [], delete: [], invoke: [] };
+  const calls = { from: [], select: [], eq: [], order: [], range: [], insert: [], update: [], delete: [], invoke: [] };
 
   function from(table) {
     calls.from.push(table);
@@ -78,6 +78,14 @@ export function stubSupabase(tables, fns = {}) {
       single: () => ((single = true), builder),
       eq: (column, value) => (calls.eq.push([column, value]), (filters[column] = value), builder),
       order: (column) => (calls.order.push(column), builder),
+      // Recorded into `filters` rather than only into `calls`, so a stub that is
+      // a function can answer differently per page. That is the only way to
+      // reproduce PostgREST's 1000-row cap in a test, and the cap is not
+      // hypothetical: it silently truncated the dictionary once the seeded
+      // content passed a thousand terms.
+      range: (from, to) => (
+        calls.range.push([from, to]), (filters.__range = [from, to]), builder
+      ),
       then: (resolve, reject) => {
         const answer = tables[table];
         const raw = typeof answer === 'function' ? answer(filters, op) : answer;

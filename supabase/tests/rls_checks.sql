@@ -223,8 +223,14 @@ insert into results (name, expected, actual)
 
 insert into results (name, expected, actual)
   select 'A: levels visible', '2', count(*)::text from public.levels;
+-- A shape, not a census. This check exists to prove `authenticated` can read
+-- the dictionary at all; the row count is a property of whatever content has
+-- been seeded and changes every time a level is written, which would fail this
+-- check for a reason that has nothing to do with RLS.
 insert into results (name, expected, actual)
-  select 'A: dictionary visible', '117', count(*)::text from public.dictionary_entries;
+  select 'A: dictionary visible', 'reachable',
+         case when count(*) > 0 then 'reachable' else 'empty' end
+  from public.dictionary_entries;
 insert into results (name, expected, actual)
   select 'A: posts visible (L1 only)', '10', count(*)::text from public.posts;
 insert into results (name, expected, actual)
@@ -266,24 +272,42 @@ insert into results (name, expected, actual)
   select 'A: L2 posts now visible', '3', count(*)::text
   from public.posts p join public.levels l on l.id = p.level_id where l.slug = 'b1-momentum';
 
--- re-reading a post at a lower percentage must not erode the roll-up
+-- re-reading a post at a lower percentage must not erode the roll-up.
+--
+-- Identified by position, not slug. Slugs belong to whatever content happens to
+-- be seeded and change whenever a post is retitled; position is the level's own
+-- structure. Keying on a slug here once broke this whole batch, because a
+-- missing one makes the subselect null and reading_sessions.post_id is not null.
 insert into public.reading_sessions (user_id, post_id, percent_read, completed, ended_at)
-  values ((select auth.uid()), (select id from public.posts where slug='beim-arzt'), 50, false, now());
+  values ((select auth.uid()),
+          (select p.id from public.posts p join public.levels l on l.id = p.level_id
+            where l.slug = 'b1-foundation' and p.position = 3), 50, false, now());
 
 insert into results (name, expected, actual)
   select 'A: session_count increments on re-read', '2', rp.session_count::text
-  from public.reading_progress rp join public.posts p on p.id = rp.post_id where p.slug = 'beim-arzt';
+  from public.reading_progress rp
+       join public.posts p on p.id = rp.post_id
+       join public.levels l on l.id = p.level_id
+ where l.slug = 'b1-foundation' and p.position = 3;
 insert into results (name, expected, actual)
   select 'A: best_percent_read keeps the max', '100', rp.best_percent_read::text
-  from public.reading_progress rp join public.posts p on p.id = rp.post_id where p.slug = 'beim-arzt';
+  from public.reading_progress rp
+       join public.posts p on p.id = rp.post_id
+       join public.levels l on l.id = p.level_id
+ where l.slug = 'b1-foundation' and p.position = 3;
 insert into results (name, expected, actual)
   select 'A: completed_at survives re-read', 'set', case when rp.completed_at is null then 'NULL' else 'set' end
-  from public.reading_progress rp join public.posts p on p.id = rp.post_id where p.slug = 'beim-arzt';
+  from public.reading_progress rp
+       join public.posts p on p.id = rp.post_id
+       join public.levels l on l.id = p.level_id
+ where l.slug = 'b1-foundation' and p.position = 3;
 
 -- vocabulary
 insert into public.saved_words (user_id, post_id, term, surface_form, post_label, translation)
-  values ((select auth.uid()), (select id from public.posts where slug='der-alltag-in-berlin'),
-          'herausforderung', 'Herausforderung', 'Post 1: Der Alltag in Berlin', 'challenge');
+  values ((select auth.uid()),
+          (select p.id from public.posts p join public.levels l on l.id = p.level_id
+            where l.slug = 'b1-foundation' and p.position = 1),
+          'herausforderung', 'Herausforderung', 'Post 1: fixture', 'challenge');
 insert into results (name, expected, actual)
   select 'A: saved word visible to owner', '1', count(*)::text from public.saved_words;
 
@@ -293,7 +317,7 @@ insert into results (name, expected, actual)
   select 'A: surface_form round-trips', 'Herausforderung', coalesce(max(surface_form),'NULL')
   from public.saved_words where term = 'herausforderung';
 insert into results (name, expected, actual)
-  select 'A: post_label round-trips', 'Post 1: Der Alltag in Berlin', coalesce(max(post_label),'NULL')
+  select 'A: post_label round-trips', 'Post 1: fixture', coalesce(max(post_label),'NULL')
   from public.saved_words where term = 'herausforderung';
 
 -- surface_form must lower() to term, or the bank could show one word while the
