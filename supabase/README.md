@@ -250,9 +250,14 @@ the database and not carried in a migration. The files are the record; the table
 are a serving copy.
 
 ```
-src/assets/posts/level-01/NN-L1-<slug>.md   one file per post, frontmatter + prose
+src/assets/posts/level-NN/NN-LN-<slug>.md   one file per post, frontmatter + prose
+src/assets/posts/level-NN/_level.tsv        optional: the level row, for a new level
 src/assets/dictionary/de-en.tsv             one file for the whole dictionary
 ```
+
+The dictionary is one file for the **whole app**, not one per level.
+`dictionary_entries.term` is globally unique and carries no `post_id`, so a word
+is defined once and every level's vocabulary is merged into the same table.
 
 The `content-authoring` skill (`.claude/skills/content-authoring/`) holds the
 rules and three scripts: `check_posts.py` validates the prose against what
@@ -263,12 +268,21 @@ prose correction is data and should not accumulate in migration history.
 
 Two rules that are not negotiable:
 
-- **Posts are updated in place, keyed on `(level_id, position)`.** Never delete
-  and reinsert. `reading_sessions.post_id` and `reading_progress.post_id` are
+- **Posts are upserted on `(level_id, position)`.** Never delete and reinsert.
+  `reading_sessions.post_id` and `reading_progress.post_id` are
   `on delete cascade`, so a delete erases every reader's history for that post and
   can re-lock the next level for somebody who had finished it. Keying on `id`
   would also be wrong: `posts.id` equals `posts.position` today only by accident
   of the original seed.
+
+  It is an `insert … on conflict do update`, not a bare `UPDATE`, and that
+  distinction was found the hard way while preparing Level 2. A level being
+  written for the first time holds no rows at all, so an `UPDATE` against it
+  matches nothing **and reports success** — a seed that silently writes nothing
+  is the one failure mode this route must not have. The conflict clause keeps
+  `posts.id` on every later run, so a correction is still an update in place.
+  `published_at` is set on insert and deliberately left out of the update list,
+  so a post retired with `published_at = null` stays retired across a re-run.
 - **Retire a post by unpublishing it** (`published_at = null`), not by deleting it.
 
 Level 1 was written this way in Feature 13: ten posts of 450–500 words and 1,440
@@ -301,8 +315,19 @@ would hit it the same way.
 
 ## Known gaps
 
-- `b1-momentum` (level 2) is seeded as an empty shell so the dashboard's "to Level
-  2" copy has something to point at.
+- `b1-momentum` (level 2) is **seeded**: ten posts of 500-530 words and the
+  vocabulary behind them. The dictionary now holds 2,658 rows covering both
+  levels, and no word in either level renders as an em dash.
+- The dictionary is projected to reach roughly 7,400 rows at ten levels.
+  `fetchDictionary` pages, so correctness is fine, but that is eight sequential
+  requests on every app load. Worth revisiting before the level count gets much
+  higher — it is a latency problem long before it is a free-tier one (ten levels
+  is projected at ~4% of the 500 MB quota).
+- **The CEFR ladder is levels 1-9 B1, level 10 B2.** Level 10 is a deliberate
+  first taste of B2 rather than the top of a smooth ramp, so B2 grammar —
+  Konjunktiv I in reported speech above all — is held back until then. Level 1
+  carried three Konjunktiv I constructions and two lexical Präteritum verbs from
+  the original seed; both were corrected in Feature 14 and re-seeded.
 - **The German in Level 1 has been read by nobody but the model that wrote it.**
   Accepted knowingly: a wrong sentence in a learning app teaches the error, and
   the mitigation is that correcting one is a file edit and a re-run.

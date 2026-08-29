@@ -19,6 +19,6 @@ Helmut Kohl macht sie schon 1991 zur Ministerin. In den Zeitungen heißt sie jah
 
 Ihr Stil ist immer derselbe. Sie spricht leise, wartet lange und entscheidet spät. Manche nennen das mutig, andere nennen es zu langsam. Sie selbst erklärt es so: Sie will erst alle Argumente hören, bevor sie etwas sagt. Große Reden hält sie nicht gern, und über Gefühle spricht sie fast nie.
 
-Privat lebt sie sehr ruhig. Ihr Mann ist Chemiker und arbeitet an einer Universität in Berlin. Am Wochenende fährt das Paar oft aufs Land, nördlich der Stadt. Sie kocht gern und einfach, sie geht in die Oper, und im Urlaub wandert sie in den Bergen. Nur in der Stadt leben, das könnte sie nicht, hat sie einmal gesagt.
+Privat lebt sie sehr ruhig. Ihr Mann ist Chemiker und arbeitet an einer Universität in Berlin. Am Wochenende fährt das Paar oft aufs Land, nördlich der Stadt. Sie kocht gern und einfach, sie geht in die Oper, und im Urlaub wandert sie in den Bergen. Nur in der Stadt leben, das ist nichts für sie, hat sie einmal gesagt.
 
-2021 hört sie auf. Sie tritt nicht noch einmal an, obwohl sie wahrscheinlich gewinnen könnte. Am letzten Abend spielt eine Militärkapelle für sie, und sie hat sich dafür ein altes Lied gewünscht. Danach wird es still um sie. Sie schreibt ein Buch, hält ab und zu einen Vortrag und lebt wieder ziemlich normal.
+2021 hört sie auf. Sie tritt nicht noch einmal an, obwohl sie wahrscheinlich wieder gewinnt. Am letzten Abend spielt eine Militärkapelle für sie, und sie hat sich dafür ein altes Lied gewünscht. Danach wird es still um sie. Sie schreibt ein Buch, hält ab und zu einen Vortrag und lebt wieder ziemlich normal.

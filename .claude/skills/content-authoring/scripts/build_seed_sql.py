@@ -8,12 +8,21 @@ through the Supabase MCP server's execute_sql. Every statement is idempotent:
 re-running any file is a no-op, so a batch that fails is fixed by running it
 again rather than by unwinding.
 
-Posts are updated by (level_id, position), never by id and never by slug:
+Posts are upserted on (level_id, position), never by id and never by slug:
   - keying on id would rely on posts.id happening to equal posts.position,
     which is true today by accident of the original seed
   - keying on slug breaks the moment a post is retitled
   - deleting and reinserting would cascade through reading_sessions and
     reading_progress and destroy every reader's history
+
+An upsert rather than an UPDATE, because a level being written for the first
+time holds no rows: an UPDATE against it matches nothing and reports success,
+which is the one failure mode a seed must not have. ON CONFLICT DO UPDATE keeps
+posts.id on every subsequent run, so a correction is still an update in place.
+
+A directory may carry a `_level.tsv` sidecar naming the level it belongs to
+(slug, name, cefr, position). If it does, the level row is created too, so a
+level that does not exist yet needs no hand-written SQL either.
 
 level_id is resolved by slug so no generated id is ever written into SQL.
 """
@@ -45,6 +54,36 @@ def read_post(path):
     return fm, s[end:].strip("\n")
 
 
+def read_level_meta(posts_dir):
+    """Read the optional `_level.tsv` sidecar: slug, name, cefr, position.
+
+    A level directory that names its own level lets a level nobody has created
+    yet be seeded by the same route as its posts. Absent -- as it is for a level
+    already in the database -- no level statement is generated at all.
+
+    Deliberately not frontmatter. Repeating the level's name and CEFR band in
+    all ten post files would invite exactly one of them to drift, and the post
+    files already carry the only thing they need: the level's slug.
+    """
+    path = os.path.join(posts_dir, "_level.tsv")
+    if not os.path.exists(path):
+        return None
+    for line in io.open(path, encoding="utf-8"):
+        line = line.rstrip("\n")
+        if not line or line.startswith("#") or line.startswith("slug\t"):
+            continue
+        parts = line.split("\t")
+        if len(parts) < 4:
+            raise ValueError(f"{path}: expected 4 columns: slug, name, cefr, position")
+        slug, name, cefr, position = parts[0], parts[1], parts[2], parts[3]
+        # The same list as the levels.cefr check constraint. Caught here rather
+        # than by Postgres, so the failure names the file instead of the row.
+        if cefr not in ("A1", "A2", "B1", "B2", "C1", "C2"):
+            raise ValueError(f"{path}: cefr {cefr!r} is not a CEFR band")
+        return slug, name, cefr, int(position)
+    return None
+
+
 def read_dictionary(path):
     rows = []
     for n, line in enumerate(io.open(path, encoding="utf-8")):
@@ -67,25 +106,68 @@ def main(posts_dir, dict_path, out_dir, batch=400):
         os.remove(stale)
     written = []
 
-    # 1 - posts, updated in place -------------------------------------------
+    # 0 - the level row itself, if the directory declares one -----------------
+    # Only needed for a level that does not exist yet. `do nothing` rather than
+    # `do update`: name, cefr and position are curated in the database once and
+    # a re-run must not quietly revert an edit made there.
+    meta = read_level_meta(posts_dir)
+    if meta:
+        slug, name, cefr, position = meta
+        sql = ("-- The level row. Idempotent: a level that already exists is left\n"
+               "-- exactly as it is, so re-running this can never renumber or\n"
+               "-- relabel a level that readers are already working through.\n\n"
+               "insert into public.levels (slug, name, cefr, position) values\n"
+               f"  ({q(slug)}, {q(name)}, {q(cefr)}, {int(position)})\n"
+               "on conflict (slug) do nothing;\n")
+        f = os.path.join(out_dir, "00-level.sql")
+        io.open(f, "w", encoding="utf-8").write(sql)
+        written.append(f)
+
+    # 1 - posts, upserted in place -------------------------------------------
     # One file per post, so a post that fails can be re-run on its own and so no
     # single payload is too large to hand to execute_sql.
+    #
+    # An upsert, not a bare UPDATE. A level being written for the first time has
+    # no rows at all, and an UPDATE against it matches nothing while reporting
+    # success -- a seed that silently writes nothing is worse than one that
+    # fails. Conflicts resolve on `unique (level_id, position)`, which is the
+    # level's own structure:
+    #   - `id` would rely on posts.id happening to equal posts.position, true
+    #     today only by accident of the original seed
+    #   - `slug` breaks the moment a post is retitled
+    # ON CONFLICT DO UPDATE keeps posts.id, so reading_sessions and
+    # reading_progress do not cascade away. Nothing is ever deleted.
+    #
+    # published_at is set on insert and deliberately absent from the update
+    # list: a post retired with `published_at = null` must stay retired across a
+    # re-run, or unpublishing would be undone by the next seed.
     for path in sorted(glob.glob(os.path.join(posts_dir, "*.md"))):
         fm, body = read_post(path)
         sql = (
-            "-- Updated in place: posts.id must not change, or reading_progress\n"
-            "-- and reading_sessions cascade away with it.\n\n"
-            "update public.posts set\n"
-            f"  slug  = {q(fm['slug'])},\n"
-            f"  title = {q(fm['title'])},\n"
-            f"  blurb = {q(fm['blurb'])},\n"
-            f"  topic = {q(fm['topic'])},\n"
-            f"  body  = {q(body)}\n"
-            f"where level_id = (select id from public.levels where slug = {q(fm['level'])})\n"
-            f"  and position = {int(fm['position'])};\n")
-        p = os.path.join(out_dir, f"01-post-{int(fm['position']):02d}.sql")
-        io.open(p, "w", encoding="utf-8").write(sql)
-        written.append(p)
+            "-- Upserted on (level_id, position): inserts a post the level does not\n"
+            "-- have yet, and otherwise updates in place. posts.id must not change,\n"
+            "-- or reading_progress and reading_sessions cascade away with it.\n\n"
+            "insert into public.posts\n"
+            "  (level_id, position, slug, title, blurb, topic, body, published_at)\n"
+            "values (\n"
+            f"  (select id from public.levels where slug = {q(fm['level'])}),\n"
+            f"  {int(fm['position'])},\n"
+            f"  {q(fm['slug'])},\n"
+            f"  {q(fm['title'])},\n"
+            f"  {q(fm['blurb'])},\n"
+            f"  {q(fm['topic'])},\n"
+            f"  {q(body)},\n"
+            "  now()\n"
+            ")\n"
+            "on conflict (level_id, position) do update set\n"
+            "  slug  = excluded.slug,\n"
+            "  title = excluded.title,\n"
+            "  blurb = excluded.blurb,\n"
+            "  topic = excluded.topic,\n"
+            "  body  = excluded.body;\n")
+        f = os.path.join(out_dir, f"01-post-{int(fm['position']):02d}.sql")
+        io.open(f, "w", encoding="utf-8").write(sql)
+        written.append(f)
 
     # 2 - dictionary, upserted by term ---------------------------------------
     rows = read_dictionary(dict_path)

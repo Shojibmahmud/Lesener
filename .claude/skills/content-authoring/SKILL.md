@@ -29,9 +29,17 @@ Shojib curates before anything is written to the database. Do not compress this.
 ## Where content lives
 
 ```
-src/assets/posts/level-01/NN-L1-<slug>.md    one file per post
+src/assets/posts/level-NN/NN-LN-<slug>.md    one file per post
+src/assets/posts/level-NN/_level.tsv         the level row, only for a new level
 src/assets/dictionary/de-en.tsv              one file for the whole app
 ```
+
+`_level.tsv` is a single line — `slug`, `name`, `cefr`, `position`, tab
+separated, under a header. It exists so a level the database does not have yet
+can be created by the same route as its posts; a directory whose level already
+exists may carry it (it upserts to nothing) or leave it out. It is deliberately
+not frontmatter: repeating the level's name and band in all ten post files would
+invite exactly one of them to drift.
 
 The filename ends with the post's `slug`, so the file and `posts.slug` are the
 same string. Nothing imports these files, so Vite ignores them and they add
@@ -80,7 +88,9 @@ re-checking against the source rather than trusting this file.
 - **No apostrophes inside words.** `geht's` cleans to `gehts`, a term of its own.
 - **No accented characters outside `äöüÄÖÜß`.** They are silently stripped —
   `Café` becomes the term `caf`, which no dictionary row will match. Spell it
-  `Cafe`. (A dead `café` row from the original seed proves the trap.)
+  `Cafe`. The original seed carried a dead `café` row that proved the trap; it
+  was deleted from the database in Feature 13 and from `de-en.tsv` in Feature 14.
+  `term_gap.py` reports any that reappear under *rows no tap can ever match*.
 - Hyphenated compounds are fine and become one term: `U-Bahn` → `u-bahn`.
 - **Numerals are inert.** `1989` cleans to nothing and cannot be tapped. Use
   figures where they carry meaning, but never write a chronology — a paragraph
@@ -147,11 +157,16 @@ capitalised adverb.
 
 ## Seeding (only on explicit instruction)
 
-**Update posts in place. Never delete and reinsert.** `reading_sessions.post_id`
-and `reading_progress.post_id` are both `on delete cascade`, so deleting a post
-erases every reader's progress on it and can re-lock the next level for someone
-who had finished. An `UPDATE … WHERE level_id = … AND position = N` keeps
-`posts.id`, so progress and saved words survive even when the slug changes.
+**Upsert posts on `(level_id, position)`. Never delete and reinsert.**
+`reading_sessions.post_id` and `reading_progress.post_id` are both
+`on delete cascade`, so deleting a post erases every reader's progress on it and
+can re-lock the next level for someone who had finished. `on conflict
+(level_id, position) do update` keeps `posts.id`, so progress and saved words
+survive even when the slug changes.
+
+A bare `UPDATE` is wrong for a level being written for the first time: it holds
+no rows, so every statement matches nothing **and reports success**. Level 2
+would have seeded as a silent no-op. `build_seed_sql.py` emits the upsert.
 
 Other things that bite:
 

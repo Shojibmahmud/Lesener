@@ -17,13 +17,21 @@ const post = (id, position, title) => ({
 
 const levelOnePosts = [post(101, 1, 'Der Alltag'), post(102, 2, 'Die Suche')];
 
+// Level 2's own posts, on the level whose id is 9. Needed to count completion
+// per level: with Level 2 empty, a numerator spanning the whole library is
+// indistinguishable from one scoped to the level.
+const levelTwoPosts = [
+  { ...post(201, 1, 'Der Betriebsrat'), level_id: 9 },
+  { ...post(202, 2, 'Der Wald'), level_id: 9 },
+];
+
 const session = { user: { id: 'reader-1', email: 'reader@example.com' } };
 
 // The signed-in reader's profile. A name has to be present for the dashboard
 // greeting to carry one, and every one of these tests goes through it.
 const READER = { id: 'reader-1', first_name: 'Anna', last_name: 'Schneider' };
 
-async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts, 9: [] }, completed = [], profile = READER } = {}) {
+async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts, 9: [] }, completed = [], profile = READER, loadContentImpl } = {}) {
   vi.resetModules();
   window.location.hash = '';
 
@@ -44,13 +52,19 @@ async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts
       },
     },
   }));
-  vi.doMock('../src/lib/content', () => ({
-    loadContent: () => Promise.resolve({ levels, postsByLevel, dictionary: new Map() }),
-  }));
+  const loadContent = vi.fn(
+    loadContentImpl ?? (() => Promise.resolve({ levels, postsByLevel, dictionary: new Map() })),
+  );
+  vi.doMock('../src/lib/content', () => ({ loadContent }));
+  // Backed by a mutable set rather than the `completed` array, so a finish is
+  // visible to the *next* fetchProgress exactly as a database write would be.
+  // Without that, any case that refetches the library reads back the progress
+  // the reader started with and undoes the finish it just made.
+  const finished = new Set(completed);
   vi.doMock('../src/lib/progress', () => ({
     fetchProgress: () =>
-      Promise.resolve(completed.map((id) => ({ post_id: id, best_percent_read: 100, completed_at: '2026-08-18T10:00:00Z' }))),
-    recordFinish: vi.fn(() => Promise.resolve()),
+      Promise.resolve([...finished].map((id) => ({ post_id: id, best_percent_read: 100, completed_at: '2026-08-18T10:00:00Z' }))),
+    recordFinish: vi.fn(({ postId }) => { finished.add(postId); return Promise.resolve(); }),
   }));
 
   vi.doMock('../src/lib/vocab', () => ({
@@ -73,7 +87,18 @@ async function mountApp({ levels = [one, two], postsByLevel = { 7: levelOnePosts
   const { default: App } = await import('../src/App.jsx');
   await act(async () => { render(<App />); });
   await act(async () => { listeners.forEach((cb) => cb('SIGNED_IN', session)); });
+  return { loadContent };
 }
+
+// The first button in a card's footer is the one that opens it.
+const cardFor = (title) =>
+  Array.from(document.querySelectorAll('.lift')).find((card) => card.textContent.includes(title));
+
+const readAndFinish = async (title) => {
+  await act(async () => { cardFor(title).querySelector('button').click(); });
+  await act(async () => { screen.getByRole('button', { name: /finish reading/i }).click(); });
+  await act(async () => { screen.getByRole('button', { name: /back to dashboard/i }).click(); });
+};
 
 // Matched by text rather than a regex: the padlock on a locked entry is a
 // surrogate pair, and an optional-emoji pattern without the `u` flag makes only
@@ -142,6 +167,95 @@ describe('a level that is unlocked but holds nothing', () => {
     expect(screen.getByText(/no posts in this level yet/i)).toBeInTheDocument();
     expect(screen.queryByText(/is locked/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/to open it/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('the completion count', () => {
+  // The bug this fixes was visible on screen: a reader who had finished all of
+  // Level 1 and one post of Level 2 was told "11 of 10 posts completed" and
+  // "110% of this level". The denominator was always the selected level's
+  // post_count; the numerator was every completed post in the library.
+  it('counts only the posts of the level on screen', async () => {
+    await mountApp({
+      postsByLevel: { 7: levelOnePosts, 9: levelTwoPosts },
+      completed: [101, 102, 201],
+    });
+
+    await act(async () => { levelButton(2).click(); });
+
+    expect(screen.getByText(/1 of 2 posts completed/)).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
+  });
+
+  it('never exceeds the level it is describing', async () => {
+    await mountApp({
+      postsByLevel: { 7: levelOnePosts, 9: levelTwoPosts },
+      completed: [101, 102, 201, 202],
+    });
+
+    await act(async () => { levelButton(2).click(); });
+
+    expect(screen.getByText(/2 of 2 posts completed/)).toBeInTheDocument();
+    expect(screen.getByText('100%')).toBeInTheDocument();
+    expect(screen.queryByText(/of 2 posts completed/).textContent).not.toMatch(/[34] of 2/);
+  });
+
+  it('still counts the first level correctly', async () => {
+    await mountApp({
+      postsByLevel: { 7: levelOnePosts, 9: levelTwoPosts },
+      completed: [101],
+    });
+
+    expect(screen.getByText(/1 of 2 posts completed/)).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
+  });
+});
+
+describe('a level that opens while the page is up', () => {
+  // The library is fetched once per sign-in, but the gate is reactive. A reader
+  // who finished the last post of Level 1 in one sitting was shown "no posts in
+  // this level yet" for the level they had just earned, because postsByLevel
+  // still held the empty list RLS handed over while it was locked. Only a manual
+  // reload fixed it. Reproduced from a fresh account before this was written.
+  const withLevelTwoWithheld = () =>
+    Promise.resolve({ levels: [one, two], postsByLevel: { 7: levelOnePosts, 9: [] }, dictionary: new Map() });
+  const withLevelTwoVisible = () =>
+    Promise.resolve({ levels: [one, two], postsByLevel: { 7: levelOnePosts, 9: levelTwoPosts }, dictionary: new Map() });
+
+  it('fetches the posts it could not see before, with no reload', async () => {
+    // One of Level 1's two posts already done, so Level 2 is still shut on load
+    // and the database rightly hands over none of its posts.
+    const loadContentImpl = vi.fn()
+      .mockImplementationOnce(withLevelTwoWithheld)
+      .mockImplementation(withLevelTwoVisible);
+    await mountApp({ completed: [101], loadContentImpl });
+
+    expect(levelButton(2)).toBeDisabled();
+
+    await readAndFinish('Die Suche');
+
+    expect(levelButton(2)).toBeEnabled();
+    await act(async () => { levelButton(2).click(); });
+
+    expect(screen.getByText('Der Betriebsrat')).toBeInTheDocument();
+    expect(screen.queryByText(/no posts in this level yet/i)).not.toBeInTheDocument();
+    expect(loadContentImpl).toHaveBeenCalledTimes(2);
+  });
+
+  // The guard against a refetch loop. A level that is open and empty on arrival
+  // may simply hold nothing publishable; RLS's answer at load time stands, and
+  // asking again would change nothing while costing a round trip every render.
+  it('does not refetch for a level that was already open and empty', async () => {
+    const { loadContent } = await mountApp({
+      levels: [one, two],
+      postsByLevel: { 7: levelOnePosts, 9: [] },
+      completed: [101, 102],
+    });
+
+    await act(async () => { levelButton(2).click(); });
+
+    expect(screen.getByText(/no posts in this level yet/i)).toBeInTheDocument();
+    expect(loadContent).toHaveBeenCalledTimes(1);
   });
 });
 

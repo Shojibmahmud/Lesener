@@ -9,7 +9,7 @@ position: 7
 
 Es gibt Ideen, die klingen zu einfach, um zu funktionieren. Das Deutschlandticket ist so eine Idee. Man zahlt einmal im Monat einen festen Betrag und darf damit im ganzen Land jeden Bus, jede Straßenbahn, jede U-Bahn und jeden Regionalzug benutzen. Keine Zonen, keine Zusatzkarten, keine Rechnerei am Automaten.
 
-Um zu verstehen, warum das so wichtig ist, muss man die Zeit davor kennen. Jede Region hatte ihren eigenen Verbund mit eigenen Preisen und eigenen Namen für die Zonen. Eine Fahrt über eine Stadtgrenze konnte plötzlich doppelt so teuer sein. Vor dem Automaten standen die Leute mit dem Handy in der Hand und suchten nach der richtigen Karte. Wer nicht ortskundig war, kaufte im Zweifel das teuerste Ticket.
+Um zu verstehen, warum das so wichtig ist, muss man die Zeit davor kennen. Jede Region hatte ihren eigenen Verbund mit eigenen Preisen und eigenen Namen für die Zonen. Eine Fahrt über eine Stadtgrenze konnte plötzlich doppelt so teuer sein. Vor dem Automaten haben die Leute mit dem Handy in der Hand gestanden und nach der richtigen Karte gesucht. Wer nicht ortskundig war, hat im Zweifel das teuerste Ticket gekauft.
 
 Im Frühling 2023 kommt das neue Angebot, zuerst für neunundvierzig Euro im Monat. Es ist ein Abo, das man jeden Monat kündigen kann, und meistens gibt es das Ticket digital auf dem Handy oder als Karte aus Plastik. Innerhalb weniger Wochen kaufen es Millionen Menschen. Für viele Pendler ist es sofort deutlich billiger als das alte Monatsticket.
 

@@ -44,10 +44,17 @@ values
    '{"provider":"email"}'::jsonb,
    '{"first_name":"Erika","last_name":"Falk"}'::jsonb);
 
--- give level 2 content so the gate has something to hide
+-- Give level 2 content so the gate has something to hide.
+--
+-- Positions 9001+, not 1-3. posts has `unique (level_id, position)`, so the
+-- moment a level is really seeded these rows collide with it and the whole
+-- batch aborts on a constraint violation -- a failure that says nothing about
+-- RLS. A position no authored level will ever reach keeps this test independent
+-- of how much content exists. Every assertion below counts only these rows, by
+-- slug, for the same reason.
 insert into public.posts (level_id, position, slug, title, blurb, topic, body, published_at)
 select (select id from public.levels where slug = 'b1-momentum'),
-       g, 'l2-test-'||g, 'L2 Test '||g, 'blurb', 'Alltag', 'Testtext', now()
+       9000 + g, 'l2-test-'||g, 'L2 Test '||g, 'blurb', 'Alltag', 'Testtext', now()
 from generate_series(1,3) g;
 
 create temp table results (n serial, name text, expected text, actual text);
@@ -221,8 +228,13 @@ insert into results (name, expected, actual)
   select 'A: theme restored to null', 'NULL', coalesce(theme,'NULL')
   from public.profiles where id = (select auth.uid());
 
+-- A floor, not a census, for the same reason the dictionary check below is a
+-- shape: levels are added as their content is written, and this check exists to
+-- prove `authenticated` can read the table at all.
 insert into results (name, expected, actual)
-  select 'A: levels visible', '2', count(*)::text from public.levels;
+  select 'A: levels visible', 'at least 2',
+         case when count(*) >= 2 then 'at least 2' else count(*)::text end
+  from public.levels;
 -- A shape, not a census. This check exists to prove `authenticated` can read
 -- the dictionary at all; the row count is a property of whatever content has
 -- been seeded and changes every time a level is written, which would fail this
@@ -235,9 +247,16 @@ insert into results (name, expected, actual)
   select 'A: posts visible (L1 only)', '10', count(*)::text from public.posts;
 insert into results (name, expected, actual)
   select 'A: L2 posts hidden', '0', count(*)::text
-  from public.posts p join public.levels l on l.id = p.level_id where l.slug = 'b1-momentum';
+  from public.posts p join public.levels l on l.id = p.level_id
+  where l.slug = 'b1-momentum' and p.slug like 'l2-test-%';
+-- levels.post_count counts every post in the level, this test's three included,
+-- so the figure moves with whatever content has been seeded. What matters here
+-- is that a locked level still reports a count at all -- that is what lets the
+-- client tell "withheld" from "empty" (src/lib/levels.js).
 insert into results (name, expected, actual)
-  select 'A: L2 posts_total via counter', '3', coalesce(max(posts_total)::text,'NULL')
+  select 'A: L2 posts_total counted despite lock', 'at least 3',
+         case when coalesce(max(posts_total), 0) >= 3 then 'at least 3'
+              else coalesce(max(posts_total)::text, 'NULL') end
   from public.level_progress where slug = 'b1-momentum';
 insert into results (name, expected, actual)
   select 'A: L2 locked before reading', 'false', coalesce(bool_or(is_unlocked)::text,'NULL')
@@ -270,7 +289,8 @@ insert into results (name, expected, actual)
   from public.level_progress where slug = 'b1-momentum';
 insert into results (name, expected, actual)
   select 'A: L2 posts now visible', '3', count(*)::text
-  from public.posts p join public.levels l on l.id = p.level_id where l.slug = 'b1-momentum';
+  from public.posts p join public.levels l on l.id = p.level_id
+  where l.slug = 'b1-momentum' and p.slug like 'l2-test-%';
 
 -- re-reading a post at a lower percentage must not erode the roll-up.
 --
@@ -391,7 +411,8 @@ exception when others then
 end $$;
 insert into results (name, expected, actual)
   select 'B: L2 still locked (A unlocking is not shared)', '0', count(*)::text
-  from public.posts p join public.levels l on l.id = p.level_id where l.slug = 'b1-momentum';
+  from public.posts p join public.levels l on l.id = p.level_id
+  where l.slug = 'b1-momentum' and p.slug like 'l2-test-%';
 
 do $$
 begin

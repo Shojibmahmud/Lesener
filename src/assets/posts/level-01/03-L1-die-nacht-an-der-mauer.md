@@ -17,7 +17,7 @@ Das ist ein Fehler. Die neue Regel soll erst am nächsten Tag gelten, und die Gr
 
 Kurz danach stehen die ersten Menschen an den Übergängen. An der Bornholmer Straße werden es immer mehr, erst hundert, dann tausend, dann viel mehr. Sie rufen, sie warten, sie zeigen ihre Ausweise. Der Offizier im Dienst heißt Harald Jäger. Er ruft mehrmals bei seinen Vorgesetzten an, aber niemand will eine klare Antwort geben.
 
-Gegen halb zwölf trifft Jäger allein eine Entscheidung. Er lässt die Schranke öffnen. Er hat keinen Befehl dafür, und er weiß, dass ihn das seine Stelle kosten kann. Später sagt er, er habe die Wahl gehabt zwischen Schießen und Öffnen. Die Menschen laufen an ihm vorbei, viele weinen, manche lachen und singen.
+Gegen halb zwölf trifft Jäger allein eine Entscheidung. Er lässt die Schranke öffnen. Er hat keinen Befehl dafür, und er weiß, dass ihn das seine Stelle kosten kann. Später sagt er, dass er die Wahl hatte zwischen Schießen und Öffnen. Die Menschen laufen an ihm vorbei, viele weinen, manche lachen und singen.
 
 In dieser Nacht sind Zehntausende unterwegs. Fremde umarmen sich auf der Straße. In den Kneipen im Westen zahlt niemand mehr für sein Bier. Auf der Mauer am Brandenburger Tor sitzen junge Leute mit Sektflaschen, und darunter stehen Soldaten, die nicht wissen, was sie tun sollen. Am nächsten Morgen ist die Stadt eine andere.
 

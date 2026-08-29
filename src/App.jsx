@@ -540,6 +540,48 @@ export default function App() {
     return labels;
   }, [content?.postsByLevel]);
 
+  // The library is fetched once per sign-in; the level gate is reactive. So when
+  // a reader finishes the last post of a level, `unlocked` opens the next one
+  // immediately -- but `postsByLevel` still holds the empty list RLS rightly
+  // handed over while that level was locked, and the dashboard says "no posts in
+  // this level yet" about the level they just earned. Reproduced from a fresh
+  // account: register, finish Level 1, and Level 2 is empty until a reload.
+  //
+  // The trigger is the *transition*, not the state. A level that is already open
+  // and empty on arrival is not stale -- its posts may simply all be unpublished,
+  // and RLS's answer at load time is authoritative. Only a level that flips shut
+  // to open while the page is up can be holding a list fetched under the old
+  // answer.
+  //
+  // That also makes this terminate on its own, with no attempt counter: the
+  // refetch leaves the level open in both the previous and the current map, so
+  // the false-to-true edge cannot fire twice for the same level.
+  const previouslyUnlocked = useRef(null);
+
+  useEffect(() => {
+    previouslyUnlocked.current = null;
+  }, [userId]);
+
+  useEffect(() => {
+    if (contentStatus !== 'ready' || !content) return;
+
+    const previous = previouslyUnlocked.current;
+    previouslyUnlocked.current = unlocked;
+    // First settled render of this library: nothing to compare against.
+    if (!previous) return;
+
+    const justOpened = levels.find(
+      (candidate) =>
+        unlocked.get(candidate.id) &&
+        previous.get(candidate.id) === false &&
+        // The denormalised counter, reported even for a level whose posts were
+        // withheld. Zero means genuinely empty, and must not trigger a refetch.
+        candidate.post_count > 0 &&
+        (content.postsByLevel[candidate.id] ?? []).length === 0,
+    );
+    if (justOpened) setContentAttempt((n) => n + 1);
+  }, [contentStatus, content, levels, unlocked]);
+
   const selectLevel = (levelId) => {
     // Refused rather than merely discouraged. A disabled control can still be
     // reached by other means, and the dashboard should not render a level whose
@@ -555,7 +597,15 @@ export default function App() {
   // through a card, so a missing post here is a bug worth seeing, not a state
   // to paper over.
   const post = posts.find((p) => p.id === activePostId) ?? null;
-  const done = completed.length;
+  // Scoped to the level on screen. `completed` spans the whole library, so
+  // counting it whole against one level's postCount reads 11 of 10 -- 110% --
+  // for a reader who finished Level 1 and one post of Level 2. The denominator
+  // was always per-level; the numerator has to match it.
+  //
+  // Counted against `posts`, the level's own visible list, rather than by
+  // filtering ids: a locked level hands over no posts, so this is 0 there,
+  // which is the truthful answer for a level the reader has not opened.
+  const done = posts.filter((p) => completed.includes(p.id)).length;
   const pctLabel = (postCount > 0 ? Math.round((done / postCount) * 100) : 0) + '%';
 
   // Hold the painted background until the stored session has been read, so a
