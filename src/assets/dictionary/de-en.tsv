@@ -1,12 +1,19 @@
 term	display_form	translation
 ab	ab	off, away; from
+abbucht	abbucht	debits, deducts from an account
 abend	Abend	evening
 abendbrot	Abendbrot	evening meal of bread, cold supper
 abends	abends	in the evening
 aber	aber	but
+abgeholt	abgeholt	picked up, collected; taken away
 abgeholzt	abgeholzt	deforested, cleared of trees
+abgeordnete	Abgeordnete	member of parliament, elected representative
+abgeordneten	Abgeordneten	members of parliament (inflected)
 abgerechnet	abgerechnet	settled up, accounted for
+abgeschafft	abgeschafft	abolished, done away with
+abgeschaltet	abgeschaltet	switched off, shut down
 abgestimmt	abgestimmt	voted; agreed, coordinated
+abholen	abholen	to pick up, to collect
 abhängig	abhängig	dependent
 abitur	Abitur	school-leaving examination
 abkommen	Abkommen	agreement, treaty
@@ -18,18 +25,26 @@ abo	Abo	subscription
 abrechnung	Abrechnung	statement of account, settlement
 absatz	Absatz	paragraph; sales
 abschluss	Abschluss	qualification, final certificate
+abschlüsse	Abschlüsse	qualifications, degrees; conclusions
 abschreckte	abschreckte	deterred, put off
+abschreiben	abschreiben	to copy from someone; to write off
 abstand	Abstand	distance, gap
 abstimmen	abstimmen	to vote
 abweichen	abweichen	to deviate, to depart from
 abzuschaffen	abzuschaffen	to abolish
+abzuschalten	abzuschalten	to switch off, to shut down
 acht	acht	eight
 achtundzwanzig	achtundzwanzig	twenty-eight
 achtzehn	achtzehn	eighteen
 achtzig	achtzig	eighty
 achtziger	achtziger	eighties
 adolf	Adolf	Adolf
+adressbüchern	Adressbüchern	address books (dative plural)
+adresse	Adresse	address
+afrikanischen	afrikanischen	African (inflected)
 ahorn	Ahorn	maple
+akademien	Akademien	academies
+akzeptierten	akzeptierten	accepted
 albert	Albert	Albert (first name)
 all	all	all
 alle	alle	all
@@ -48,37 +63,57 @@ alte	alte	old
 alten	alten	old
 alter	alter	old
 altes	altes	old
+altmodisch	altmodisch	old-fashioned
 alufolie	Alufolie	aluminium foil
 am	am	at the
 amerika	Amerika	America
 amerikanischen	amerikanischen	American
 amt	Amt	office, public post
+amtliche	amtliche	official
 amtsgericht	Amtsgericht	local court, district court
 amüsiert	amüsiert	amuses; amused
 an	an	at, on, to
 andere	andere	other, others
 anderen	anderen	other
+anderer	anderer	other, different (inflected)
 anderes	anderes	other, something else
 anders	anders	differently
 anderswo	anderswo	elsewhere
+anderthalb	anderthalb	one and a half
 aneinanderhängen	aneinanderhängen	to string together, to join up
 anerkannte	anerkannte	recognised, officially approved
+anerkennung	Anerkennung	recognition, acknowledgement
 anfang	Anfang	beginning
 anfangen	anfangen	to begin, to start
 anfing	anfing	began, started
+anfänger	Anfänger	beginner, beginners
 anfängt	anfängt	begins, starts
 angeblich	angeblich	supposedly, allegedly
 angebot	Angebot	offer
+angefangen	angefangen	begun, started
 angehörigen	Angehörigen	relatives, family members
 angekommen	angekommen	arrived
 angela	Angela	Angela (first name)
 angenehm	angenehm	pleasant
 angerufen	angerufen	called, phoned
+angesehenen	angesehenen	respected, distinguished (inflected)
+angestellte	Angestellte	employee, salaried employees
 angestellten	Angestellten	employees
 angestellter	Angestellter	employee
 angriff	Angriff	attack
 angst	Angst	fear, anxiety
+ankommt	ankommt	arrives; depends on
+anlage	Anlage	installation, plant; aptitude, disposition
+anlagen	Anlagen	installations, plants, facilities
 anlegen	anlegen	to invest, to deposit; to lay out
+anmeldung	Anmeldung	registration
+anreisen	anreisen	to travel there, to come from far away
+anrufen	anrufen	to call, to phone
+anschaffte	anschaffte	bought, acquired
+anschaltet	anschaltet	switches on
+anschließend	anschließend	afterwards, subsequently
+anspringen	anspringen	to start up (of an engine)
+anspruchsvoll	anspruchsvoll	demanding, sophisticated
 anstalt	Anstalt	institution, public body
 anstalten	Anstalten	institutions, public bodies
 anstellen	anstellen	to switch on
@@ -92,11 +127,13 @@ antworten	antworten	to answer; answers
 antwortet	antwortet	answers
 antwortete	antwortete	answered, replied
 anwerbung	Anwerbung	recruitment
+anwesenden	anwesenden	present, in attendance (inflected)
 anzieht	anzieht	attracts
 anzuschauen	anzuschauen	to look at
 anzuwerben	anzuwerben	to recruit
 apotheke	Apotheke	pharmacy
 apotheken	Apotheken	pharmacies
+app	App	app
 arbeit	Arbeit	work
 arbeite	arbeite	work (I work)
 arbeiten	Arbeiten	to work; papers, published works
@@ -106,31 +143,49 @@ arbeitet	arbeitet	works
 arbeitete	arbeitete	worked
 arbeitgeber	Arbeitgeber	employer
 arbeitskräfte	Arbeitskräfte	workers, labour
+arbeitslosen	arbeitslosen	unemployed (inflected)
+arbeitsplätze	Arbeitsplätze	jobs, workplaces
 arbeitsvertrag	Arbeitsvertrag	employment contract
 arbeitszeit	Arbeitszeit	working hours
 arbeitszeiten	Arbeitszeiten	working hours
+architekt	Architekt	architect
 archive	Archive	archives
+archiven	Archiven	archives (dative plural)
 ard	ARD	ARD, Germany's public broadcasting network
 arendt	Arendt	Arendt
+argument	Argument	argument, point
 argumente	Argumente	arguments
+arm	arm	poor
+arsenpräparat	Arsenpräparat	arsenic-based drug
 art	Art	kind, sort; manner
+arten	Arten	species, kinds, types
 artikel	Artikel	article
+arzt	Arzt	doctor, physician
+assistenten	Assistenten	assistant, assistants
 atombombe	Atombombe	atomic bomb
 atomkraft	Atomkraft	nuclear power
 auch	auch	also, too
 auf	auf	in, on
+aufbewahrt	aufbewahrt	kept, stored, preserved
+auffallen	auffallen	to stand out, to be noticed
 auffallend	auffallend	strikingly, noticeably
 auffällig	auffällig	striking, conspicuous
 aufgabe	Aufgabe	task, job
+aufgaben	Aufgaben	tasks, exercises; duties
 aufgebaut	aufgebaut	built up, rebuilt
+aufgeklärt	aufgeklärt	solved, cleared up; enlightened
+aufgenommen	aufgenommen	admitted, taken in; recorded
 aufhebung	Aufhebung	abolition, lifting
+aufhob	aufhob	abolished, annulled; picked up
 aufhängen	aufhängen	to hang up, to put up
 aufhört	aufhört	stops, ceases
 auflöst	auflöst	dissolves, unpicks
 aufnahmen	Aufnahmen	recordings
 aufs	aufs	onto the
 aufschlag	Aufschlag	surcharge, premium
+aufschlägt	aufschlägt	opens (a book); adds on
 aufschrift	Aufschrift	label, inscription
+aufsucht	aufsucht	visits, goes to see
 aufsätze	Aufsätze	essays, papers
 auftaucht	auftaucht	appears, turns up
 auftrag	Auftrag	commission, instruction
@@ -138,25 +193,34 @@ aufzeichnen	aufzeichnen	to record, to log
 augen	Augen	eyes
 augustinus	Augustinus	Augustine
 aus	aus	from, out of
+ausbau	Ausbau	expansion, build-out
 ausbilden	ausbilden	to train apprentices
 ausbildung	Ausbildung	vocational training
 ausbildungsberufe	Ausbildungsberufe	recognised training occupations
 ausbildungsvertrag	Ausbildungsvertrag	training contract
 ausdrücklich	ausdrücklich	expressly, explicitly
+auseinandergehen	auseinandergehen	to diverge, to differ
+auseinanderlaufen	auseinanderlaufen	to drift apart, to diverge
 ausflüge	Ausflüge	outings, day trips
 ausfällt	ausfällt	turns out; is cancelled
 ausgebildet	ausgebildet	trained
 ausgerechnet	ausgerechnet	of all things, precisely
+ausgewertet	ausgewertet	evaluated, analysed
 ausgezogen	ausgezogen	taken off; moved out
+aushält	aushält	withstands, endures
 auskunft	Auskunft	information; credit report
 ausland	Ausland	abroad
 ausländer	Ausländer	foreigners
 ausnahme	Ausnahme	exception
+ausprobiert	ausprobiert	tried out, tested
 ausreise	Ausreise	departure, emigration
 ausreiste	ausreiste	left the country
 aussage	Aussage	statement, testimony
 aussah	aussah	looked, appeared
+ausschließlich	ausschließlich	exclusively, only
 ausschmückung	Ausschmückung	ornamentation, decoration
+ausschuss	Ausschuss	committee
+ausschüsse	Ausschüsse	committees
 aussieht	aussieht	looks, appears
 auswahl	Auswahl	choice, selection
 ausweise	Ausweise	identity cards
@@ -176,6 +240,7 @@ autos	Autos	cars
 autoteile	Autoteile	car parts
 außen	außen	outside, outwards
 außerdem	außerdem	besides, in addition
+außerhalb	außerhalb	outside of
 azubi	Azubi	apprentice (short form)
 bach	Bach	Bach; stream
 backen	backen	to bake
@@ -185,15 +250,26 @@ bahnfahren	Bahnfahren	travelling by train
 bahnhofsgebäudes	Bahnhofsgebäudes	station building
 bahnhöfen	Bahnhöfen	railway stations
 bahnsteig	Bahnsteig	platform
+bakterien	Bakterien	bacteria
+bakterium	Bakterium	bacterium
 bald	bald	soon
 banal	banal	banal, trivial
 banalität	Banalität	banality
 band	Band	assembly line; volume, ribbon
+bank	Bank	bank; bench
 banken	Banken	banks
+bar	bar	in cash; bare
 baracken	Baracken	huts, barracks
+bargeld	Bargeld	cash
+barzahlungen	Barzahlungen	cash payments
+baten	baten	asked, requested
 batterien	Batterien	batteries
+bau	Bau	building, construction
 bauanleitung	Bauanleitung	assembly instructions
 bauen	bauen	to build
+bauern	Bauern	farmers, peasants
+bauhaus	Bauhaus	Bauhaus (school of art and design)
+bauhauses	Bauhauses	of the Bauhaus
 baum	Baum	tree
 baumaterial	Baumaterial	building material
 baumärkte	Baumärkte	DIY stores
@@ -204,24 +280,38 @@ bauten	bauten	built (plural)
 beamte	Beamte	official, civil servant
 beamten	Beamten	official, officials
 beantragt	beantragt	applied for
+bearbeitung	Bearbeitung	revision, editing, processing
 beaufsichtigt	beaufsichtigt	supervises, oversees
 bebaute	bebaute	built-up
 bedeckt	bedeckt	covered
+bedeutet	bedeutet	means, signifies
 bedeutsam	bedeutsam	significant
 bedeutung	Bedeutung	meaning, significance
+bedeutungen	Bedeutungen	meanings, senses
+bedienen	bedienen	to serve, to operate; to help oneself
 bedingungen	Bedingungen	conditions
 beenden	beenden	to end, to finish
 beethoven	Beethoven	Beethoven
 befehl	Befehl	order, command
+befreit	befreit	exempted; freed
+befürworter	Befürworter	supporters, advocates
 begabungsprobleme	Begabungsprobleme	problems of ability
 begann	begann	began
+begannen	begannen	began
+begegnung	Begegnung	encounter, meeting
+beginn	Beginn	beginning, start
 beginnt	beginnt	begins
+begleiterscheinung	Begleiterscheinung	accompanying phenomenon, side effect
+beglichen	beglichen	settled, paid (of a bill)
+begreifen	begreifen	to grasp, to understand
 begrenzt	begrenzt	limited; limits
 begriff	Begriff	term, concept; grasped
 begriffe	Begriffe	terms, concepts
 begriffen	begriffen	understood, grasped
 begrüßungsgeld	Begrüßungsgeld	welcome money
 behalten	behalten	to retain
+behandelte	behandelte	treated
+behandlung	Behandlung	treatment
 beharrlichkeit	Beharrlichkeit	persistence, tenacity
 behauptet	behauptet	claims, asserts
 behörde	Behörde	authority, public office
@@ -232,13 +322,19 @@ beiden	beiden	both, the two
 beides	beides	both
 beilage	Beilage	side dish
 beim	beim	at the
+beinahe	beinahe	almost, nearly
 beispiel	Beispiel	example
+beispiele	Beispiele	examples
 beitrag	Beitrag	fee, contribution
 beitrags	Beitrags	of the fee
 beitritt	beitritt	joins
+beiträge	Beiträge	contributions, premiums; articles
+bekam	bekam	got, received
+bekamen	bekamen	got, received (plural)
 bekannt	bekannt	known, well known
 bekannteste	bekannteste	best-known
 bekanntesten	bekanntesten	best-known
+bekomme	bekomme	get, receive (I)
 bekommen	bekommen	received
 bekommt	bekommt	gets, receives
 belastet	belastet	burdened, strained
@@ -246,6 +342,7 @@ belege	Belege	evidence, records
 belegschaft	Belegschaft	workforce, staff
 beliebt	beliebt	popular
 beliebten	beliebten	popular
+bemerkenswerte	bemerkenswerte	remarkable, notable
 bemerkt	bemerkt	notices, notes
 bemerkte	bemerkte	noticed
 benannt	benannt	named
@@ -254,9 +351,13 @@ benennt	benennt	names, designates
 benutzen	benutzen	to use
 benutzt	benutzt	uses; used
 beobachtete	beobachtete	observed, watched
+beratungsstellen	Beratungsstellen	advice centres, counselling services
+bereich	Bereich	area, field, sector
 bereits	bereits	already
+bereue	bereue	regret (I)
 berg	Berg	mountain
 bergen	Bergen	mountains
+bergmannsfamilie	Bergmannsfamilie	miner's family
 bergwerken	Bergwerken	mines
 berichte	Berichte	reports
 berlin	Berlin	Berlin
@@ -269,21 +370,30 @@ beruhigt	beruhigt	reassures; reassured
 berücksichtigen	berücksichtigen	to take into account
 berühmt	berühmt	famous
 berühmte	berühmte	famous
+berühren	berühren	to touch; to affect, to concern
+besaß	besaß	owned, possessed
+bescheinigung	Bescheinigung	certificate, doctor's note
 beschlagnahmt	beschlagnahmt	confiscated
 beschloss	beschloss	decided, passed
 beschlossen	beschlossen	decided, passed (a law)
+beschluss	Beschluss	decision, resolution
+beschlüsse	Beschlüsse	decisions, resolutions
 beschreiben	beschreiben	to describe
 beschreibt	beschreibt	describes
+beschrieben	beschrieben	described
 beschwert	beschwert	complains
 beschwerten	beschwerten	complained
+beschädigte	beschädigte	damaged
 beschäftigen	beschäftigen	to occupy, to employ
 beschäftigt	beschäftigt	occupies; employed
 beschäftigte	Beschäftigte	employee; employed
-beschäftigten	Beschäftigten	employees
+beschäftigten	Beschäftigten	employees; occupied themselves with, dealt with
+besichtigen	besichtigen	to view, to visit, to inspect
 besichtigung	Besichtigung	viewing
 besiedeltes	besiedeltes	populated
 besitzt	besitzt	owns
 besondere	besondere	special
+besonderen	besonderen	special, particular (inflected)
 besonders	besonders	especially
 besser	besser	better
 bessere	bessere	better
@@ -298,6 +408,9 @@ beständigkeit	Beständigkeit	steadiness, continuity
 besuch	Besuch	visit
 besucher	Besucher	visitors
 besucht	besucht	visited
+beteiligen	beteiligen	to take part, to participate
+beteiligt	beteiligt	involved, taking part
+beteiligten	Beteiligten	those involved, participants
 betrag	Betrag	amount, sum
 betragen	betragen	to amount to
 betreiber	Betreiber	operators
@@ -305,56 +418,79 @@ betreten	betreten	to enter, to set foot on
 betrieb	Betrieb	company, firm
 betriebe	Betriebe	companies
 betrieben	Betrieben	firms, workplaces
+betriebskindergärten	Betriebskindergärten	company nurseries
 betriebsrat	Betriebsrat	works council
 betriebsvereinbarung	Betriebsvereinbarung	works agreement
+betritt	betritt	enters, steps into
+betroffen	betroffen	affected; dismayed
 betroffenen	Betroffenen	those affected
+beträge	Beträge	amounts, sums
+beträgen	Beträgen	amounts, sums (dative)
 beträgt	beträgt	amounts to
 bett	Bett	bed
 bevor	bevor	before
 bewarb	bewarb	applied
 bewegt	bewegt	moves
+bewegten	bewegten	moved
 bewegung	Bewegung	movement, motion
 bewerber	Bewerber	applicants
 bewerbung	Bewerbung	job application
 bewohner	Bewohner	residents
 bewusst	bewusst	deliberately, consciously
 bewusste	bewusste	deliberate, conscious
+bezahlen	bezahlen	to pay; paying
 bezahlt	bezahlt	paid
 bezeichnet	bezeichnet	denotes, describes
 beziehung	Beziehung	relationship
 bezogen	bezogen	referred to; drawn on
+bibliotheken	Bibliotheken	libraries
 bienen	Bienen	bees
 bier	Bier	beer
+bietet	bietet	offers
 bild	Bild	picture, image
+bildeten	bildeten	formed; educated
+bildung	Bildung	education; formation
 billig	billig	cheap
 billige	billige	cheap
 billiger	billiger	cheaper
+bin	bin	am
+birgit	Birgit	Birgit (first name)
 bis	bis	until, up to
+bisher	bisher	so far, until now
 bisschen	bisschen	a bit
 bitte	bitte	please; ask (I ask)
 blaue	blaue	blue
+blech	Blech	sheet metal, tin
 bleibe	bleibe	stay (I stay)
 bleiben	bleiben	to stay, to remain
 bleibt	bleibt	stays, remains
+blick	Blick	view, glance, look
 blicke	Blicke	glances, looks
 blieb	blieb	stayed, remained
 blieben	blieben	stayed, remained
+blockieren	blockieren	to block
 blockiert	blockiert	blocked
 blumen	Blumen	flowers
+blut	Blut	blood
 blöcken	Blöcken	blocks
 boden	Boden	floor, ground
 bohren	bohren	to drill
 bon	Bon	receipt
 borkenkäfer	Borkenkäfer	bark beetle
 bornholmer	Bornholmer	Bornholmer (Berlin street name)
+botaniker	Botaniker	botanist
+boten	boten	offered
 brach	brach	broke
+brachen	brachen	broke; collapsed
 brachte	brachte	brought
+brachten	brachten	brought
 branchen	Branchen	industries, sectors
 brandenburger	Brandenburger	Brandenburg (gate)
 brauch	Brauch	custom, tradition
 brauchbares	Brauchbares	something usable
 brauchen	brauchen	to need
 braucht	braucht	needs
+brauchten	brauchten	needed
 braune	braune	brown
 braunen	braunen	brown
 braunglas	Braunglas	brown glass
@@ -363,8 +499,12 @@ breit	breit	broad, wide
 breite	breite	broad; width
 breiter	breiter	wide, broad
 brennstoff	Brennstoff	fuel
+breslau	Breslau	Breslau, now Wroclaw
+breuel	Breuel	Breuel (surname)
+bricht	bricht	breaks, breaks off
 brief	Brief	letter
 briefe	Briefe	letters
+brille	Brille	glasses, spectacles
 bringen	bringen	to bring, to take
 bringt	bringt	brings, takes
 britische	britische	British
@@ -375,24 +515,39 @@ brotkultur	Brotkultur	bread culture
 brotsorten	Brotsorten	varieties of bread
 bruch	Bruch	break, rupture
 brutal	brutal	brutal
+bruttolohn	Bruttolohn	gross wage
 brötchen	Brötchen	bread roll
+brüder	Brüder	brothers
 buch	Buch	book
 buche	Buche	beech
+buchhaltung	Buchhaltung	bookkeeping, accounting
+buchstaben	Buchstaben	letters of the alphabet
+bund	Bund	federal government; federation
+bundesbank	Bundesbank	Bundesbank, the German central bank
+bundesgesetzblatt	Bundesgesetzblatt	Federal Law Gazette
+bundeshaushalt	Bundeshaushalt	federal budget
 bundesliga	Bundesliga	Bundesliga
+bundesländer	Bundesländer	federal states
+bundespräsident	Bundespräsident	Federal President
+bundesrat	Bundesrat	Bundesrat, the chamber of the federal states
 bundesrepublik	Bundesrepublik	Federal Republic
 bundestag	Bundestag	Bundestag, federal parliament
+bundesweit	bundesweit	nationwide
 bunker	Bunker	bunkers
 bus	Bus	bus
 butter	Butter	butter
 bäcker	Bäcker	baker
 bäckerei	Bäckerei	bakery
 bäckereien	Bäckereien	bakeries
+bände	Bände	volumes (of a book)
 bäume	Bäume	trees
 bäumen	Bäumen	trees (dative)
+börse	Börse	stock exchange, market
 börsennotierte	börsennotierte	publicly listed
 böse	böse	evil; angry
 bösen	Bösen	evil
 bücher	Bücher	books
+bückt	bückt	bends down
 bühne	Bühne	stage
 bühnenwerke	Bühnenwerke	stage works
 bürger	Bürger	citizens
@@ -404,18 +559,28 @@ bürojob	Bürojob	office job
 cafe	Cafe	café
 cafes	Cafes	cafés
 cent	Cent	cent
+charakter	Charakter	character, nature
 chef	Chef	boss
 chemie	Chemie	chemistry, chemical industry
 chemiker	Chemiker	chemist
+chicago	Chicago	Chicago
+cholera	Cholera	cholera
+chronisch	chronisch	chronic
 club	Club	club
 clubkultur	Clubkultur	club culture
+cohn	Cohn	Cohn (surname)
+computer	Computer	computer
 container	Container	container, bottle bank
+d-mark	D-Mark	D-Mark, the former German currency
+da	da	there; since, as
 dabei	dabei	with it; present, there
 dabeihat	dabeihat	has with them
+dach	Dach	roof
 daches	Daches	of the roof
 dadurch	dadurch	thereby, as a result
 dafür	dafür	for it, in return
 dagegen	dagegen	against it
+dahin	dahin	there, to that point; until then
 dahinter	dahinter	behind it
 dahintersteckt	dahintersteckt	lies behind it
 damals	damals	back then
@@ -425,6 +590,7 @@ daneben	daneben	next to it
 dann	dann	then
 daran	daran	on it, of it
 darauf	darauf	on it, onto it
+daraufhin	daraufhin	thereupon, in response to that
 daraus	daraus	out of it, from it
 darf	darf	may, is allowed to
 darin	darin	in it
@@ -435,6 +601,10 @@ das	das	the
 dass	dass	that
 dasselbe	dasselbe	the same thing
 daten	Daten	data
+datenbank	Datenbank	database
+datum	Datum	date
+dauerform	Dauerform	dormant form, resting stage
+dauerhafteste	dauerhafteste	most lasting, most durable
 dauert	dauert	takes
 dauerte	dauerte	lasted
 dauerten	dauerten	lasted
@@ -443,14 +613,19 @@ davor	davor	before that, in front of it
 dazu	dazu	in addition, to that
 dazugeben	dazugeben	to add, to contribute
 dazugekommen	dazugekommen	added, gained
+dazwischen	dazwischen	in between
 ddr	DDR	GDR, East Germany
 debatte	Debatte	debate
 deckeln	Deckeln	lids
+deckt	deckt	covers
+definition	Definition	definition
 dem	dem	the
+demnig	Demnig	Demnig (surname)
 demselben	demselben	the same
 den	den	the
 denen	denen	whom, which (dative)
 denken	denken	to think; thinking, thought
+denkmal	Denkmal	monument, memorial
 denkmalschutz	Denkmalschutz	heritage protection
 denkt	denkt	thinks
 denn	denn	because, for
@@ -462,14 +637,19 @@ derselbe	derselbe	the same
 derselben	derselben	the same
 des	des	of the
 deshalb	deshalb	therefore, that is why
+dessau	Dessau	Dessau (city in Saxony-Anhalt)
+dessen	dessen	whose, of which
 desto	desto	the (in the more, the more)
 deswegen	deswegen	because of that
+detlev	Detlev	Detlev (first name)
 detroit	Detroit	Detroit
 deuten	deuten	to point, to indicate
 deutlich	deutlich	clearly, noticeably
 deutliche	deutliche	clear
+deutlicher	deutlicher	clearer, plainer; clear (inflected)
 deutsch	Deutsch	German
 deutsche	deutsche	German; a German; the German language
+deutschem	deutschem	German (dative)
 deutschen	Deutschen	German; the Germans
 deutscher	deutscher	German
 deutsches	deutsches	German
@@ -477,6 +657,7 @@ deutschkurse	Deutschkurse	German courses
 deutschland	Deutschland	Germany
 deutschlands	Deutschlands	of Germany
 deutschlandticket	Deutschlandticket	Deutschlandticket, nationwide travel pass
+diagnose	Diagnose	diagnosis
 dicht	dicht	dense, densely
 dicken	dicken	thick
 die	die	the
@@ -488,6 +669,7 @@ diesem	diesem	this
 diesen	diesen	this, these
 dieser	dieser	this
 dieses	dieses	this
+diesmal	diesmal	this time
 digital	digital	digital
 diktaturen	Diktaturen	dictatorships
 dinge	Dinge	things
@@ -498,6 +680,7 @@ doch	doch	yet
 dokumentationen	Dokumentationen	documentaries
 doppelt	doppelt	double, twice
 doppelten	doppelten	double
+dorf	Dorf	village
 dort	dort	there
 dose	Dose	tin, small box
 dosen	Dosen	cans, tins
@@ -507,11 +690,16 @@ dreht	dreht	turns
 drei	drei	three
 dreieinhalb	dreieinhalb	three and a half
 dreihundert	dreihundert	three hundred
+dreimal	dreimal	three times
 dreitausend	dreitausend	three thousand
+dreizehn	dreizehn	thirteen
 dreißig	dreißig	thirty
+dritte	dritte	third
 drittel	Drittel	third
+dritten	dritten	third (inflected)
 druck	Druck	pressure; print
 druckt	druckt	prints
+druckten	druckten	printed
 drängten	drängten	pressed, urged
 duale	duale	dual
 dualen	dualen	dual
@@ -523,10 +711,14 @@ dunkles	dunkles	dark
 durch	durch	through
 durcheinander	Durcheinander	confusion, chaos
 durchgefallen	durchgefallen	failed (an exam)
+durchschnittsnoten	Durchschnittsnoten	average grades
+durchsuchen	durchsuchen	to search, to search through
+durchsuchten	durchsuchten	searched, raided
 durfte	durfte	was allowed to
 durften	durften	were allowed to
 dutzende	Dutzende	dozens
 döner	Döner	doner kebab
+dörfer	Dörfer	villages
 dürfe	dürfe	may, is allowed to
 dürfen	dürfen	may, to be allowed to
 düsseldorf	Düsseldorf	Duesseldorf
@@ -553,6 +745,7 @@ eigentliche	eigentliche	actual, real
 eigentliches	eigentliches	actual, real
 eigentümer	Eigentümer	owner
 ein	ein	a
+einander	einander	one another, each other
 eindruck	Eindruck	impression
 eine	eine	a
 einem	einem	a
@@ -573,10 +766,13 @@ eingestuft	eingestuft	classified, rated
 eingetragene	eingetragene	registered
 eingezeichnet	eingezeichnet	marked, drawn in
 einhalten	einhalten	to observe, to keep to
+einig	einig	in agreement, agreed
 einige	einige	some, a few
 einigen	einigen	some
+einiges	einiges	quite a bit, a fair amount
 einigte	einigte	agreed, settled
 einigungsstelle	Einigungsstelle	arbitration board
+einkaufen	einkaufen	to shop, to go shopping
 einkommen	Einkommen	income
 einmal	einmal	once
 einordnen	einordnen	to classify, to pigeonhole
@@ -592,21 +788,30 @@ einweihungsparty	Einweihungsparty	housewarming party
 einzelgänger	Einzelgänger	loner
 einzeln	einzeln	individually, one by one
 einzelne	einzelne	individual, single
+einzelnen	einzelnen	individual, single (inflected)
+einzige	einzige	only, sole
 einzigen	einzigen	single, only
 einziger	einziger	single, only
 einziges	einziges	single, only
 einzug	Einzug	moving in
+einzukaufen	einzukaufen	to shop, to buy
 elektriker	Elektriker	electrician
 elektrische	elektrische	electrical
 elektroniker	Elektroniker	electronics technician
 elektronischen	elektronischen	electronic
 eltern	Eltern	parents
+emigranten	Emigranten	emigrants, exiles
+empfinden	empfinden	to feel, to perceive
+empfindlich	empfindlich	sensitive, delicate
+empfindlicher	empfindlicher	more sensitive, touchier
 ende	Ende	end
 enden	Enden	ends
 endet	endet	ends
 endgültig	endgültig	finally, for good
 endlich	endlich	finally
 energie	Energie	energy
+energien	Energien	energies, forms of energy
+energiewende	Energiewende	energy transition
 engeren	engeren	narrower
 englisch	Englisch	English
 englische	englische	English
@@ -614,9 +819,11 @@ englischen	englischen	English
 englischsprachige	englischsprachige	English-speaking
 enkel	Enkel	grandchildren
 entartet	entartet	degenerate
+entdeckte	entdeckte	discovered
 entfernt	entfernt	away, distant
 enthalten	enthalten	included, contained
 enthielt	enthielt	contained
+enthält	enthält	contains
 entlastet	entlastet	discharged, relieved
 entnehmen	entnehmen	to take out, to extract
 entscheiden	entscheiden	to decide
@@ -624,30 +831,43 @@ entscheidend	entscheidend	decisive, crucial
 entscheidet	entscheidet	decides
 entscheidung	Entscheidung	decision
 entscheidungen	Entscheidungen	decisions
+entschied	entschied	decided
 entschieden	entschieden	decided; decisively
 entschuldigung	Entschuldigung	excuse, apology
 entstand	entstand	arose, came into being
 entstanden	entstanden	arose, came into being
 entstehen	entstehen	to arise, to come about
 entsteht	entsteht	arises, comes about
+entwarf	entwarf	designed, drew up
+entwarfen	entwarfen	designed, drew up (plural)
 entweder	entweder	either
 entwickelt	entwickelt	develops; developed
+entwickelte	entwickelte	developed
 entwickelten	entwickelten	developed
+entwurf	Entwurf	draft, bill
+entwürfe	Entwürfe	drafts, bills
 entzündet	entzündet	ignites, flares up
 er	er	he
 erbe	Erbe	legacy, inheritance
+erblinden	erblinden	to go blind
+ereignis	Ereignis	event, occurrence
 erfahrung	Erfahrung	experience
+erfindung	Erfindung	invention
 erfindungen	Erfindungen	inventions
 erfolg	Erfolg	success
 erfolgreichen	erfolgreichen	successful
+erforschten	erforschten	researched, investigated
 erfunden	erfunden	invented
 erfährt	erfährt	learns, finds out
+erfüllt	erfüllt	fulfils, meets
 ergibt	ergibt	makes, results in
 erhalten	erhalten	to receive; preserved
+erheblich	erheblich	considerably, substantially
 erheblicher	erheblicher	considerable
 erhoben	erhoben	levied, collected
 erhöhung	Erhöhung	increase, rise
 erinnert	erinnert	remembers, reminds
+erinnerte	erinnerte	remembered; reminded
 erkennbar	erkennbar	recognisably, discernibly
 erkennt	erkennt	recognises
 erklären	erklären	to explain
@@ -657,16 +877,29 @@ erlauben	erlauben	to allow
 erlaubnis	Erlaubnis	permission
 erlaubt	erlaubt	allowed, permitted
 erlebt	erlebt	experiences, lives through
+erledigt	erledigt	done, dealt with, settled
+erledigte	erledigte	dealt with, carried out
 ermordet	ermordet	murdered
+ermordeten	Ermordeten	the murdered, victims of murder
+erneuerbaren	erneuerbaren	renewable (inflected)
+erneuerbarer	erneuerbarer	renewable (inflected)
 ernst	ernst	serious
 ernsten	ernsten	serious
 ernsthaft	ernsthaft	seriously
+ernähren	ernähren	to feed, to support
+erreger	Erreger	pathogen, germ
+erreichen	erreichen	to reach, to achieve
 erreicht	erreicht	reaches, achieves
 erreichte	erreichte	reached
 erscheint	erscheint	appears, seems
+erschien	erschien	appeared, was published
+erschossen	erschossen	shot dead
+erschwert	erschwert	made more difficult, hampered
+ersparnisse	Ersparnisse	savings
 erst	erst	only, not until
 erstaunen	Erstaunen	astonishment
 erstaunlich	erstaunlich	surprisingly
+erstaunlichste	erstaunlichste	most astonishing
 erste	erste	first
 ersten	Ersten	first
 erster	erster	first
@@ -676,6 +909,9 @@ erwartete	erwartete	expected
 erwartung	Erwartung	expectation
 erweitert	erweitert	expanded, extended
 erwischt	erwischt	catches, gets
+erzeugt	erzeugt	generated, produced
+erzeugte	erzeugte	generated, produced
+erzeugung	Erzeugung	generation, production
 es	es	it
 esse	esse	eat (I eat)
 essen	Essen	to eat; food, meal
@@ -684,9 +920,14 @@ etwas	etwas	something; somewhat
 euro	Euro	euro
 europa	Europa	Europe
 europas	Europas	of Europe
+existenzen	Existenzen	livelihoods, lives
 extra	extra	extra, on top
+extras	Extras	extras, additional benefits
 fabrik	Fabrik	factory
 fabriken	Fabriken	factories
+fach	Fach	subject, field; compartment
+facharbeiter	Facharbeiter	skilled worker
+facharzttermin	Facharzttermin	appointment with a specialist
 fachinformatikerin	Fachinformatikerin	IT specialist (female)
 fachleute	Fachleute	experts, specialists
 faden	Faden	thread
@@ -711,7 +952,9 @@ fand	fand	found
 fangen	fangen	to catch; to start
 farbe	Farbe	colour; paint
 farben	Farben	colours
+fassade	Fassade	facade, front of a building
 fasste	fasste	summed up, grasped
+fassten	fassten	took hold of, grasped
 fast	fast	almost
 februar	Februar	February
 fehlen	fehlen	to be missing
@@ -723,24 +966,34 @@ fehlten	fehlten	were missing, were lacking
 feierabend	Feierabend	the end of the working day, time off
 feiert	feiert	celebrates
 feld	Feld	field
+felder	Felder	fields
 fenster	Fenster	window, windows
+fenstern	Fenstern	windows (dative plural)
+ferdinand	Ferdinand	Ferdinand (first name)
+ferienheime	Ferienheime	holiday homes
 fernsehen	Fernsehen	television
 fernseher	Fernseher	television set
 fernsehprogramm	Fernsehprogramm	television channel
 fernweh	Fernweh	longing for distant places
 fernzüge	Fernzüge	long-distance trains
 fertig	fertig	finished, ready
+fertige	fertige	finished, completed
 fest	Fest	firm, solid; celebration, festival
-feste	feste	firm, fixed
+feste	feste	firm, fixed; celebrations, parties
 festen	festen	fixed
+fester	fester	fixed, firm (inflected)
 festes	festes	firm
 festgelegt	festgelegt	laid down, stipulated
+festhalten	festhalten	to hold on to; to detain
+festlegen	festlegen	to lay down, to fix
 festspielhaus	Festspielhaus	festival theatre
 feststellten	feststellten	established, found
 fichte	Fichte	spruce
 fichten	Fichten	spruces
 fiel	fiel	fell
 finanziell	finanziell	financially
+finanzielle	finanzielle	financial
+finanziert	finanziert	financed, funded
 finanzkrise	Finanzkrise	financial crisis
 finde	finde	find (I find)
 finden	finden	to find
@@ -748,34 +1001,49 @@ findet	findet	finds
 firma	Firma	company
 firmen	Firmen	companies
 flach	flach	shallow, flat
+flache	flache	flat
+flachen	flachen	flat (inflected)
 flaschen	Flaschen	bottles
 fließbändern	Fließbändern	assembly lines
 floh	floh	fled
 flucht	Flucht	escape, flight
 flughäfen	Flughäfen	airports
 flächen	Flächen	areas, expanses
+flügeln	Flügeln	wings of a building (dative plural)
 flüssigkeit	Flüssigkeit	liquid
+folge	Folge	consequence, result; episode
+folgen	Folgen	consequences; to follow
 folgt	folgt	follows
 fordern	fordern	to demand
 forderung	Forderung	demand, claim
 form	Form	form, shape
+formal	formal	formal, in formal terms
 formel	Formel	formula
 formeln	Formeln	set phrases, formulas
 formen	Formen	forms
 formular	Formular	form
+formularen	Formularen	forms (dative plural)
+formulieren	formulieren	to formulate, to word
 formulierung	Formulierung	phrase, wording
 forscher	Forscher	researchers
 forstleute	Forstleute	foresters
+foto	Foto	photo
 fotografieren	fotografieren	to photograph
 fotografierte	fotografierte	photographed
 frage	frage	ask
 fragen	Fragen	to ask; questions
 fragt	fragt	asks
+fraktionen	Fraktionen	parliamentary groups
 frankreich	Frankreich	France
 frankreichs	Frankreichs	of France
+französisch	Französisch	French (the language)
 frau	Frau	woman; wife
+frauen	Frauen	women
+frauenname	Frauenname	woman's name
 frei	frei	free
 freien	freien	free
+freiheit	Freiheit	freedom, liberty
+freiwillig	freiwillig	voluntarily, of one's own free will
 freizeit	Freizeit	leisure time
 fremde	Fremde	strangers; foreign
 fremder	fremder	outside, foreign
@@ -787,110 +1055,163 @@ freundlich	freundlich	friendly, kind
 freundliche	freundliche	friendly
 freundschaften	Freundschaften	friendships
 frieden	Frieden	peace
+friedhof	Friedhof	cemetery
 frisch	frisch	fresh
 frische	frische	fresh
 frisst	frisst	devours, swallows up
 frist	Frist	notice period, deadline
 fristen	Fristen	deadlines, periods
 froh	froh	glad
+frucht	Frucht	fruit
 früh	früh	early
 früher	früher	earlier, in the past
+frühere	frühere	former, earlier
 frühes	frühes	early
 frühjahr	Frühjahr	spring
 frühling	Frühling	spring
+fukushima	Fukushima	Fukushima
 fundament	Fundament	foundation
+fundstellen	Fundstellen	references, places where something was found
 funktionieren	funktionieren	to work, to function
 funktioniert	funktioniert	works, functions
+fuß	Fuß	foot
 fußball	Fußball	football
+fußgängerzone	Fußgängerzone	pedestrian zone
+fächer	Fächer	school subjects; compartments
+fächern	Fächern	school subjects (dative plural)
 fährt	fährt	travels, goes
+fälle	Fälle	cases
 fällt	fällt	falls
 färben	färben	to colour, to tint
+färbte	färbte	stained, dyed
+föderalismus	Föderalismus	federalism
+förderung	Förderung	subsidy, support, funding
 förster	Förster	forester
 försterinnen	Försterinnen	foresters (female)
 fühlte	fühlte	felt
 führen	führen	to lead; to run
 führt	führt	leads
+führten	führten	led, ran, headed
+füllt	füllt	fills
 fünf	fünf	five
 fünfundzwanzig	fünfundzwanzig	twenty-five
 fünfzig	fünfzig	fifty
 fünfziger	fünfziger	fifties
 für	für	for
+fürsten	Fürsten	prince, princes
 füße	Füße	feet
+füßen	Füßen	feet (dative plural)
 gab	gab	gave; there was
+gaben	gaben	gave
 galt	galt	was considered
 galten	galten	counted as, were regarded as
 ganz	ganz	whole; quite
 ganze	ganze	whole
 ganzen	ganzen	whole
+ganzer	ganzer	whole, entire (inflected)
 ganzes	ganzes	whole
+ganztagsschule	Ganztagsschule	all-day school
 gar	gar	at all
+garantiert	garantiert	guaranteed
+gaskraftwerke	Gaskraftwerke	gas-fired power stations
 gaspreise	Gaspreise	gas prices
 gast	Gast	guest
 gastronomie	Gastronomie	catering, hospitality trade
+gearbeitet	gearbeitet	worked
 gebacken	gebacken	baked
 gebaut	gebaut	built
 geben	geben	to give
+gebilde	Gebilde	structures, formations
+geblieben	geblieben	stayed, remained
+gebogenem	gebogenem	bent, curved (dative)
 geboren	geboren	born
 gebracht	gebracht	brought, taken
 gebraucht	gebraucht	needed; used
 geburt	Geburt	birth
+geburtsjahr	Geburtsjahr	year of birth
+geburtstag	Geburtstag	birthday
+gebäude	Gebäude	building
+gebückt	gebückt	bent down, stooped
+gebühren	Gebühren	fees, charges
 gedacht	gedacht	thought; intended
 gedanke	Gedanke	thought
 gedanken	Gedanken	thoughts
 gedankenlosigkeit	Gedankenlosigkeit	thoughtlessness
 geduld	Geduld	patience
+gefallen	gefallen	fallen, been made (of a decision); pleased
+geforscht	geforscht	researched
 gefunden	gefunden	found
+gefährlich	gefährlich	dangerous
 gefällt	gefällt	pleases
 gefühl	Gefühl	feeling
 gefühle	Gefühle	feelings
 geführt	geführt	led; run, managed
 gegen	gegen	against; around (a time)
+gegend	Gegend	area, region
 gegenseite	Gegenseite	other side
+gegenseitige	gegenseitige	mutual, reciprocal
 gegenteil	Gegenteil	opposite
 gegründet	gegründet	founded
 gehabt	gehabt	had
+gehalten	gehalten	held; kept; given (a talk)
 gehaltsabrechnungen	Gehaltsabrechnungen	payslips
 gehe	gehe	go (I go)
 gehen	gehen	to go, to walk
 geht	geht	goes
+gehweg	Gehweg	pavement, footpath
 gehören	gehören	to belong
 gehört	gehört	belongs; heard
+gehörte	gehörte	belonged
 gehörten	gehörten	belonged
 geige	Geige	violin
+geist	Geist	spirit, mind; ghost
 gekauft	gekauft	bought
 gekocht	gekocht	cooked
 gekommen	gekommen	come, arrived
 gekostet	gekostet	cost
 gelang	gelang	succeeded, managed
 gelassen	gelassen	left, left behind
+gelaufen	gelaufen	walked, run
 gelbe	gelbe	yellow
 geld	Geld	money
+geldbörse	Geldbörse	purse, wallet
+geldwäsche	Geldwäsche	money laundering
 gelebt	gelebt	lived
+gelehrten	Gelehrten	scholars, learned men
 gelernt	gelernt	learned
 gelesen	gelesen	read
+gelingt	gelingt	succeeds, works out
 gelten	gelten	to apply, to be valid
 gelöst	gelöst	solved; terminated
+gemacht	gemacht	made, done
 gemachte	gemachte	made
+gemeinde	Gemeinde	municipality; congregation, community
 gemeinsam	gemeinsam	together, jointly
 gemeinsame	gemeinsame	shared, joint
 gemeint	gemeint	meant
 gemüsereste	Gemüsereste	vegetable scraps
+genannt	genannt	named, called, mentioned
 genau	genau	exactly, precisely
 genauer	genauer	more precisely
+genauso	genauso	just as, exactly the same
 generation	Generation	generation
 generationen	Generationen	generations
 genf	Genf	Geneva
 geniale	geniale	brilliant, genius
 genommen	genommen	taken
 genossenschaft	Genossenschaft	cooperative
+genossenschaften	Genossenschaften	cooperatives
 genug	genug	enough
 genügt	genügt	suffices, is enough
+geometrischen	geometrischen	geometric (inflected)
 geordneten	geordneten	orderly, systematic
 geparkte	geparkte	parked
 gepflanzt	gepflanzt	planted
 geplant	geplant	planned
+geprägter	geprägter	minted, coined; shaped (inflected)
 geprüft	geprüft	tested, examined
 gerade	gerade	just, right now
+gerechnet	gerechnet	calculated, counted, reckoned
 geredet	geredet	talked
 geregelt	geregelt	regulated, settled
 gericht	Gericht	court
@@ -903,43 +1224,63 @@ geräte	Geräte	devices, appliances
 gesagt	gesagt	said
 gesammelt	gesammelt	collected
 gesamte	gesamte	entire, whole
+gesamten	gesamten	entire, whole (inflected)
+gesamtschule	Gesamtschule	comprehensive school
+geschenk	Geschenk	present, gift
 geschichte	Geschichte	story; history
 geschickt	geschickt	sent; skilful
 geschieht	geschieht	happens
+geschirr	Geschirr	crockery, dishes
 geschlossen	geschlossen	closed, shut
 geschoben	geschoben	pushed
+geschrieben	geschrieben	written
 geschwiegen	geschwiegen	kept silent
 geschäfte	Geschäfte	shops
 geschäftsführung	Geschäftsführung	management
 geschützt	geschützt	protected
+gesehen	gesehen	seen
 gesellschaft	Gesellschaft	society
+gesellschaften	Gesellschaften	companies; societies
 gesetz	Gesetz	law, act
+gesetze	Gesetze	laws
+gesetzlich	gesetzlich	statutory, laid down by law
+gesetzliche	gesetzliche	statutory, state (inflected)
 gesetzlichen	gesetzlichen	statutory, legal
 gesetzliches	gesetzliches	statutory, legal
+gesetzt	gesetzt	set, placed, laid
 gesichtern	Gesichtern	faces
 gespart	gespart	saved
 gesponserte	gesponserte	sponsored
 gesprochen	gesprochen	spoken
 gespräch	Gespräch	conversation
+gestaltung	Gestaltung	design, shaping
 gestanden	gestanden	stood
+gestellt	gestellt	put, placed; charged (of a bill)
 gesteuert	gesteuert	controlled, steered
 gestiegen	gestiegen	risen
 gestoppt	gestoppt	stopped, halted
+gestorben	gestorben	died
 gestritten	gestritten	argued, quarrelled
 gesucht	gesucht	searched, looked for
+gesunde	gesunde	healthy
 geteilt	geteilt	divided, split
 getragen	getragen	carried, borne
 getrennt	getrennt	separated, separately
+getreten	getreten	stepped, trodden
+getroffen	getroffen	met; made (of a decision); hit
 gewerkschaft	Gewerkschaft	trade union
 gewerkschaften	Gewerkschaften	trade unions
 gewesen	gewesen	been
+gewinn	Gewinn	profit, gain
 gewinnen	gewinnen	to win
 gewinnt	gewinnt	wins
 gewirkt	gewirkt	worked, been active
 gewisse	gewisse	certain
 gewissen	Gewissen	conscience
 gewohnheit	Gewohnheit	habit
+gewohnt	gewohnt	lived, resided; accustomed
 geworden	geworden	become
+geworfen	geworfen	thrown
 gewählt	gewählt	elected, chosen
 gewöhnlichen	gewöhnlichen	ordinary
 gewöhnt	gewöhnt	accustomed, used to
@@ -955,10 +1296,15 @@ ging	ging	went
 gingen	gingen	went
 gitarren	Gitarren	guitars
 glas	Glas	glass
+glasteller	Glasteller	glass dish, glass plate
+glauben	glauben	to believe
+glaubt	glaubt	believes
 gleich	gleich	same; right away
 gleiche	Gleiche	the same
 gleichzeitig	gleichzeitig	simultaneously
+glänzen	glänzen	to shine, to gleam
 glück	Glück	luck
+goethe	Goethe	Goethe (surname)
 grammatisch	grammatisch	grammatically
 grau	grau	grey
 grauen	grauen	grey
@@ -970,28 +1316,38 @@ grenzen	Grenzen	borders; limits
 grenzsoldaten	Grenzsoldaten	border guards
 griechenland	Griechenland	Greece
 grill	Grill	grill, barbecue
+grimm	Grimm	Grimm (surname)
+grimms	Grimms	the Grimms; of Grimm
+gropius	Gropius	Gropius (surname)
 groß	groß	big, large
 große	große	big, large
 großeltern	Großeltern	grandparents
 großen	großen	big, large
 großer	großer	big, large
+großes	großes	big, large (neuter)
 großvater	Großvater	grandfather
 grund	Grund	reason; ground
 grundgesetz	Grundgesetz	Basic Law, German constitution
 grundsatz	Grundsatz	principle
+grundstück	Grundstück	plot of land, property
 grundstücke	Grundstücke	plots of land
 grundsätzlich	grundsätzlich	in principle, as a rule
 gruppe	Gruppe	group
 gruppen	Gruppen	groups
+größere	größere	larger, bigger
 größeren	größeren	larger
 größte	größte	largest
 größten	größten	biggest
 grün	Grün	green
 gründe	Gründe	reasons
 gründen	gründen	to found, to set up
+gründeten	gründeten	founded, set up
 gründlich	gründlich	thoroughly
 grünglas	Grünglas	green glass
+grüßen	grüßen	to greet, to say hello
 gunsten	Gunsten	favour
+gunta	Gunta	Gunta (first name)
+gunter	Gunter	Gunter (first name)
 gurke	Gurke	cucumber
 gut	gut	good, well
 gutachten	Gutachten	expert reports
@@ -1001,6 +1357,7 @@ guter	guter	good
 guthaben	Guthaben	credit balance
 gymnasium	Gymnasium	grammar school
 gäste	Gäste	guests
+göttingen	Göttingen	Göttingen (university city)
 gültig	gültig	valid
 günstige	günstige	cheap, favourable
 günstiges	günstiges	cheap, good value
@@ -1012,7 +1369,9 @@ hafen	Hafen	harbour, port
 haftet	haftet	is liable
 halb	halb	half
 halbe	halbe	half
+halbes	halbes	half
 half	half	helped
+halle	Halle	hall, workshop floor
 halt	halt	just, simply
 halte	halte	consider, hold
 halten	halten	to hold; to give (a talk)
@@ -1023,6 +1382,7 @@ hand	Hand	hand
 handel	Handel	trade, retail
 handeln	Handeln	to act; action
 handelten	handelten	dealt with; acted
+handfläche	Handfläche	palm of the hand
 handschuhschneeballwerfer	Handschuhschneeballwerfer	one who throws snowballs wearing gloves
 handvoll	Handvoll	handful
 handwerk	Handwerk	craft, skilled trades
@@ -1030,38 +1390,53 @@ handwerker	Handwerker	craftsman, tradesman
 handy	Handy	mobile phone
 handzeichen	Handzeichen	hand signals
 hannah	Hannah	Hannah
+hannes	Hannes	Hannes (first name)
 hannover	Hannover	Hanover
 harald	Harald	Harald (first name)
+harten	harten	hard, strong (inflected)
+hartnäckiger	hartnäckiger	more stubbornly, more persistently
 harz	Harz	the Harz mountains
 hat	hat	has
 hatte	hatte	had
 hatten	hatten	had
+hauptfächern	Hauptfächern	main subjects (dative plural)
 haus	Haus	house
 hausangestellte	Hausangestellte	domestic servant
+hausbesitzer	Hausbesitzer	homeowners
 hause	Hause	home
 hauses	Hauses	of the house
+hausgemeinschaften	Hausgemeinschaften	the residents of a building
 haushalt	Haushalt	household; budget
 haushalte	Haushalte	households
 hausordnung	Hausordnung	house rules
+haustür	Haustür	front door
 hefte	Hefte	exercise books
 heftig	heftig	fierce, heated
 heidegger	Heidegger	Heidegger
 heidelberg	Heidelberg	Heidelberg
 heilig	heilig	sacred, holy
+heilmittel	Heilmittel	cure, remedy
+heilte	heilte	healed, cured
 heimat	Heimat	home, homeland
 heimweh	Heimweh	homesickness
 heiraten	heiraten	to marry
 heizkraftwerk	Heizkraftwerk	combined heat and power station
 heizung	Heizung	heating
+heißen	heißen	to be called, to be named
 heißt	heißt	is called; means
+helfen	helfen	to help
 helmut	Helmut	Helmut (first name)
 her	her	from, ago
 heraus	heraus	out of
+herausbringen	herausbringen	to take out; to bring out, to publish
 herausforderung	Herausforderung	challenge
+herauskommt	herauskommt	comes out, emerges
 herbst	Herbst	autumn
+herden	Herden	herds
 herkunft	Herkunft	origin
 herkunftsland	Herkunftsland	country of origin
 herrschaft	Herrschaft	rule, domination
+herstellen	herstellen	to produce, to manufacture
 hersteller	Hersteller	manufacturer, manufacturers
 herstellung	Herstellung	manufacture, production
 herum	herum	around
@@ -1072,32 +1447,49 @@ hielt	hielt	held; considered
 hielten	hielten	held; considered
 hier	hier	here
 hierher	hierher	here, to this place
+hieß	hieß	was called
+hießen	hießen	were called
+hilfe	Hilfe	help, assistance
 hilft	hilft	helps
 hin	hin	there, towards
+hinausgekommen	hinausgekommen	got beyond, progressed past
 hindernis	Hindernis	obstacle
 hinein	hinein	into it
 hinten	hinten	at the back
 hinter	hinter	behind
 hintergrund	Hintergrund	background
+hinterher	hinterher	afterwards
+hinterließ	hinterließ	left behind
+hinterlässt	hinterlässt	leaves behind
 historisch	historisch	historically
 historische	historische	historical
+hobby	Hobby	hobby
 hoch	hoch	high
 hochschule	Hochschule	university, higher education institution
 hochschulen	Hochschulen	universities
 hof	Hof	courtyard, yard
 hoffe	hoffe	hope (I hope)
+hohem	hohem	high, tall (dative)
+hohen	hohen	high, tall (inflected)
 holen	holen	to fetch, to get
 holt	holt	fetches; catches up
+holte	holte	fetched, brought
 holten	holten	fetched, brought over
 holz	Holz	wood
+hotline	Hotline	hotline
 hunde	Hunde	dogs
 hundert	hundert	hundred
+hundertdreiundzwanzig	hundertdreiundzwanzig	one hundred and twenty-three
+hunderttausend	hunderttausend	one hundred thousand
 hunderttausende	Hunderttausende	hundreds of thousands
+hundertvierzig	hundertvierzig	one hundred and forty
+hygienischen	hygienischen	hygienic (inflected)
 hälfte	Hälfte	half
 hält	hält	holds; gives (a talk)
 hänge	Hänge	slopes, hillsides
 hängt	hängt	hangs
 hätte	hätte	would have
+hätten	hätten	would have
 häufig	häufig	often, frequently
 häuser	Häuser	houses
 häusern	Häusern	houses
@@ -1108,14 +1500,17 @@ höhe	Höhe	amount, height
 höher	höher	higher
 höre	höre	listen (I listen)
 hören	hören	to hear, to listen
+hörsaal	Hörsaal	lecture hall
 hörspiele	Hörspiele	radio plays
 hört	hört	hears; stops
 hörte	hörte	heard, listened
 hörten	hörten	heard, listened
+hürden	Hürden	hurdles, obstacles
 ic	IC	IC, intercity train
 ice	ICE	ICE, high-speed train
 ich	ich	I
 ideale	ideale	ideal
+idealisten	Idealisten	idealists
 idee	Idee	idea
 ideen	Ideen	ideas
 ihm	ihm	him, to him
@@ -1126,24 +1521,34 @@ ihre	ihre	her, their
 ihrem	ihrem	her, their (dative)
 ihren	ihren	her, their
 ihrer	ihrer	her, their
+ihres	ihres	her, their (genitive)
 illegal	illegal	illegal
 im	im	in the
 imbiss	Imbiss	snack bar
 immer	immer	always
+impfte	impfte	vaccinated
 in	in	in
+indien	Indien	India
 industrie	Industrie	industry
+industriebetriebe	Industriebetriebe	industrial companies
 industrieland	Industrieland	industrial country
 industriestädten	Industriestädten	industrial cities
+infektion	Infektion	infection
 information	Information	information
 informiert	informiert	informed
 inhalt	Inhalt	contents
+inland	Inland	the home country, domestic market
 innenstädte	Innenstädte	city centres
 innerhalb	innerhalb	within
 ins	ins	into the
 insgesamt	insgesamt	in total, altogether
+institut	Institut	institute
 interessant	interessant	interesting
+interessiert	interessiert	interested; is of interest
+internationalen	internationalen	international (inflected)
 internet	Internet	internet
 interniert	interniert	interned
+investierten	investierten	invested
 inzwischen	inzwischen	by now, meanwhile
 irgendetwas	irgendetwas	something or other
 irgendwann	irgendwann	at some point
@@ -1153,14 +1558,18 @@ ist	ist	is
 italien	Italien	Italy
 ja	ja	yes
 jacke	Jacke	jacket
+jacob	Jacob	Jacob (first name)
 jahr	Jahr	year
 jahre	Jahre	years
 jahrelang	jahrelang	for years
 jahren	Jahren	years
 jahres	Jahres	of the year
 jahrhundert	Jahrhundert	century
+jahrhunderte	Jahrhunderte	centuries
+jahrhunderts	Jahrhunderts	of the century
 jahrtausendwende	Jahrtausendwende	turn of the millennium
 jahrzehnte	Jahrzehnte	decades
+jahrzehntelang	jahrzehntelang	for decades
 jahrzehnten	Jahrzehnten	decades
 je	je	each; ever
 jede	jede	every, each
@@ -1171,6 +1580,7 @@ jedes	jedes	every
 jedoch	jedoch	however
 jeher	jeher	always (in seit jeher)
 jemand	jemand	someone
+jemandem	jemandem	someone (dative)
 jemanden	jemanden	someone
 jener	jener	that, those
 jerusalem	Jerusalem	Jerusalem
@@ -1190,54 +1600,74 @@ juristischer	juristischer	legal
 jäger	Jäger	Jäger (surname); hunter
 jüdischen	jüdischen	Jewish
 jüngere	jüngere	younger
+jüngeren	jüngeren	younger (inflected)
 kabeln	Kabeln	cables
 kaffee	Kaffee	coffee
 kaffeesatz	Kaffeesatz	coffee grounds
+kalkutta	Kalkutta	Calcutta
 kalt	kalt	cold
 kaltmiete	Kaltmiete	base rent, rent excluding bills
 kaltmieten	Kaltmieten	rents excluding utilities
 kam	kam	came
 kamen	kamen	came
 kamera	Kamera	camera
+kameras	Kameras	cameras
 kammer	Kammer	chamber of trade
 kanal	Kanal	canal
 kandidieren	kandidieren	to stand for election
+kandinsky	Kandinsky	Kandinsky (surname)
 kann	kann	can, is able to
+kannten	kannten	knew
 kantate	Kantate	cantata
+kanzler	Kanzler	chancellor
 kanzlerin	Kanzlerin	chancellor (female)
+kapital	Kapital	capital, funds
 kaputte	kaputte	broken
 kaputtes	kaputtes	broken
 karneval	Karneval	carnival
 karotte	Karotte	carrot
 karriere	Karriere	career
+karsten	Karsten	Karsten (name)
 karte	Karte	card, ticket
+kartenlesegerät	Kartenlesegerät	card reader
+kartenzahlung	Kartenzahlung	card payment
 kartons	Kartons	cardboard boxes
+kasse	Kasse	health insurer; till, checkout
 kassenprüfungen	Kassenprüfungen	audits of the accounts
 kassenwartin	Kassenwartin	treasurer (female)
+katastrophe	Katastrophe	catastrophe, disaster
 kauf	Kauf	purchase
 kaufen	kaufen	to buy
 kaufhäuser	Kaufhäuser	department stores
 kaufte	kaufte	bought
+kauften	kauften	bought
 kaum	kaum	hardly
 kaution	Kaution	deposit
 kehrt	kehrt	turns; returns
 kehrten	kehrten	returned
+kehrtwende	Kehrtwende	about-turn, complete reversal
 kein	kein	no, not a
 keine	keine	no, not any
 keinem	keinem	no, none (dative)
 keinen	keinen	no, not a
 keiner	keiner	nobody, none
+kenne	kenne	know (I)
 kennen	kennen	to know, to be familiar with
 kennt	kennt	knows
 kennzeichnung	Kennzeichnung	label, marking
 kern	Kern	core
+kernkraft	Kernkraft	nuclear power
+kernkraftwerke	Kernkraftwerke	nuclear power stations
+kette	Kette	chain
 ketten	Ketten	chains
 kiel	Kiel	Kiel (city)
 kilometer	Kilometer	kilometres
 kilos	Kilos	kilos
+kilowattstunde	Kilowattstunde	kilowatt hour
 kind	Kind	child
 kinder	Kinder	children
 kindergarten	Kindergarten	kindergarten, nursery
+kindergärten	Kindergärten	nurseries, kindergartens
 kindern	Kindern	children
 kindheit	Kindheit	childhood
 kirche	Kirche	church
@@ -1246,22 +1676,33 @@ klang	Klang	sound; sounded
 klappt	klappt	works out
 klar	klar	clear, clearly
 klare	klare	clear
+klasse	Klasse	class, year group
+klassen	Klassen	classes, year groups
 klassiker	Klassiker	classics, classical composers
 klausel	Klausel	clause
 klauseln	Klauseln	clauses
+klee	Klee	Klee (surname); clover
 kleine	kleine	small
 kleinen	kleinen	small
 kleiner	kleiner	small
+kleinere	kleinere	smaller
+kleineren	kleineren	smaller (inflected)
 kleines	kleines	small
 klima	Klima	climate
 klingelt	klingelt	rings
 klingen	klingen	to sound
 klingt	klingt	sounds
+knappes	knappes	barely a, scant
 kneipen	Kneipen	pubs
+koch	Koch	Koch (surname); cook
 kocht	kocht	cooks
 koffer	Koffer	suitcase
 kohl	Kohl	Kohl (surname); cabbage
+kohle	Kohle	coal
+kollege	Kollege	colleague
 kollegin	Kollegin	colleague (female)
+kolonien	Kolonien	colonies
+kombinate	Kombinate	combines, state-owned industrial groups of the GDR
 komme	komme	come (I come)
 kommen	kommen	come
 kommission	Kommission	commission
@@ -1273,11 +1714,14 @@ komponisten	Komponisten	composers
 kompromiss	Kompromiss	compromise
 konflikt	Konflikt	conflict
 konflikte	Konflikte	conflicts
+konkurs	Konkurs	bankruptcy
 konnte	konnte	could, was able to
 konnten	konnten	could, were able to
 konservativen	Konservativen	conservatives
 kontakt	Kontakt	contact
+kontaktloses	kontaktloses	contactless
 kontinent	Kontinent	continent
+konto	Konto	bank account
 kontrolliert	kontrolliert	controls
 konzern	Konzern	large corporation
 konzerne	Konzerne	corporations
@@ -1290,10 +1734,26 @@ korrigiert	korrigiert	corrects
 kosten	kosten	to cost; costs
 kostet	kostet	costs
 kosteten	kosteten	cost
+kostümen	Kostümen	costumes (dative plural)
+kraft	Kraft	force, power; in Kraft treten means to come into force
 kraftwerk	Kraftwerk	power station; Kraftwerk
+kraftwerke	Kraftwerke	power stations
 krank	krank	ill, sick
+kranke	Kranke	sick people, patients; sick, ill (inflected)
+krankengeld	Krankengeld	sickness benefit
+krankenhaustag	Krankenhaustag	day in hospital
+krankenhäusern	Krankenhäusern	hospitals (dative plural)
 krankenpflege	Krankenpflege	nursing
+krankenversicherung	Krankenversicherung	health insurance
+kranker	kranker	sick, ill (inflected)
+krankes	krankes	sick, ill (neuter)
+krankheit	Krankheit	illness, disease
 kratzer	Kratzer	scratches
+kredit	Kredit	credit, loan
+kreditkarte	Kreditkarte	credit card
+kreditkarten	Kreditkarten	credit cards
+kreisarzt	Kreisarzt	district medical officer
+kreislauf	Kreislauf	cycle; circulation
 kreuzberg	Kreuzberg	Kreuzberg (district)
 kreuzung	Kreuzung	crossroads, junction
 krieg	Krieg	war
@@ -1307,33 +1767,54 @@ kronen	Kronen	treetops, crowns
 kruste	Kruste	crust
 kuchen	Kuchen	cake
 kultur	Kultur	culture
+kulturhoheit	Kulturhoheit	the states' own authority over schools and culture
+kultusministerkonferenz	Kultusministerkonferenz	standing conference of the state education ministers
 kummerspeck	Kummerspeck	weight gained from comfort eating
 kunden	Kunden	customers
+kurs	Kurs	course, class; rate
+kurse	Kurse	courses, classes
 kurz	kurz	short, briefly
 kurze	kurze	short
 kurzes	kurzes	short
 kurzfristig	kurzfristig	at short notice
 kämpft	kämpft	fights, campaigns
 käse	Käse	cheese
+käufer	Käufer	buyer, buyers
+könig	König	king
 königsberg	Königsberg	Koenigsberg
 können	können	can, to be able to
 könnte	könnte	could
 könnten	könnten	could, would be able to
 körben	Körben	baskets
 körner	Körner	grains, seeds
+körpers	Körpers	of the body
 küche	Küche	kitchen
 küchen	Küchen	kitchens
+küchentisch	Küchentisch	kitchen table
 kühlschrank	Kühlschrank	fridge
 kündigen	kündigen	to cancel, to give notice
+kündigte	kündigte	terminated, gave notice on
 kündigung	Kündigung	notice, termination
+künstler	Künstler	artist, artists
+kürzte	kürzte	cut, reduced
+küste	Küste	coast
+labor	Labor	laboratory
 lachen	lachen	to laugh
 laden	Laden	shop
+ladens	Ladens	of the shop
 lage	Lage	situation
 lagen	lagen	lay
 lager	Lager	camp; warehouse
 lagern	lagern	to be stored, to lie
+lampe	Lampe	lamp
 land	Land	country; countryside
+landarzt	Landarzt	country doctor
+landes	Landes	of the country, of the state
+landesgrenze	Landesgrenze	state border
+landesregierung	Landesregierung	state government
 landet	landet	lands, ends up
+landete	landete	landed, ended up
+landsleute	Landsleute	compatriots, fellow countrymen
 lang	lang	long
 lange	lange	long, for a long time
 langen	langen	long
@@ -1342,13 +1823,18 @@ langsam	langsam	slow, slowly
 langsamkeit	Langsamkeit	slowness
 langweilig	langweilig	boring
 las	las	read
+lasen	lasen	read (past)
 lassen	lassen	to let, to have something done
 laufen	laufen	to run, to walk
+laufzeiten	Laufzeiten	operating lifetimes, running times
 laut	laut	loud
 laute	laute	loud
+lautesten	lautesten	loudest
 leben	Leben	to live; life
 lebens	Lebens	of life
+lebensläufe	Lebensläufe	life stories, CVs
 lebensmittelläden	Lebensmittelläden	grocery shops
+lebenswerk	Lebenswerk	life's work
 lebt	lebt	lives
 lebte	lebte	lived
 lediglich	lediglich	merely, only
@@ -1356,20 +1842,35 @@ leer	leer	empty
 leere	leere	empty
 leeren	leeren	empty
 leerer	leerer	emptier
+lege	lege	lay, put (I)
+legen	legen	to lay, to put
 legt	legt	puts, lays
+legten	legten	laid, put
+lehrbüchern	Lehrbüchern	textbooks (dative plural)
+lehre	Lehre	lesson; apprenticeship
+lehrer	Lehrer	teacher, teachers
+lehrlinge	Lehrlinge	apprentices
+lehrplänen	Lehrplänen	curricula (dative plural)
+lehrten	lehrten	taught
 leicht	leicht	easy; light
 leichter	leichter	easier; plain (language)
+leiht	leiht	lends; borrows
 leine	Leine	lead, leash
 leipzig	Leipzig	Leipzig
 leise	leise	quiet, quietly
 leiser	leiser	quieter
 leisten	leisten	to afford; to achieve
+leistungen	Leistungen	benefits, services; achievements
+leitete	leitete	led, headed
+leitung	Leitung	power line, cable; management
+leitungen	Leitungen	power lines, cables
 lernen	lernen	to learn
 lernende	Lernende	learners
 lernt	lernt	learns
 lese	lese	read
 lesen	lesen	to read
 leser	Leser	readers
+lesung	Lesung	reading (of a bill in parliament)
 letzte	letzte	last
 letzten	letzten	last
 leute	Leute	people
@@ -1379,22 +1880,33 @@ lichts	Lichts	of light
 lieber	lieber	rather, preferably
 liebesbegriff	Liebesbegriff	concept of love
 lied	Lied	song
+lief	lief	ran, was running
+liefen	liefen	ran, were running
 liefern	liefern	to supply, to deliver
 liefert	liefert	supplies, delivers
+lieferung	Lieferung	instalment, delivery
+liege	liege	lie, am lying (I)
 liegen	liegen	to lie, to be situated
 liegt	liegt	lies, is situated
 liest	liest	reads
 ließ	ließ	let, allowed
+ließen	ließen	let, allowed; had something done
 linien	Linien	lines
 lissabon	Lissabon	Lisbon
 liste	Liste	list
+listen	Listen	lists
 literatur	Literatur	literature
+lizenzen	Lizenzen	licences
 lockern	lockern	to loosen, to relax (rules)
 logistikunternehmen	Logistikunternehmen	logistics company
+lohn	Lohn	wage, pay
 lohns	Lohns	of the wage
 london	London	London
 los	los	off; going on
 lose	lose	loose, informal
+ludwig	Ludwig	Ludwig (first name)
+luft	Luft	air
+luther	Luther	Luther (surname)
 lächerlich	lächerlich	ridiculous
 läden	Läden	shops
 länder	Länder	countries
@@ -1409,6 +1921,7 @@ lösung	Lösung	solution
 mache	mache	make, do (I make)
 machen	machen	to make, to do
 macht	Macht	makes, does; power
+machte	machte	made, did
 machten	machten	made, did
 mag	mag	likes
 mahlzeit	Mahlzeit	meal
@@ -1418,58 +1931,83 @@ manche	manche	some
 manchen	manchen	some
 mancher	mancher	many a, some
 manchmal	manchmal	sometimes
+manifest	Manifest	manifesto
 mann	Mann	man; husband
 marburg	Marburg	Marburg
 mark	Mark	mark (former German currency)
 marken	Marken	brands
 markt	Markt	market
+marktstände	Marktstände	market stalls
 marokko	Marokko	Morocco
 martin	Martin	Martin
 maschinen	Maschinen	machines
 masse	Masse	mass
 massen	Massen	masses
+material	Material	material
 mathematik	Mathematik	mathematics
 mauer	Mauer	wall
 max	Max	Max
+maßstab	Maßstab	scale; standard
+medikamente	Medikamente	medicines, drugs
+medizin	Medizin	medicine (the subject)
 medizinisch	medizinisch	medically
+medizinstudium	Medizinstudium	medical studies
+meeresalgen	Meeresalgen	sea algae, seaweed
 mehr	mehr	more
 mehrere	mehrere	several
 mehreren	mehreren	several
 mehrerer	mehrerer	several
 mehrfach	mehrfach	repeatedly, several times
+mehrheit	Mehrheit	majority
 mehrheiten	Mehrheiten	majorities
 mehrmals	mehrmals	several times
 mehrwegflaschen	Mehrwegflaschen	returnable bottles
+meiler	Meiler	reactor, pile
 mein	mein	my
 meine	meine	my
 meinem	meinem	my
 meinen	meinen	to mean; my (dative)
+meiner	meiner	my (inflected)
 meint	meint	means
 meinung	Meinung	opinion
+meist	meist	mostly, usually
 meisten	meisten	most
 meistens	meistens	mostly, usually
 meister	Meister	master craftsman
 meisterbrief	Meisterbrief	master craftsman's certificate
+meisterin	Meisterin	master craftswoman, female master
 meldet	meldet	registers, reports
+meldeten	meldeten	reported, registered
 mensch	Mensch	person, human being
 menschen	Menschen	people
 merkel	Merkel	Merkel (surname)
 merken	merken	to notice
 merkt	merkt	notices
 messen	messen	to measure
+messing	Messing	brass
 metall	Metall	metal
 meter	Meter	metre
+methode	Methode	method
+methoden	Methoden	methods
+meyer	Meyer	Meyer (surname)
 mich	mich	me
+mies	Mies	Mies (surname); lousy, poor
 miete	Miete	rent
 mieten	Mieten	rents
 mieter	Mieter	tenants
 mietrecht	Mietrecht	tenancy law
 mietvertrag	Mietvertrag	tenancy agreement
 mietverträge	Mietverträge	tenancy agreements
+mikroskop	Mikroskop	microscope
 milch	Milch	milk
+milden	milden	lenient, mild (inflected)
 militärkapelle	Militärkapelle	military band
+milliarden	Milliarden	billions
 millionen	Millionen	millions
+milzbrand	Milzbrand	anthrax
 minderwertiges	minderwertiges	inferior
+minister	Minister	minister
+ministerien	Ministerien	ministries
 ministerin	Ministerin	minister (female)
 ministerium	Ministerium	ministry
 minute	Minute	minute
@@ -1478,6 +2016,7 @@ mir	mir	me
 mischung	Mischung	mixture
 mischungen	Mischungen	mixtures, blends
 mischwald	Mischwald	mixed forest
+missbrauchen	missbrauchen	to misuse, to abuse
 missbraucht	missbraucht	misused, abused
 misst	misst	measures
 misstraute	misstraute	distrusted
@@ -1486,6 +2025,8 @@ missverständnis	Missverständnis	misunderstanding
 missverständnisse	Missverständnisse	misunderstandings
 mit	mit	with
 mitarbeiter	Mitarbeiter	employees
+mitarbeitern	Mitarbeitern	staff, colleagues (dative plural)
+mitarbeiters	Mitarbeiters	of the member of staff
 mitbestimmung	Mitbestimmung	codetermination, worker participation
 miteigentümer	Miteigentümer	co-owners
 mitgebracht	mitgebracht	brought along
@@ -1495,14 +2036,19 @@ mitmachen	mitmachen	to join in, to take part
 mittags	mittags	at midday
 mittagspause	Mittagspause	lunch break
 mitte	Mitte	middle; Mitte (Berlin district)
+mittel	Mittel	remedy, agent; means
 mittelgroßer	mittelgroßer	medium-sized
 mittelmäßigen	mittelmäßigen	mediocre
 mitteln	Mitteln	means, resources
+mittelpunkt	Mittelpunkt	centre, focal point
 mittelstand	Mittelstand	small and medium-sized businesses
 mitten	mitten	in the middle
 mittlerem	mittlerem	medium, average
+mitversichert	mitversichert	covered by someone else's insurance
+mitzureden	mitzureden	to have a say
 modell	Modell	model
 moderne	moderne	modern
+module	Module	modules, solar panels
 moment	Moment	moment
 monat	Monat	month
 monate	Monate	months
@@ -1512,10 +2058,12 @@ monatlich	monatlich	monthly
 monatsmieten	Monatsmieten	months' rent
 monatsticket	Monatsticket	monthly ticket
 montag	Montag	Monday
+mord	Mord	murder
 morgen	Morgen	morning
 moscheen	Moscheen	mosques
 motoren	Motoren	engines, motors
 museen	Museen	museums
+museum	Museum	museum
 musik	Musik	music
 musiker	Musiker	musicians
 musiktradition	Musiktradition	musical tradition
@@ -1531,18 +2079,21 @@ mädchen	Mädchen	girl
 mähen	mähen	to mow
 männer	Männer	men
 märchen	Märchen	fairy tales
+märchensammlung	Märchensammlung	collection of fairy tales
 märkte	Märkte	markets
 möbelhäuser	Möbelhäuser	furniture stores
 möchte	möchte	would like
 möglich	möglich	possible
 möglichen	möglichen	possible
 möglichkeit	Möglichkeit	possibility, opportunity
+möglichkeiten	Möglichkeiten	possibilities, options
 mühsam	mühsam	laboriously, painstakingly
 müll	Müll	rubbish, waste
 müllabfuhr	Müllabfuhr	refuse collection
 mülleimer	Mülleimer	rubbish bin
 mülltrennung	Mülltrennung	waste separation
 münchen	München	Munich
+münzen	Münzen	coins
 müssen	müssen	must, to have to
 nach	nach	after
 nachahmungen	Nachahmungen	imitations
@@ -1550,16 +2101,21 @@ nachbarn	Nachbarn	neighbours
 nachbarschaft	Nachbarschaft	neighbourhood
 nachdem	nachdem	after
 nachdenken	Nachdenken	to think about; reflection
+nachfolgerin	Nachfolgerin	successor (female)
 nachforderung	Nachforderung	additional demand for payment
+nachgeben	nachgeben	to give in, to yield
 nachhaltigkeit	Nachhaltigkeit	sustainability
 nachhilfe	Nachhilfe	private tuition
 nachholen	nachholen	to bring over later, to catch up on
 nachmittag	Nachmittag	afternoon
 nachmittags	nachmittags	in the afternoon
+nachname	Nachname	surname
+nachrechnen	nachrechnen	to check the figures, to work out
 nachricht	Nachricht	message
 nachrichten	Nachrichten	news
 nacht	Nacht	night
 nachts	nachts	at night
+nachweis	Nachweis	proof, certificate
 nachwächst	nachwächst	grows back
 name	Name	name
 namen	Namen	name, names
@@ -1569,15 +2125,20 @@ nationalität	Nationalität	nationality
 nationalsozialisten	Nationalsozialisten	National Socialists, Nazis
 naturwissenschaften	Naturwissenschaften	natural sciences
 natürlich	natürlich	of course, naturally
+nebel	Nebel	fog, mist
 neben	neben	next to, beside
 nebenbei	nebenbei	on the side, at the same time
 nebeneinander	nebeneinander	side by side
 nebenkosten	Nebenkosten	service charges, utility costs
+nebenprodukt	Nebenprodukt	by-product
 nehme	nehme	takes, take
 nehmen	nehmen	to take
 nennen	nennen	to call, to name
 nennt	nennt	calls, names
+netz	Netz	grid, network
+netzentgelte	Netzentgelte	grid fees
 neu	neu	new
+neubearbeitung	Neubearbeitung	revision, new edition
 neue	neue	new
 neuen	neuen	new
 neuer	neuer	new
@@ -1586,17 +2147,21 @@ neun	neun	nine
 neunten	neunten	ninth
 neunundvierzig	neunundvierzig	forty-nine
 neunzehnten	neunzehnten	nineteenth
+neunzig	neunzig	ninety
 neutralen	neutralen	neutral
 new	New	New
 nicht	nicht	not
 nichts	nichts	nothing
+nichtwissen	Nichtwissen	not knowing, ignorance
 nie	nie	never
 niederlage	Niederlage	defeat
 niedrig	niedrig	low
+niedriger	niedriger	lower
 niemand	niemand	nobody
 niemandem	niemandem	nobody (dative)
 niemanden	niemanden	nobody (accusative)
 nimmt	nimmt	takes
+nirgendwo	nirgendwo	nowhere
 nobelpreis	Nobelpreis	Nobel Prize
 noch	noch	still
 norden	Norden	north
@@ -1605,16 +2170,24 @@ normale	normale	normal
 normalen	normalen	normal
 normaler	normaler	normal
 not	Not	hardship, need
+note	Note	grade, mark; note
 noten	Noten	sheet music, notes
 november	November	November
+null	null	zero
 nun	nun	now
 nur	nur	only
 nächste	nächste	next
 nächsten	nächsten	next
+nähe	Nähe	closeness, proximity
+nährböden	Nährböden	culture media, growing media
+nährstoff	Nährstoff	nutrient
+nämlich	nämlich	namely, that is; you see
 nördlich	nördlich	to the north of
 nüsse	Nüsse	nuts
+nützlich	nützlich	useful
 ob	ob	whether, if
 oben	oben	above, at the top
+obergrenze	Obergrenze	upper limit, cap
 obst	Obst	fruit
 obwohl	obwohl	although
 oder	oder	or
@@ -1630,9 +2203,11 @@ ohnehin	ohnehin	anyway, in any case
 onkel	Onkel	uncle
 online	online	online
 oper	Oper	opera
+opposition	Opposition	opposition
 optimisten	Optimisten	optimists
 orchester	Orchester	orchestra
 ordentlich	ordentlich	decently, properly
+ordneten	ordneten	arranged, sorted
 ordnung	Ordnung	order
 ordnungsamt	Ordnungsamt	public order office
 organ	Organ	body, organ
@@ -1644,9 +2219,13 @@ ort	Ort	place, town
 orte	Orte	places
 orten	Orten	places
 ortskundig	ortskundig	familiar with the area
+oskar	Oskar	Oskar (first name)
+ost	Ost	East
 ost-berlin	Ost-Berlin	East Berlin
+ostafrika	Ostafrika	East Africa
 ostdeutsche	Ostdeutsche	East German
 osten	Osten	east
+osteuropa	Osteuropa	Eastern Europe
 paar	Paar	a few; couple, pair
 palästina	Palästina	Palestine
 pandemie	Pandemie	pandemic
@@ -1657,19 +2236,25 @@ paris	Paris	Paris
 park	Park	park
 parks	Parks	parks
 parlament	Parlament	parliament
+parlaments	Parlaments	of parliament
 partei	Partei	political party
 parteien	Parteien	parties
 partys	Partys	parties, raves
 pass	Pass	passport
 passau	Passau	Passau (city)
+passen	passen	to fit, to suit
 passend	passend	matching; exact (money)
 passieren	passieren	to happen
+passt	passt	fits, suits
 patentamt	Patentamt	patent office
 pathos	Pathos	pathos, grandiosity
+patienten	Patienten	patients
+paul	Paul	Paul (first name)
 pause	Pause	break
 pausenbrot	Pausenbrot	packed snack for school
 peinlich	peinlich	embarrassing
 pendler	Pendler	commuters
+perfekt	perfekt	perfect
 person	Person	person
 personen	Personen	people, persons
 persönlich	persönlich	personally
@@ -1678,12 +2263,14 @@ pfand	Pfand	deposit on bottles
 pfarrer	Pfarrer	pastor, vicar
 pflegeheimen	Pflegeheimen	care homes
 pflegekräfte	Pflegekräfte	care workers
+pflicht	Pflicht	duty, obligation
 philosophische	philosophische	philosophical
 physik	Physik	physics
 physikerin	Physikerin	physicist (female)
 physisches	physisches	physical
 pilze	Pilze	mushrooms
 plan	Plan	plan
+planen	planen	to plan
 plant	plant	plans
 planung	Planung	planning
 plastik	Plastik	plastic
@@ -1696,8 +2283,13 @@ plötzlich	plötzlich	suddenly
 politik	Politik	politics
 politiker	Politiker	politician
 politisch	politisch	politically
+politische	politische	political
+politischen	politischen	political (inflected)
 polizei	Polizei	police
+pool	Pool	pool
+portemonnaie	Portemonnaie	purse, wallet
 portugal	Portugal	Portugal
+posen	Posen	Posen, now Poznan
 posten	Posten	items, posts
 prag	Prag	Prague
 praktisch	praktisch	practical, practically
@@ -1712,35 +2304,54 @@ prinzip	Prinzip	principle
 privat	privat	privately
 private	private	private
 privaten	privaten	private
+privatleuten	Privatleuten	private individuals (dative plural)
 privatreisen	Privatreisen	private travel
 pro	pro	per
 probezeit	Probezeit	probationary period
 probiert	probiert	tried, tasted
 problem	Problem	problem
 produkt	Produkt	product
+produkte	Produkte	products
 produkts	Produkts	of the product
 produzieren	produzieren	to produce
 produziert	produziert	produces; produced
+professor	Professor	professor
+professoren	Professoren	professors
 profiklubs	Profiklubs	professional clubs
 profitieren	profitieren	to benefit
+prognose	Prognose	forecast, prediction
 programm	Programm	programme; software
 programme	Programme	programmes
+projekt	Projekt	project
+projekte	Projekte	projects
 promovierte	promovierte	did a doctorate
 propaganda	Propaganda	propaganda
+protestierten	protestierten	protested
 protokoll	Protokoll	record, handover report
+protokolle	Protokolle	minutes, records
+provinz	Provinz	province
 prozent	Prozent	per cent
+prozente	Prozente	percentages, percentage points
 prozess	Prozess	trial; process
+prozesse	Prozesse	trials; processes
 prunk	Prunk	pomp, ostentation
+prägen	prägen	to shape, to leave a mark on; to mint
 prägt	prägt	shapes, characterises
 prägte	prägte	shaped, coined
 prägten	prägten	shaped, coined
+präsident	Präsident	president
 präsidenten	Präsidenten	president
 prüfen	prüfen	to check, to examine
 prüft	prüft	examines, checks
 prüfung	Prüfung	examination
+prüfungen	Prüfungen	examinations
 publikum	Publikum	audience
 pullover	Pullover	jumper, sweater
+pult	Pult	desk, lectern
 punkt	Punkt	point
+putzt	putzt	cleans, polishes
+quellen	Quellen	sources; springs
+quittungen	Quittungen	receipts
 quote	Quote	ratings, quota
 rad	Rad	bicycle; wheel
 radikal	radikal	radically
@@ -1754,11 +2365,15 @@ raten	Raten	instalments
 rauch	Rauch	smoke
 raum	Raum	space, room
 reagieren	reagieren	to react
+recherchiert	recherchiert	researches, looks up
 rechnen	rechnen	to calculate; to expect
 rechnerei	Rechnerei	tedious calculating
 rechnern	Rechnern	computers
+rechnet	rechnet	calculates, works out
+rechneten	rechneten	calculated
 rechnung	Rechnung	bill, invoice
-recht	Recht	law, right
+rechnungen	Rechnungen	bills, invoices
+recht	Recht	law, right; quite, really
 rechte	Rechte	rights
 rechtlich	rechtlich	legally
 rechtsform	Rechtsform	legal form
@@ -1766,23 +2381,34 @@ reden	Reden	to talk; speeches
 redet	redet	talks
 redete	redete	talked
 reformiert	reformiert	reformed
+regal	Regal	shelf, bookcase
+regalen	Regalen	shelves (dative plural)
 regel	Regel	rule
 regelmäßig	regelmäßig	regularly
 regeln	Regeln	rules
+regen	Regen	rain
 regiert	regiert	governs
 regierung	Regierung	government
 region	Region	region
 regionale	regionale	regional
 regionalzug	Regionalzug	regional train
 regionalzügen	Regionalzügen	regional trains
+regionen	Regionen	regions
 regnet	regnet	rains
+reich	reich	rich, wealthy
+reichen	reichen	to be enough; to hand, to pass
 reicht	reicht	is enough
+reihe	Reihe	row, series; an die Reihe kommen means to get one's turn
 reihen	Reihen	rows
+reihenfolge	Reihenfolge	order, sequence
 reihenweise	reihenweise	in rows, by the dozen
+reinigen	reinigen	to clean
 reinigung	Reinigung	cleaning
 reise	Reise	journey, trip
 reisebüros	Reisebüros	travel agencies
 reisen	Reisen	travel, journeys
+reiste	reiste	travelled
+reisten	reisten	travelled (plural)
 relativitätstheorie	Relativitätstheorie	theory of relativity
 rendite	Rendite	return on investment
 rente	Rente	pension, retirement
@@ -1792,6 +2418,7 @@ rest	Rest	rest, remainder
 restaurants	Restaurants	restaurants
 reste	Reste	remnants, traces
 restmüll	Restmüll	residual waste
+retten	retten	to save, to rescue
 rettung	Rettung	rescue, saving
 rhythmus	Rhythmus	rhythm
 richtig	richtig	right, properly
@@ -1802,13 +2429,18 @@ riecht	riecht	smells
 riesige	riesige	huge
 riet	riet	advised
 risiken	Risiken	risks
+ritual	Ritual	ritual
+robert	Robert	Robert (first name)
 roggen	Roggen	rye
+rohe	Rohe	Rohe, part of the surname Mies van der Rohe
 rohstoff	Rohstoff	raw material
+rohwedder	Rohwedder	Rohwedder (surname)
 rolle	Rolle	role
 romantik	Romantik	Romanticism
 romantische	romantische	romantic
 rote	rote	red
 roter	roter	red
+ruf	Ruf	reputation; call
 rufen	rufen	to call, to shout
 ruft	ruft	calls, shouts
 ruhe	Ruhe	quiet, peace
@@ -1822,25 +2454,33 @@ rundfunk	Rundfunk	broadcasting
 russisch	Russisch	Russian
 räume	Räume	rooms
 rücken	Rücken	back
+rückentraining	Rückentraining	back exercise class
+saal	Saal	hall, auditorium
 sabine	Sabine	Sabine (first name)
 sache	Sache	thing, matter
 sachsen	Sachsen	Saxony
+sachverständige	Sachverständige	experts, expert witnesses
 sagen	sagen	to say
 sagt	sagt	says
 sah	sah	saw
 salz	Salz	salt
 sammeln	sammeln	to collect
 sammelte	sammelte	collected, gathered
+sammelten	sammelten	collected, gathered
 samstag	Samstag	Saturday
 samstagabend	Samstagabend	Saturday evening
 samstagvormittag	Samstagvormittag	Saturday morning
 sand	Sand	sand
 sang	sang	sang
+sanieren	sanieren	to restructure, to turn around; to renovate
+saniert	saniert	restructured, renovated
 satz	Satz	sentence
 satzung	Satzung	constitution, statutes
 satzungen	Satzungen	constitutions, statutes
 sauerland	Sauerland	the Sauerland
 sauerteig	Sauerteig	sourdough
+saß	saß	sat
+saßen	saßen	sat (plural)
 schabowski	Schabowski	Schabowski (surname)
 schadenfreude	Schadenfreude	pleasure at another's misfortune
 schadholz	Schadholz	damaged timber
@@ -1850,33 +2490,52 @@ schande	Schande	disgrace
 scharf	scharf	sharply
 schattenseite	Schattenseite	downside
 schauen	schauen	to look
+schaut	schaut	looks
+schaute	schaute	looked
 scheibe	Scheibe	slice
+schein	Schein	banknote; appearance
+scheine	Scheine	banknotes
+scheinen	Scheinen	banknotes (dative plural)
+scheitern	scheitern	to fail, to come to nothing
+scheitert	scheitert	fails
 schicht	Schicht	layer; shift
 schichten	Schichten	shifts; layers
+schicke	schicke	send (I)
+schicksal	Schicksal	fate, destiny
 schickte	schickte	sent
+schickten	schickten	sent
 schief	schief	wrong, askew
 schiefgeht	schiefgeht	goes wrong
 schien	schien	seemed
 schiene	Schiene	rail, track
 schießen	Schießen	to shoot
 schild	Schild	sign
+schilder	Schilder	signs
 schlangen	Schlangen	queues; snakes
 schlecht	schlecht	bad, badly
 schlechten	schlechten	bad
 schlechter	schlechter	worse
 schlechtes	schlechtes	bad
+schlemmer	Schlemmer	Schlemmer (surname)
 schlicht	schlicht	simply, plainly
+schlichte	schlichte	plain, simple
 schließe	schließe	lock (I lock)
 schließlich	schließlich	finally, after all
 schließt	schließt	closes
 schlimmsten	schlimmsten	worst
+schlossen	schlossen	closed, shut down
+schlussstein	Schlussstein	keystone, final piece
 schlägt	schlägt	hits; gets by
 schlüssel	Schlüssel	keys
 schmerz	Schmerz	pain
+schmuck	Schmuck	ornament, decoration; jewellery
 schmutzig	schmutzig	dirty
 schnell	schnell	fast, quickly
 schnelle	schnelle	fast
+schnellen	schnellen	fast, quick (inflected)
 schneller	schneller	faster
+schnelles	schnelles	fast, quick (neuter)
+schnitt	Schnitt	cut; im Schnitt means on average
 schon	schon	already
 schrank	Schrank	cupboard, wardrobe
 schranke	Schranke	barrier
@@ -1885,20 +2544,32 @@ schreiben	schreiben	to write
 schreibt	schreibt	writes
 schreibtisch	Schreibtisch	desk
 schrieb	schrieb	wrote
+schrieben	schrieben	wrote
+schriftlich	schriftlich	in writing
 schriftsteller	Schriftsteller	writer
+schriftzug	Schriftzug	lettering, wordmark
 schrippe	Schrippe	bread roll (Berlin word)
+schritt	Schritt	step
 schuhe	Schuhe	shoes
+schuld	Schuld	guilt, blame; debt
 schulden	Schulden	debts
 schule	Schule	school
 schulen	Schulen	schools
 schulformen	Schulformen	types of school
+schulgebäude	Schulgebäude	school buildings
 schulhof	Schulhof	schoolyard
+schuljahren	Schuljahren	school years (dative plural)
+schulklassen	Schulklassen	school classes
+schulpolitik	Schulpolitik	education policy
+schulsystem	Schulsystem	school system
+schwacher	schwacher	weak (inflected)
 schwarzen	schwarzen	black
 schweiz	Schweiz	Switzerland
 schweizer	Schweizer	Swiss
 schwer	schwer	difficult; heavy
 schwere	schwere	difficult, hard
 schwerer	schwerer	harder, more difficult
+schwerfällig	schwerfällig	cumbersome, ponderous
 schwerfälligkeit	Schwerfälligkeit	ponderousness, sluggishness
 schwierig	schwierig	difficult
 schwimmbad	Schwimmbad	swimming pool
@@ -1918,6 +2589,8 @@ sechsmal	sechsmal	six times
 sechsundzwanzig	sechsundzwanzig	twenty-six
 sechzehn	sechzehn	sixteen
 see	See	lake
+segen	Segen	blessing
+sehe	sehe	see (I)
 sehen	sehen	to see
 sehnsuchtsort	Sehnsuchtsort	place of longing
 sehr	sehr	very
@@ -1931,6 +2604,7 @@ seiner	seiner	his, its
 seines	seines	of his
 seit	seit	since, for
 seitdem	seitdem	since then
+seite	Seite	side; page
 seiten	Seiten	sides; pages
 sektflaschen	Sektflaschen	sparkling wine bottles
 selben	selben	same
@@ -1940,6 +2614,7 @@ selbstständig	selbstständig	self-employed
 selbstständiger	selbstständiger	independent
 selbstverständlich	selbstverständlich	as a matter of course
 selbstverständliche	Selbstverständliche	the taken-for-granted
+selbständige	Selbständige	self-employed people
 selten	selten	rarely
 seltener	seltener	less often, rarer
 seltsam	seltsam	strange
@@ -1948,13 +2623,17 @@ semmel	Semmel	bread roll (southern German word)
 sender	Sender	broadcasters, channels
 sendungen	Sendungen	programmes, broadcasts
 senken	senken	to lower, to reduce
+serie	Serie	series; in Serie means mass-produced
 setzen	setzen	to sit down, to put
+setzte	setzte	put, set
 sich	sich	himself, herself, themselves
+sicher	sicher	certain, safe; certainly
 sichern	sichern	to ensure, to secure
 sicht	Sicht	view, perspective
 sichtbar	sichtbar	visible
 sie	sie	she; they; you (formal)
 sieben	sieben	seven
+siebten	siebten	seventh
 siebzig	siebzig	seventy
 sieht	sieht	sees; looks
 silbe	Silbe	syllable
@@ -1967,12 +2646,15 @@ sinnvoller	sinnvoller	more sensible
 situation	Situation	situation
 sitzen	sitzen	to sit
 sitzt	sitzt	sits
+sitzungen	Sitzungen	sessions, meetings
+skandal	Skandal	scandal
 so	so	so, like this
 sobald	sobald	as soon as
 sodass	sodass	so that
 sofort	sofort	immediately
 software	Software	software
 sogar	sogar	even
+sohnes	Sohnes	of the son
 solange	solange	as long as
 solche	solche	such
 solchen	solchen	such
@@ -1987,32 +2669,40 @@ sommer	Sommer	summer
 sommern	Sommern	summers
 sondern	sondern	but rather
 sonderzug	Sonderzug	special train
+sonne	Sonne	sun
 sonnenfinsternis	Sonnenfinsternis	solar eclipse
 sonntag	Sonntag	Sunday
+sonntagen	Sonntagen	Sundays (dative plural)
 sonntagmorgen	Sonntagmorgen	Sunday morning
 sonntagnachmittag	Sonntagnachmittag	Sunday afternoon
 sonst	sonst	otherwise; else
 sorgen	Sorgen	worries; to take care
 sorgt	sorgt	ensures, sees to it
+sorgte	sorgte	saw to it, made sure; cared
 sowieso	sowieso	anyway
+spalten	Spalten	columns (of print); to split
 spanien	Spanien	Spain
 spannend	spannend	exciting
 spannendsten	spannendsten	most exciting
 sparten	sparten	saved
 spazieren	spazieren	to stroll, to walk
 spaß	Spaß	fun
+speicher	Speicher	storage, store
 speichern	speichern	to store, to save
 sperrmüll	Sperrmüll	bulky waste
+spezialisiert	spezialisiert	specialised
 spielen	Spielen	to play; playing
 spielplätze	Spielplätze	playgrounds
 spielt	spielt	plays
 spielzeug	Spielzeug	toy
 spontan	spontan	spontaneous
+sporen	Sporen	spores
 sport	Sport	sport
 sportarten	Sportarten	sports, disciplines
 sporthalle	Sporthalle	sports hall
 sports	Sports	of sport
 sportverbände	Sportverbände	sports associations
+sportvereine	Sportvereine	sports clubs
 sprach	sprach	spoke
 sprache	Sprache	language
 sprachen	Sprachen	languages
@@ -2022,53 +2712,75 @@ spreche	spreche	speak (I speak)
 sprechen	sprechen	talk
 sprecherin	Sprecherin	spokeswoman
 spricht	spricht	speaks
+springt	springt	jumps; springt ein means steps in
 spät	spät	late
 späten	späten	late
 später	später	later
 spätere	spätere	later
+späteren	späteren	later (inflected)
 spätestens	spätestens	at the latest
 spürt	spürt	feels, senses
 staat	Staat	state
+staaten	Staaten	states
 staatenlos	staatenlos	stateless
 staatsangehörigkeit	Staatsangehörigkeit	citizenship, nationality
 staatsangehörigkeitsrecht	Staatsangehörigkeitsrecht	citizenship law
 stadt	Stadt	city
 stadtgrenze	Stadtgrenze	city boundary
 stahl	Stahl	steel
+stahlrohr	Stahlrohr	steel tube
+stammen	stammen	to come from, to originate
 stammt	stammt	comes from, originates
 stand	stand	stood
+standards	Standards	standards
 standen	standen	stood
+stapelten	stapelten	piled up
+starb	starb	died
+starben	starben	died (plural)
 stark	stark	strong, strongly
 starken	starken	strong
 starker	starker	strong
 starre	starre	rigid, fixed
 station	Station	station, stop
 stationen	Stationen	stations, stops
+statistiken	Statistiken	statistics
 statt	statt	instead of
 stattdessen	stattdessen	instead
 stattfanden	stattfanden	took place
 stattfindet	stattfindet	takes place
 steckt	steckt	is, lies; sticks
+steckte	steckte	was in, sat in; put
 stehe	stehe	stand (I stand)
-stehen	stehen	to stand
+stehen	stehen	to stand; to be located; to say (of a text)
 steht	steht	stands
 steige	steige	get on (I get on)
 steigt	steigt	rises; gets on
+stein	Stein	stone
+steine	Steine	stones
 stelle	Stelle	position, job; place
 stellen	Stellen	to put; positions, jobs
 stellt	stellt	puts; introduces
 stellte	stellte	put, placed
+stellten	stellten	put, placed; posed
+stellung	Stellung	position; Stellung nehmen means to comment
 steuer	Steuer	tax
+steuern	Steuern	taxes; to steer
+stichwort	Stichwort	headword, entry; keyword
 stieg	stieg	climbed, got out
+stiegen	stiegen	rose, climbed
 stift	Stift	pen
 stil	Stil	style
 still	still	quiet, still
 stille	stille	quiet
 stillsteht	stillsteht	comes to a standstill
 stimme	Stimme	voice; vote
+stimmen	stimmen	to vote; to be right; voices
 stimmt	stimmt	is true, is correct
 stimmung	Stimmung	mood
 stirbt	stirbt	dies
+stoff	Stoff	substance, material; fabric
+stoffe	Stoffe	fabrics, materials
+stolpersteine	Stolpersteine	Stolpersteine, brass memorial stones set in the pavement
 stolz	Stolz	pride; proud
 strafbar	strafbar	punishable, a criminal offence
 straße	Straße	street
@@ -2087,31 +2799,50 @@ strenge	Strenge	rigour, strictness
 strich	strich	struck out, deleted
 stritt	stritt	argued, quarrelled
 stritten	stritten	argued, quarrelled
+strom	Strom	electricity; current
+stromrechnung	Stromrechnung	electricity bill
 stroms	Stroms	of the electricity
+stromversorgung	Stromversorgung	electricity supply
 struktur	Struktur	structure
 student	Student	student
 studenten	Studenten	students
 studiengebühren	Studiengebühren	tuition fees
+studiengänge	Studiengänge	degree courses
+studienplätze	Studienplätze	university places
 studieren	studieren	to study
 studiert	studiert	studies
+studierte	studierte	studied
 studium	Studium	degree course, studies
+stuhl	Stuhl	chair
+stumpf	stumpf	dull, matt
 stunde	Stunde	hour
 stunden	Stunden	hours
 stundenlang	stundenlang	for hours
 sturm	Sturm	storm
+stäbchenförmigen	stäbchenförmigen	rod-shaped (inflected)
 städte	Städte	cities
 städten	Städten	cities
 stämme	Stämme	trunks
 stämmen	Stämmen	trunks (dative)
+stärke	Stärke	strength; starch
+stärker	stärker	more strongly, stronger
+stölzl	Stölzl	Stölzl (surname)
 störten	störten	bothered, disturbed
 stück	Stück	piece, work
+stücke	Stücke	pieces
+stühle	Stühle	chairs
+suchen	suchen	to look for, to search
 sucht	sucht	looks for, searches
 suchten	suchten	looked for
 summe	Summe	sum, amount
 supermarkt	Supermarkt	supermarket
 supermärkte	Supermärkte	supermarkets
+symbolische	symbolische	symbolic, token
 sympathisch	sympathisch	likeable
 system	System	system
+systematisch	systematisch	systematically
+systeme	Systeme	systems
+systems	Systems	of the system
 szene	Szene	scene
 säcke	Säcke	sacks, bags
 sägen	sägen	to saw
@@ -2124,29 +2855,42 @@ tagelang	tagelang	for days
 tagen	Tagen	days
 tankstellen	Tankstellen	petrol stations
 tanz	Tanz	dance
+tapeten	Tapeten	wallpapers
 tatsächlich	tatsächlich	actually, in fact
 tausend	tausend	thousand
 tausende	Tausende	thousands
+technik	Technik	technology; technique
+technisch	technisch	technical
 techno	Techno	techno
 teiglinge	Teiglinge	part-baked dough pieces
 teil	Teil	part
 teilchen	Teilchen	particles
 teilen	teilen	to share, to divide
 teilt	teilt	divides
+teilung	Teilung	division, partition
+telefonfabrik	Telefonfabrik	telephone factory
 telefoniert	telefoniert	is on the phone
 templin	Templin	Templin (town)
+tempo	Tempo	speed, pace
 termine	Termine	appointments
+termins	Termins	of the appointment
+test	Test	test
 teuer	teuer	expensive
 teuerste	teuerste	most expensive
 text	Text	text
 texte	Texte	texts
+texten	Texten	texts (dative plural)
+theater	Theater	theatre
 theke	Theke	counter
 thema	Thema	topic, subject
 theoretisch	theoretisch	theoretically
 theorie	Theorie	theory
 ticket	Ticket	ticket
+tief	tief	deep, deeply
+tier	Tier	animal
 tiere	Tiere	animals
 tisch	Tisch	table
+tischlampe	Tischlampe	table lamp
 tischtennisverein	Tischtennisverein	table tennis club
 tochter	Tochter	daughter
 tod	Tod	death
@@ -2162,22 +2906,34 @@ toter	toter	dead
 touristen	Touristen	tourists
 tradition	Tradition	tradition
 traf	traf	met; struck
+trafen	trafen	met
 tragen	tragen	to carry, to wear
 trainer	Trainer	coach
 traktoren	Traktoren	tractors
+transport	Transport	transport
+trassen	Trassen	routes, power line corridors
 traurigkeit	Traurigkeit	sadness
 treffe	treffe	meet
 treffen	treffen	to meet
+trennen	trennen	to separate, to sort
 trennt	trennt	separates
 treppenhaus	Treppenhaus	stairwell
 treppenhauses	Treppenhauses	of the stairwell
+tresen	Tresen	counter, bar
+treten	treten	to step, to tread
+treuhand	Treuhand	the Treuhand, the agency that sold off GDR industry
+treuhandanstalt	Treuhandanstalt	Treuhandanstalt, the agency that sold off GDR industry
+treuhandbetrieben	Treuhandbetrieben	Treuhand-owned companies (dative plural)
 trieb	trieb	drove, pushed
 trifft	trifft	meets; makes (a decision)
+trinkgeld	Trinkgeld	tip, gratuity
 tritt	tritt	steps; joins
 trockenen	trockenen	dry
 trotzdem	trotzdem	nevertheless
 trägt	trägt	carries, bears, wears
 trümmern	Trümmern	rubble, ruins
+tuberkulin	Tuberkulin	tuberculin
+tuberkulose	Tuberkulose	tuberculosis
 tugend	Tugend	virtue
 tun	tun	to do
 tunesien	Tunesien	Tunisia
@@ -2187,7 +2943,9 @@ tut	tut	does
 tyrannei	Tyrannei	tyranny
 tätigkeit	Tätigkeit	activity, occupation
 töne	Töne	notes, tones
+tötete	tötete	killed
 tür	Tür	door
+türen	Türen	doors
 türkei	Türkei	Turkey
 tüten	Tüten	bags
 u-bahn	U-Bahn	subway
@@ -2195,14 +2953,23 @@ uhr	Uhr	clock; o'clock
 ulm	Ulm	Ulm (city)
 um	um	at; around; in order to
 umarmen	umarmen	to hug
+umbau	Umbau	conversion, rebuilding
 umbrüche	Umbrüche	upheavals
+umfang	Umfang	extent, size, scope
 umfangreichen	umfangreichen	extensive, substantial
+umfragen	Umfragen	surveys, polls
 umgekehrt	umgekehrt	the other way round, conversely
 umgelegt	umgelegt	passed on, apportioned
+umgetauscht	umgetauscht	exchanged, converted
 umkleide	Umkleide	changing room
+umlage	Umlage	levy, surcharge
 umlegen	umlegen	to knock down; to pass on
 umsatz	Umsatz	turnover, revenue
+umschläge	Umschläge	envelopes
+umschulung	Umschulung	retraining
+umsetzen	umsetzen	to implement, to put into practice
 umsteigen	Umsteigen	to change trains
+umstellung	Umstellung	adjustment, change
 umständen	Umständen	circumstances
 umständlich	umständlich	awkwardly, in a roundabout way
 umweg	Umweg	detour
@@ -2210,11 +2977,16 @@ umweltbewegung	Umweltbewegung	environmental movement
 umweltverbände	Umweltverbände	environmental associations
 umziehen	umziehen	to move house
 umzieht	umzieht	moves house
+umzug	Umzug	move, relocation
+umzugskarton	Umzugskarton	moving box
 unabhängig	unabhängig	independent, regardless
 unabhängige	unabhängige	independent
 unangenehm	unangenehm	unpleasant, awkward
 unangenehme	unangenehme	unpleasant
+unauffällig	unauffällig	inconspicuously, quietly
+unbekannten	unbekannten	unknown (inflected)
 unbequem	unbequem	uncomfortable, inconvenient
+unbezahlbar	unbezahlbar	unaffordable; priceless
 unbezahlt	unbezahlt	unpaid
 und	und	and
 unerhört	unerhört	outrageous, unheard of
@@ -2230,26 +3002,38 @@ ungewöhnlich	ungewöhnlich	unusually
 ungewöhnliche	ungewöhnliche	unusual
 ungeübte	ungeübte	untrained, inexperienced
 unglück	Unglück	misfortune
+ungünstigen	ungünstigen	unfavourable (inflected)
 unhöflich	unhöflich	impolite
 universität	Universität	university
+universitäten	Universitäten	universities
 unordentlich	unordentlich	untidy
 unpraktisch	unpraktisch	impractical
+unrecht	unrecht	wrong; injustice
 uns	uns	us
 unseriös	unseriös	untrustworthy, disreputable
 unten	unten	below, at the bottom
 unter	unter	under, among
+unterbrechung	Unterbrechung	interruption, break
 untergebracht	untergebracht	housed, accommodated
 unterhaltung	Unterhaltung	entertainment; conversation
+unterhielten	unterhielten	maintained, ran; entertained
 unterholz	Unterholz	undergrowth
 unterlagen	Unterlagen	documents
 unternehmen	Unternehmen	company; to undertake
 unterricht	Unterricht	lessons, teaching
+unterrichtet	unterrichtet	taught; informed
+unterrichteten	unterrichteten	taught
 unterscheiden	unterscheiden	to distinguish, to differ
+unterschied	Unterschied	difference
+unterschiedlich	unterschiedlich	different, varying
 unterschreibe	unterschreibe	sign
+unterschreiben	unterschreiben	to sign
 unterschreibt	unterschreibt	signs
 unterschrieb	unterschrieb	signed
+unterschrift	Unterschrift	signature
 unterschätzt	unterschätzt	underestimates
 untersucht	untersucht	examined
+untersuchte	untersuchte	examined, investigated
 untersuchungen	Untersuchungen	studies, investigations
 unterwegs	unterwegs	out and about, on the move
 unverzüglich	unverzüglich	without delay
@@ -2258,34 +3042,52 @@ unwirksame	unwirksame	invalid
 unübersichtlich	unübersichtlich	confused, hard to survey
 urlaub	Urlaub	holiday
 urlaubstage	Urlaubstage	days of paid leave
+ursache	Ursache	cause
 ursprung	Ursprung	origin
 ursprünge	Ursprünge	origins
 ursprünglich	ursprünglich	originally
+urteile	Urteile	judgements, verdicts
 usa	USA	USA
+van	van	van, part of the surname Mies van der Rohe
 vater	Vater	father
 ventile	Ventile	valves
 verabredet	verabredet	arranges to meet
 verantwortung	Verantwortung	responsibility
 verbessern	Verbessern	to improve; improving
 verbesserten	verbesserten	improved
+verbeugt	verbeugt	bows
 verbindung	Verbindung	connection
 verboten	verboten	banned, forbidden
+verbrachte	verbrachte	spent (of time)
 verbrannt	verbrannt	burned
+verbrauchs	Verbrauchs	of consumption
 verbrechen	Verbrechen	crimes
+verbreitet	verbreitet	widespread; spreads
+verbreitete	verbreitete	widespread (inflected)
 verbund	Verbund	transport association
 verbände	Verbände	associations
 verdeckt	verdeckt	obscures, conceals
+verdiene	verdiene	earn (I)
 verdient	verdient	earns
+verdiente	verdiente	earned
+verdächtig	verdächtig	suspicious
 verein	Verein	club, association
 vereine	Vereine	clubs, associations
 vereinen	Vereinen	clubs (dative)
 vereinnahmt	vereinnahmt	appropriated, co-opted
 vereinzelte	vereinzelte	isolated, atomised
+vererbt	vererbt	passed on, inherited
 verfahren	Verfahren	procedure, process
+verfassung	Verfassung	constitution
 verfassungsgericht	Verfassungsgericht	constitutional court
+verfassungsväter	Verfassungsväter	the framers of the constitution
 verfolgt	verfolgt	pursues, follows
+verfolgung	Verfolgung	persecution
+vergeben	vergeben	to award, to allocate; to forgive
+vergesse	vergesse	forget (I)
 vergessen	vergessen	to forget; forgotten
 vergessenen	vergessenen	forgotten
+verglichen	verglichen	compared
 vergütung	Vergütung	pay, training allowance
 verhaftet	verhaftet	arrested
 verhalten	Verhalten	behaviour; to behave
@@ -2298,22 +3100,31 @@ verhält	verhält	behaves
 verhältnis	Verhältnis	relationship, ratio
 verhörte	verhörte	interrogated
 verjüngt	verjüngt	regenerates, rejuvenates
+verkauf	Verkauf	sale
 verkaufen	Verkaufen	to sell; selling
 verkaufsoffenen	verkaufsoffenen	with shops permitted to open
 verkauft	verkauft	sells
 verkaufte	verkaufte	sold
+verkauften	verkauften	sold
 verkehrsbetriebe	Verkehrsbetriebe	transport operators
 verkehrsunternehmen	Verkehrsunternehmen	transport companies
 verkäuferin	Verkäuferin	shop assistant (female)
 verlangen	verlangen	to demand
 verlangt	verlangt	demands, requires
 verlassen	verlassen	to leave
+verleger	Verleger	publisher, publishers
+verlegt	verlegt	laid, installed; postponed
+verlegung	Verlegung	laying, installation
 verlieren	verlieren	to lose
+verloren	verloren	lost
 verlust	Verlust	loss
+verlängert	verlängert	extended
 verlässt	verlässt	leaves
+vermeidet	vermeidet	avoids
 vermieten	Vermieten	to let, to rent out
 vermieter	Vermieter	landlord
 vermieterin	Vermieterin	landlady
+vermittlungsausschuss	Vermittlungsausschuss	mediation committee
 vermuten	vermuten	to suspect, to assume
 vermutlich	vermutlich	probably
 vermögen	Vermögen	assets, wealth
@@ -2324,28 +3135,43 @@ verpackungen	Verpackungen	packaging
 verpackungsmülls	Verpackungsmülls	of packaging waste
 versammeln	versammeln	to assemble, to gather
 versammlung	Versammlung	assembly, meeting
+verschieben	verschieben	to postpone, to put off
+verschieden	verschieden	different
 verschiedene	verschiedene	different, various
 verschiedenen	verschiedenen	different
 verschlimmbessern	Verschlimmbessern	to make worse by trying to improve
+verschoben	verschoben	shifted, postponed
 verschwand	verschwand	disappeared
 verschwinden	verschwinden	to disappear
 verschwindet	verschwindet	disappears
+verschwunden	verschwunden	disappeared, gone
+verschätzen	verschätzen	to misjudge, to get an estimate wrong
+versehen	Versehen	oversight, slip
+versichert	versichert	insured
 versicherung	Versicherung	insurance
 versprechen	Versprechen	promise
+versprochen	versprochen	promised
 verstand	verstand	understood
 verstanden	verstanden	understood
 verstehe	verstehe	understand
 verstehen	verstehen	to understand
 versteht	versteht	understands
 verständigte	verständigte	communicated, made oneself understood
+verstößt	verstößt	violates, breaks (a rule)
+versuche	Versuche	experiments; attempts
 versuchte	versuchte	tried
+verteidiger	Verteidiger	defenders
 verteidigt	verteidigt	defends
 verteidigungslinie	Verteidigungslinie	line of defence
 verteilen	verteilen	to distribute, to reallocate
+verteilt	verteilt	distributed, spread
+verteilten	verteilten	distributed, spread out
 vertrag	Vertrag	contract
 vertrieben	vertrieben	driven out, expelled
 verträgt	verträgt	tolerates
+verunreinigtes	verunreinigtes	contaminated
 verwaltung	Verwaltung	administration
+verweigert	verweigert	refused, withheld
 verweisen	verweisen	to refer, to point
 verweist	verweist	refers, points
 verwenden	verwenden	to use
@@ -2358,6 +3184,7 @@ veröffentlicht	veröffentlicht	publishes
 viel	viel	much, a lot
 viele	viele	many
 vielen	vielen	many
+vieler	vieler	of many
 vieles	vieles	much, a lot
 vielleicht	vielleicht	perhaps
 vier	vier	four
@@ -2365,7 +3192,9 @@ vierte	vierte	fourth
 viertel	Viertel	neighbourhood
 vierteln	Vierteln	districts, neighbourhoods
 vierzehn	vierzehn	fourteen
+virus	Virus	virus
 volk	Volk	people, nation
+volksvermögen	Volksvermögen	national wealth, publicly owned assets
 voll	voll	full
 vollen	vollen	full
 voller	voller	full of
@@ -2374,25 +3203,36 @@ vollständig	vollständig	completely, entirely
 vollständige	vollständige	complete
 vom	vom	from the
 von	von	from, of
+voneinander	voneinander	from one another
 vor	vor	in front of
+voraus	Voraus	im Voraus means in advance
 voraussetzung	Voraussetzung	precondition
 vorbei	vorbei	over, past
 vorbereitet	vorbereitet	prepared
 vorgang	Vorgang	process, procedure
+vorgelesen	vorgelesen	read aloud
 vorgesetzten	Vorgesetzten	superiors
+vorgestellt	vorgestellt	presented, introduced
 vorgeworfen	vorgeworfen	held against, reproached
+vorgänge	Vorgänge	transactions, individual operations
+vorhaben	Vorhaben	plans, projects
 vorhandenes	vorhandenes	existing
 vorher	vorher	beforehand
 vorhergesagt	vorhergesagt	predicted
+vorkurs	Vorkurs	preliminary course, foundation course
 vorliegt	vorliegt	is available, has been submitted
 vormittag	Vormittag	morning
 vorn	vorn	at the front
 vorne	vorne	at the front
+vorrede	Vorrede	preface, foreword
 vorschlag	Vorschlag	proposal
+vorschreiben	vorschreiben	to prescribe, to lay down
 vorschriften	Vorschriften	regulations
 vorschuss	Vorschuss	advance payment
 vorsitz	Vorsitz	chairmanship
+vorsitzende	Vorsitzende	chairwoman, chair
 vorstand	Vorstand	board, executive committee
+vorstellte	vorstellte	presented, introduced
 vorteil	Vorteil	advantage
 vortrag	Vortrag	talk, lecture
 vorzeitig	vorzeitig	early, prematurely
@@ -2405,6 +3245,9 @@ wald	Wald	forest
 waldbesitzer	Waldbesitzer	forest owners
 waldrand	Waldrand	edge of the forest
 waldsterben	Waldsterben	dying of the forests
+walter	Walter	Walter (first name)
+wand	Wand	wall
+wandern	wandern	to hike; to travel, to move
 wandert	wandert	hikes
 wann	wann	when
 war	war	was
@@ -2414,6 +3257,7 @@ warmmiete	Warmmiete	total rent including bills
 warnhinweis	Warnhinweis	warning notice
 warnt	warnt	warns
 warnung	Warnung	warning
+warte	warte	wait (I)
 warteliste	Warteliste	waiting list
 warten	warten	to wait
 wartet	wartet	waits
@@ -2422,52 +3266,75 @@ warum	warum	why
 was	was	what
 waschmaschine	Waschmaschine	washing machine
 wasser	Wasser	water
+wasserstoff	Wasserstoff	hydrogen
+wassily	Wassily	Wassily (first name)
+weberei	Weberei	weaving workshop, weaving mill
 wechselt	wechselt	changes, switches
+wechselte	wechselte	changed, switched
 weck	Weck	bread roll (south-western German word)
 wecker	Wecker	alarm clock
 weder	weder	neither
 weg	Weg	way, path; away, gone
 wege	Wege	paths, ways
 wehren	wehren	to defend oneself, to resist
+weht	weht	blows (of wind)
+weide	Weide	pasture, meadow
 weil	weil	because
 weile	Weile	while
+weimar	Weimar	Weimar (city in Thuringia)
 weinen	weinen	to cry
 weit	weit	far
 weite	weite	wide, loose
 weiter	weiter	further, on
 weitere	weitere	further, additional
+weitergearbeitet	weitergearbeitet	carried on working
 weitgehend	weitgehend	largely
 weizen	Weizen	wheat
 weiß	weiß	white; knows
+weißen	weißen	white (inflected)
 weißglas	Weißglas	clear glass
 welche	welche	which
 welcher	welcher	which
+welches	welches	which
 welt	Welt	world
+welten	Welten	worlds
 weltkrieg	Weltkrieg	world war
+weltkriege	Weltkriege	world wars
 weltmarktanteil	Weltmarktanteil	share of the world market
 weltweit	weltweit	worldwide
+weltweiter	weltweiter	worldwide, global (inflected)
 wem	wem	to whom
 wen	wen	whom
 wenig	wenig	little
 wenige	wenige	few
 wenigen	wenigen	few
 weniger	weniger	fewer, less
+wenigsten	wenigsten	least; am wenigsten means least of all
 wenigstens	wenigstens	at least
 wenn	wenn	when
 wer	wer	who
 werbung	Werbung	advertising
+werde	werde	will, shall (I); become
 werden	werden	to become; will
 werk	Werk	work; plant
+werks	Werks	of the work
 werksgelände	Werksgelände	factory grounds
 werkshallen	Werkshallen	factory halls
+werkstatt	Werkstatt	workshop
+werkstätten	Werkstätten	workshops
 werkzeug	Werkzeug	tools
 werkzeuge	Werkzeuge	tools
 werkzeugmaschinen	Werkzeugmaschinen	machine tools
 wert	Wert	value; worth
+wertlos	wertlos	worthless
 wertstoffhof	Wertstoffhof	recycling centre
+west	West	West
 westdeutschen	westdeutschen	West German
 westen	Westen	west
+westeuropa	Westeuropa	Western Europe
 westfernsehen	Westfernsehen	West German television
+westliche	westliche	western
+westlichen	westlichen	western (inflected)
 wettbewerb	Wettbewerb	competition
 wetter	Wetter	weather
 wettkampf	Wettkampf	competition
@@ -2475,6 +3342,8 @@ wg	WG	shared flat, flatshare
 wichtig	wichtig	important
 wichtiger	wichtiger	more important
 wichtigsten	wichtigsten	most important
+widerlegen	widerlegen	to refute, to disprove
+widersprechen	widersprechen	to contradict
 widerspricht	widerspricht	contradicts
 widerspruch	Widerspruch	contradiction, objection
 widerstandskraft	Widerstandskraft	resilience, power of resistance
@@ -2482,11 +3351,20 @@ wie	wie	how; like
 wieder	wieder	again
 wiederaufforstung	Wiederaufforstung	reforestation
 wiederentdeckten	wiederentdeckten	rediscovered
+wiederholen	wiederholen	to repeat; to retake a school year
+wiederholt	wiederholt	repeats; repeatedly
 wiederholung	Wiederholung	repetition
 wiedervereinigung	Wiedervereinigung	reunification
+wiegt	wiegt	weighs, carries weight
+wies	wies	pointed; wies nach means proved, demonstrated
 wiese	Wiese	meadow
 wilden	wilden	wild
+wilhelm	Wilhelm	Wilhelm (first name)
 will	will	wants
+wind	Wind	wind
+windanlage	Windanlage	wind turbine, wind installation
+windig	windig	windy
+windräder	Windräder	wind turbines
 winter	Winter	winter
 wir	wir	we
 wird	wird	becomes; will be
@@ -2498,9 +3376,12 @@ wirkung	Wirkung	effect
 wirtschaft	Wirtschaft	economics; economy
 wirtschaftlicher	wirtschaftlicher	economic
 wirtschaftsraum	Wirtschaftsraum	economic area
+wischen	wischen	to wipe; vom Tisch wischen means to brush aside
 wissen	wissen	to know; knowledge
 wissenschaft	Wissenschaft	science, scholarship
+wissenschaftler	Wissenschaftler	scientist, scientists
 wissenschaftlerin	Wissenschaftlerin	scientist (female)
+wissenschaftlern	Wissenschaftlern	scientists (dative plural)
 wo	wo	where
 woanders	woanders	somewhere else
 woche	Woche	week
@@ -2513,12 +3394,15 @@ wohnen	wohnen	to live, to reside
 wohnheimen	Wohnheimen	hostels, dormitories
 wohnräume	Wohnräume	living rooms
 wohnt	wohnt	lives
+wohnte	wohnte	lived, resided
 wohnung	Wohnung	apartment
 wohnungen	Wohnungen	flats, apartments
 wohnungstür	Wohnungstür	flat door
 wollen	wollen	want
 wollte	wollte	wanted to
 wollten	wollten	wanted to
+worauf	worauf	at what, on what
+worden	worden	been (used to form the passive)
 wort	Wort	word
 worüber	worüber	about which
 wovon	wovon	of what, about which
@@ -2532,52 +3416,75 @@ wusste	wusste	knew
 wächst	wächst	grows
 wählen	wählen	to elect, to choose
 während	während	during; while
+währung	Währung	currency
 wälder	Wälder	forests
 wäre	wäre	would be
 wären	wären	would be
+wärme	Wärme	heat, warmth
 wörter	Wörter	words
 wörterbuch	Wörterbuch	dictionary
+wörtern	Wörtern	words (dative plural)
 würde	würde	would
 würden	würden	would
 york	York	York
 zahl	Zahl	number, figure
+zahle	zahle	pay (I)
 zahlen	zahlen	to pay; numbers
 zahlt	zahlt	pays
 zahnpastatuben	Zahnpastatuben	toothpaste tubes
+zahnreinigung	Zahnreinigung	dental cleaning
 zdf	ZDF	ZDF, Germany's second public broadcaster
 zehn	zehn	ten
 zehntausende	Zehntausende	tens of thousands
+zehntausenden	Zehntausenden	tens of thousands (dative)
 zeichnet	zeichnet	records; draws
 zeigen	zeigen	to show
 zeigt	zeigt	shows
+zeigte	zeigte	showed
 zeit	Zeit	time
+zeitdruck	Zeitdruck	time pressure
 zeiten	Zeiten	times, eras
+zeitplan	Zeitplan	timetable, schedule
 zeitpunkt	Zeitpunkt	point in time
 zeitung	Zeitung	newspaper
 zeitungen	Zeitungen	newspapers
+zeitweise	zeitweise	at times, temporarily
 zentral	zentral	centrally
+zentralabitur	Zentralabitur	centrally set school-leaving exam
+zentralen	Zentralen	head offices, headquarters
+zentraler	zentraler	central (inflected)
 zentrum	Zentrum	centre
+zerstreuung	Zerstreuung	dispersal, scattering
 zettel	Zettel	note, slip of paper
 ziehe	ziehe	put on, pull (I put on)
 ziehen	ziehen	to move; to pull
 zieht	zieht	moves; pulls
+ziel	Ziel	aim, goal; destination
 ziemlich	ziemlich	quite, fairly
 zimmer	Zimmer	room
 zionistischen	zionistischen	Zionist
+zitaten	Zitaten	quotations (dative plural)
 zitiert	zitiert	quoted
+zog	zog	moved, pulled
+zogen	zogen	moved, pulled (plural); drew
 zonen	Zonen	zones
 zu	zu	to
 zudem	zudem	moreover, in addition
 zuerst	zuerst	at first
+zufall	Zufall	coincidence, chance
 zug	Zug	train
+zugeben	zugeben	to admit
+zugewanderte	zugewanderte	newly arrived, immigrant (inflected)
 zugezogene	Zugezogene	newcomers, people who moved in
 zugfahrt	Zugfahrt	train journey
 zugibt	zugibt	admits
 zugleich	zugleich	at the same time
 zukunft	Zukunft	future
+zuletzt	zuletzt	last, most recently
 zum	zum	to the
 zunächst	zunächst	at first
 zur	zur	to the
+zurecht	zurecht	into place, ready; rightly
 zurück	zurück	back
 zurückfahren	zurückfahren	to travel back
 zurückgehen	zurückgehen	to go back
@@ -2585,20 +3492,30 @@ zurückhaltung	Zurückhaltung	restraint, reserve
 zusage	Zusage	acceptance
 zusammen	zusammen	together
 zusammenbruch	Zusammenbruch	collapse
+zusammengearbeitet	zusammengearbeitet	worked together, collaborated
 zusammenhang	Zusammenhang	context
 zusammenkommt	zusammenkommt	meets, comes together
 zusammenschluss	Zusammenschluss	association, federation
 zusammenschlüsse	Zusammenschlüsse	associations, federations
+zusatzbeitrag	Zusatzbeitrag	additional contribution, top-up premium
 zusatzkarten	Zusatzkarten	additional tickets
+zuschuss	Zuschuss	subsidy, contribution towards a cost
 zustand	Zustand	condition, state
+zustande	zustande	zustande kommen means to come about, to be brought about
 zustimmen	zustimmen	to agree, to consent
 zustimmung	Zustimmung	consent, approval
 zuständig	zuständig	responsible
+zuständige	zuständige	responsible, competent
+zuständigen	zuständigen	responsible, competent (inflected)
 zusätzlich	zusätzlich	additionally
+zusätzlichen	zusätzlichen	additional (inflected)
+zutraute	zutraute	thought someone capable of
 zuverlässig	zuverlässig	reliably
+zuvor	zuvor	before, previously
 zwanzig	zwanzig	twenty
 zwanzigsten	zwanzigsten	twentieth
 zwar	zwar	admittedly, it is true
+zwecke	Zwecke	purposes, ends
 zwei	zwei	two
 zweifel	Zweifel	doubt
 zweihundert	zweihundert	two hundred
@@ -2606,31 +3523,43 @@ zweimal	zweimal	twice
 zweite	zweite	second
 zweiten	zweiten	second
 zweites	zweites	second
+zweiunddreißig	zweiunddreißig	thirty-two
 zwischen	zwischen	between
 zwischenzeit	Zwischenzeit	interim period
 zwölf	zwölf	twelve
 zählerstand	Zählerstand	meter reading
+zählt	zählt	counts
 zäune	Zäune	fences
+züchtete	züchtete	cultured, grew, bred
 züge	Züge	trains
 zügen	Zügen	trains (dative)
 zürich	Zürich	Zurich
+ägypten	Ägypten	Egypt
 ähnlich	ähnlich	similarly
+ähnlicher	ähnlicher	similar (inflected)
 ältere	ältere	older
 älteren	älteren	older
+ältesten	ältesten	oldest (inflected)
 ämter	Ämter	offices, posts
+ändern	ändern	to change
 ändert	ändert	changes
 änderte	änderte	changed
+änderungen	Änderungen	changes, amendments
 ärger	Ärger	trouble, annoyance
 ärgere	ärgere	am annoyed
 ärgert	ärgert	annoys
+ärzte	Ärzte	doctors
 öffentlich	öffentlich	publicly
 öffentliche	öffentliche	public
+öffentlichem	öffentlichem	public (dative)
+öffentlichkeit	Öffentlichkeit	the public
 öffnen	Öffnen	to open; opening
 öffnet	öffnet	opens
 öffnungen	Öffnungen	openings
 öffnungszeiten	Öffnungszeiten	opening hours
 öfter	öfter	more often
 ökologisch	ökologisch	ecologically
+öl	Öl	oil
 ölkrise	Ölkrise	oil crisis
 über	über	about
 überall	überall	everywhere
@@ -2642,18 +3571,25 @@ zürich	Zürich	Zurich
 überholt	überholt	outdated
 überlassen	überlassen	to leave to, to hand over
 überlebt	überlebt	survived
+überlebten	überlebten	survived
 überlegt	überlegt	thinks it over
+übernahmen	übernahmen	took over, took on
 übernehmen	übernehmen	to take over
 übernimmt	übernimmt	takes over
 übernommen	übernommen	taken over, adopted
 überrascht	überrascht	surprises; surprised
 überraschte	überraschte	surprised
 überraschung	Überraschung	surprise
+überraschungen	Überraschungen	surprises
 überschwemmten	überschwemmten	flooded, swamped
 übersetzen	übersetzen	to translate
 übersetzung	Übersetzung	translation
+überstand	überstand	survived, got through
 übersteht	übersteht	survives, gets through
 übertrieben	übertrieben	exaggerated
+übertrug	übertrug	transferred, transmitted
 überwachung	Überwachung	surveillance
+übrig	übrig	left, remaining
+übrigen	übrigen	remaining, the rest of (inflected)
 übrigens	übrigens	by the way
 übungen	Übungen	exercises

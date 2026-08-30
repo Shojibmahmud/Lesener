@@ -315,23 +315,35 @@ would hit it the same way.
 
 ## Known gaps
 
-- `b1-momentum` (level 2) is **seeded**: ten posts of 500-530 words and the
-  vocabulary behind them. The dictionary now holds 2,658 rows covering both
-  levels, and no word in either level renders as an em dash.
-- The dictionary is projected to reach roughly 7,400 rows at ten levels.
-  `fetchDictionary` pages, so correctness is fine, but that is eight sequential
-  requests on every app load. Worth revisiting before the level count gets much
-  higher — it is a latency problem long before it is a free-tier one (ten levels
-  is projected at ~4% of the 500 MB quota).
+- `b1-range` (level 3) is **seeded**: ten posts of 530-560 words and the
+  vocabulary behind them. Three of the ten levels now hold real content, the
+  dictionary holds 3,594 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level — no word in levels 1-3 can render as an em
+  dash. Level 3 was the first level created entirely from files: `b1-range` had
+  no `levels` row until `_level.tsv` made one.
+- The dictionary is projected to reach roughly 7,400 rows at ten levels, and
+  that estimate still looks about right, though the growth per level is falling
+  as the shared vocabulary does more of the work: 1,420 terms for level 1, then
+  +1,238 for level 2 and +936 for level 3. At 3,594 rows `fetchDictionary` makes
+  four sequential requests on every app load, on the way to eight. Worth
+  revisiting before the level count gets much higher — it is a latency problem
+  long before it is a free-tier one (ten levels is projected at ~4% of the
+  500 MB quota).
 - **The CEFR ladder is levels 1-9 B1, level 10 B2.** Level 10 is a deliberate
   first taste of B2 rather than the top of a smooth ramp, so B2 grammar —
   Konjunktiv I in reported speech above all — is held back until then. Level 1
   carried three Konjunktiv I constructions and two lexical Präteritum verbs from
   the original seed; both were corrected in Feature 14 and re-seeded.
-- **The German in Level 1 has been read by nobody but the model that wrote it.**
-  Accepted knowingly: a wrong sentence in a learning app teaches the error, and
-  the mitigation is that correcting one is a file edit and a re-run.
+- **The German in every seeded level has been read by nobody but the model that
+  wrote it.** Accepted knowingly: a wrong sentence in a learning app teaches the
+  error, and the mitigation is that correcting one is a file edit and a re-run.
+- **Level 3 has not been walked in the running app while unlocked.** The locked
+  state was checked — the switcher shows the level, and the Level 2 dashboard
+  reads "Level 3 unlocks when all 10 posts are read — 9 to go" at 10% — but no
+  account has finished Level 2, so the unlocked dashboard, the reader and word
+  taps on level-3 prose have only been verified against the database and the
+  test suite, not on screen.
 - `dictionary_entries.display_form` does not exist. `de-en.tsv` already carries a
   canonical spelling per term (`u-bahn` → `U-Bahn`), so the column and the vocab
-  bank change from roadmap 3 can be done without re-authoring 1,440 rows.
+  bank change from roadmap 3 can be done without re-authoring 3,594 rows.
 - `part_of_speech` is still null on every row. Nothing reads it.

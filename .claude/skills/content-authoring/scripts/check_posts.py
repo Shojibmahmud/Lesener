@@ -16,7 +16,7 @@ REQUIRED = ("slug", "title", "blurb", "topic", "level", "position")
 # always the wreckage of an abbreviation: "z. B." tokenises to "z" and "B",
 # which would need dictionary rows named z and b.
 SHORT_OK = {"ab", "am", "an", "da", "du", "er", "es", "im", "in", "ja", "je",
-            "ob", "so", "um", "wo", "zu", "ic", "wg"}
+            "ob", "so", "um", "wo", "zu", "ic", "wg", "öl"}
 
 
 def split_file(path):
