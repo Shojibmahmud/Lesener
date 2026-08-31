@@ -315,17 +315,25 @@ would hit it the same way.
 
 ## Known gaps
 
-- `b1-range` (level 3) is **seeded**: ten posts of 530-560 words and the
-  vocabulary behind them. Three of the ten levels now hold real content, the
-  dictionary holds 3,594 rows covering all of them, and `term_gap.py` reports
-  full coverage for every level — no word in levels 1-3 can render as an em
-  dash. Level 3 was the first level created entirely from files: `b1-range` had
-  no `levels` row until `_level.tsv` made one.
+- `b1-depth` (level 4) is **seeded**: ten posts of 564-590 words and the
+  vocabulary behind them. Four of the ten levels now hold real content, the
+  dictionary holds 4,482 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level — no word in levels 1-4 can render as an em
+  dash. Level 3 was the first level created entirely from files; level 4 was the
+  first to run that route with nothing novel about it, which is the point.
+  Level 4's subject field is science and industry, after level 3's how-the-state-
+  runs.
+
+  The seed was verified by checksum rather than by eye: `md5(body)` for all ten
+  posts and an `md5` over the whole `term || translation` set, ordered
+  `collate "C"`, match the authored files exactly. Re-running the seed leaves
+  `posts.id` at 66-75 and every count unchanged.
 - The dictionary is projected to reach roughly 7,400 rows at ten levels, and
   that estimate still looks about right, though the growth per level is falling
   as the shared vocabulary does more of the work: 1,420 terms for level 1, then
-  +1,238 for level 2 and +936 for level 3. At 3,594 rows `fetchDictionary` makes
-  four sequential requests on every app load, on the way to eight. Worth
+  +1,238 for level 2, +936 for level 3 and +888 for level 4 — 53% of level 4's
+  vocabulary was already covered by the levels before it. At 4,482 rows
+  `fetchDictionary` makes five sequential requests on every app load. Worth
   revisiting before the level count gets much higher — it is a latency problem
   long before it is a free-tier one (ten levels is projected at ~4% of the
   500 MB quota).
@@ -333,17 +341,36 @@ would hit it the same way.
   first taste of B2 rather than the top of a smooth ramp, so B2 grammar —
   Konjunktiv I in reported speech above all — is held back until then. Level 1
   carried three Konjunktiv I constructions and two lexical Präteritum verbs from
-  the original seed; both were corrected in Feature 14 and re-seeded.
+  the original seed; both were corrected in Feature 14 and re-seeded. Level 4's
+  drafts carried three more (`werde` twice, `sehe` once); a grep for Konjunktiv I
+  forms caught them before seeding, and it is worth running on every new level.
+  Level 3 narrates in Präteritum and reaches for Konjunktiv II, and level 4
+  continues from there — the register climbs across the B1 levels rather than
+  sitting flat.
 - **The German in every seeded level has been read by nobody but the model that
   wrote it.** Accepted knowingly: a wrong sentence in a learning app teaches the
   error, and the mitigation is that correcting one is a file edit and a re-run.
-- **Level 3 has not been walked in the running app while unlocked.** The locked
-  state was checked — the switcher shows the level, and the Level 2 dashboard
-  reads "Level 3 unlocks when all 10 posts are read — 9 to go" at 10% — but no
-  account has finished Level 2, so the unlocked dashboard, the reader and word
-  taps on level-3 prose have only been verified against the database and the
-  test suite, not on screen.
+- **Levels 3 and 4 have now been walked in the running app while unlocked**, and
+  this gap is closed. It had stood open since level 3 was seeded. The author's
+  account finished levels 1, 2 and 3 (10 of 10 each), which opened Level 4 on
+  screen: the switcher lists all four levels, the dashboard reads "Level 4: B1
+  Depth — 1 of 10 posts completed" at 10%, all ten cards show their own title and
+  blurb, and the header badge reads "B1 · Level 4".
+
+  The vocabulary path was proven end to end rather than only in SQL: a word
+  tapped in level-4 prose returned its translation and was saved to the bank —
+  `waisenjungen` → "orphan boy", one of the 888 rows authored for this level.
+  A tap reaching a row this far into a 4,482-row dictionary also exercises
+  `fetchDictionary`'s paging, which is where the level-1 seed originally failed.
+
+  Before the walk, the same chain had been checked against an impersonated
+  reader in a rolled-back transaction: with no progress a reader sees exactly
+  Level 1's ten posts, Level 4 stays shut while reporting `posts_total = 10` so
+  the client can tell "withheld" from "empty", and completing each level in turn
+  opens the next. Progress had to be written through `reading_sessions`, because
+  a direct `reading_progress` insert is refused by RLS — the gate is not one
+  INSERT away from open. Worth keeping as the cheap check before the real one.
 - `dictionary_entries.display_form` does not exist. `de-en.tsv` already carries a
   canonical spelling per term (`u-bahn` → `U-Bahn`), so the column and the vocab
-  bank change from roadmap 3 can be done without re-authoring 3,594 rows.
+  bank change from roadmap 3 can be done without re-authoring 4,482 rows.
 - `part_of_speech` is still null on every row. Nothing reads it.
