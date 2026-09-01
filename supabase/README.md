@@ -315,28 +315,40 @@ would hit it the same way.
 
 ## Known gaps
 
-- `b1-depth` (level 4) is **seeded**: ten posts of 564-590 words and the
-  vocabulary behind them. Four of the ten levels now hold real content, the
-  dictionary holds 4,482 rows covering all of them, and `term_gap.py` reports
-  full coverage for every level — no word in levels 1-4 can render as an em
-  dash. Level 3 was the first level created entirely from files; level 4 was the
-  first to run that route with nothing novel about it, which is the point.
-  Level 4's subject field is science and industry, after level 3's how-the-state-
-  runs.
+- `b1-texture` (level 5) is **seeded**: ten posts of 562-577 words and the
+  vocabulary behind them. Five of the ten levels now hold real content, the
+  dictionary holds 5,252 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level — no word in levels 1-5 can render as an em
+  dash. Level 5's subject field is land and climate — the physical country and
+  what it costs to live in it — after level 4's science and industry. Its level
+  row did not exist and was created by `_level.tsv`, the same route level 4 took.
 
-  The seed was verified by checksum rather than by eye: `md5(body)` for all ten
-  posts and an `md5` over the whole `term || translation` set, ordered
-  `collate "C"`, match the authored files exactly. Re-running the seed leaves
-  `posts.id` at 66-75 and every count unchanged.
+  The seed was verified by checksum rather than by eye: `md5(body)`, `md5(title)`
+  and `md5(blurb)` for all ten posts, and an `md5` over the whole
+  `term || translation` set ordered `collate "C"`, match the authored files
+  exactly. Level 5's posts are `posts.id` 77-86, and every reader count —
+  33 sessions, 32 progress rows, 24 saved words, none orphaned — is unchanged
+  from before the seed.
+
+  One deviation from `build_seed_sql.py` is worth recording. Its dictionary step
+  re-upserts the whole table, which at 5,252 rows is eleven ~25 KB statements;
+  only 774 rows actually changed (770 new plus four widened), so the delta was
+  applied instead, in two statements. That is only safe because it is checked
+  afterwards rather than assumed: the whole-table `md5` above is what proves the
+  database matches the file, and it would have caught any pre-existing row that
+  had drifted. Note that `md5(term || '\t' || translation)` does **not** contain
+  a tab — `'\t'` is a literal backslash-t in Postgres unless written `E'\t'`.
+  The digest is still stable and still comparable, but only against a file side
+  computed the same way.
 - The dictionary is projected to reach roughly 7,400 rows at ten levels, and
   that estimate still looks about right, though the growth per level is falling
   as the shared vocabulary does more of the work: 1,420 terms for level 1, then
-  +1,238 for level 2, +936 for level 3 and +888 for level 4 — 53% of level 4's
-  vocabulary was already covered by the levels before it. At 4,482 rows
-  `fetchDictionary` makes five sequential requests on every app load. Worth
-  revisiting before the level count gets much higher — it is a latency problem
-  long before it is a free-tier one (ten levels is projected at ~4% of the
-  500 MB quota).
+  +1,238 for level 2, +936 for level 3, +888 for level 4 and +770 for level 5 —
+  57% of level 5's vocabulary was already covered by the levels before it. At
+  5,252 rows `fetchDictionary` makes six sequential requests on every app load.
+  Worth revisiting before the level count gets much higher — it is a latency
+  problem long before it is a free-tier one (ten levels is projected at ~4% of
+  the 500 MB quota).
 - **The CEFR ladder is levels 1-9 B1, level 10 B2.** Level 10 is a deliberate
   first taste of B2 rather than the top of a smooth ramp, so B2 grammar —
   Konjunktiv I in reported speech above all — is held back until then. Level 1
@@ -344,14 +356,37 @@ would hit it the same way.
   the original seed; both were corrected in Feature 14 and re-seeded. Level 4's
   drafts carried three more (`werde` twice, `sehe` once); a grep for Konjunktiv I
   forms caught them before seeding, and it is worth running on every new level.
-  Level 3 narrates in Präteritum and reaches for Konjunktiv II, and level 4
-  continues from there — the register climbs across the B1 levels rather than
-  sitting flat.
+  It earned its keep again on level 5, which carried two (`sei` in an indirect
+  question, `habe` in reported speech); both were rewritten as indicatives before
+  seeding. Level 3 narrates in Präteritum and reaches for Konjunktiv II, and
+  levels 4 and 5 continue from there — the register climbs across the B1 levels
+  rather than sitting flat.
 - **The German in every seeded level has been read by nobody but the model that
   wrote it.** Accepted knowingly: a wrong sentence in a learning app teaches the
   error, and the mitigation is that correcting one is a file edit and a re-run.
-- **Levels 3 and 4 have now been walked in the running app while unlocked**, and
-  this gap is closed. It had stood open since level 3 was seeded. The author's
+- **Level 5 has been walked in the running app while unlocked**, by the author
+  rather than from SQL, and this gap is closed. Finishing Level 4 opened it on
+  screen: the switcher lists all five levels, the dashboard reads "Level 5: B1
+  Texture — 2 of 10 posts completed" at 20%, the header badge reads
+  "B1 · Level 5", and all ten cards show their own title and blurb. The account
+  now stands at 10 of 10 for levels 1-4 and 2 of 10 for level 5.
+
+  Before that walk the gate had been checked the cheap way, and the two agree.
+  Impersonating the same reader in a rolled-back transaction while they were
+  1 of 10 through Level 4, Level 5 reported 0 visible posts, and 10 the moment
+  Level 4 was completed through `reading_sessions` — a direct `reading_progress`
+  insert is refused by RLS, so the gate is not one INSERT away from open.
+  `private.has_level_access` recurses on `position - 1` and nothing hardcodes a
+  level count, which is the same generic gate that opened Level 4. Worth keeping
+  as the cheap check before the real one: it is free, it needs no reading, and
+  here it predicted the walk exactly.
+
+  Level-5 dictionary rows resolve on lookup (`wattwurm` → "lugworm",
+  `deichgraf` → "dike reeve, dike warden"). A tap reaching this far into a
+  5,252-row dictionary also exercises `fetchDictionary`'s paging, now six
+  sequential requests, which is where the level-1 seed originally failed.
+- **Levels 3 and 4 have been walked in the running app while unlocked**, and
+  that gap is closed too. It had stood open since level 3 was seeded. The author's
   account finished levels 1, 2 and 3 (10 of 10 each), which opened Level 4 on
   screen: the switcher lists all four levels, the dashboard reads "Level 4: B1
   Depth — 1 of 10 posts completed" at 10%, all ten cards show their own title and
@@ -372,5 +407,5 @@ would hit it the same way.
   INSERT away from open. Worth keeping as the cheap check before the real one.
 - `dictionary_entries.display_form` does not exist. `de-en.tsv` already carries a
   canonical spelling per term (`u-bahn` → `U-Bahn`), so the column and the vocab
-  bank change from roadmap 3 can be done without re-authoring 4,482 rows.
+  bank change from roadmap 3 can be done without re-authoring 5,252 rows.
 - `part_of_speech` is still null on every row. Nothing reads it.
