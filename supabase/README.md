@@ -315,6 +315,37 @@ would hit it the same way.
 
 ## Known gaps
 
+- `b1-fabric` (level 6) is **seeded**: ten posts of 562-610 words and the
+  vocabulary behind them. Six of the ten levels now hold real content, the
+  dictionary holds 5,981 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level — no word in levels 1-6 can render as an em
+  dash. Level 6's subject field is the twentieth century, the most
+  Präteritum-heavy level so far, after level 5's land and climate. Its level row
+  did not exist and was created by `_level.tsv`, the same route levels 4 and 5
+  took.
+
+  Verified by checksum rather than by eye, as level 5 was: `md5(body)`,
+  `md5(title)` and `md5(blurb)` for all ten posts match the authored files, and
+  an `md5` over the whole `term || '|' || translation` set ordered
+  `collate "C"` came back `230f4de733f39fd0732e46da9217446c` from both the
+  database and the file. That whole-table digest is what makes the delta shortcut
+  safe: `build_seed_sql.py` emits fifteen ~20 KB statements re-upserting all
+  5,981 rows, but only 733 had changed (729 new plus four widened for senses this
+  level introduces — `oder` is now also the river, `sprachen` also "spoke",
+  `beteiligten` also "took part", `stimmen` also "votes"), so the delta went in
+  as four statements instead. Reader counts — 44 sessions, 43 progress rows, 28
+  saved words, none orphaned — are unchanged from before the seed.
+
+- **A history level must still be written without numerals, and that is
+  sharper than it sounds.** `clean()` strips digits, so a year is a token no
+  reader can tap, and a paragraph dense with dates teaches nothing. Levels 2, 4
+  and 5 contain zero four-digit years and level 3 contains three; level 6 was
+  written to the same rule and contains **none**, naming time in words instead
+  (`in den zwanziger Jahren`, `im Sommer nach der Währungsreform`, `der
+  siebzehnte Juni` — the ordinal spelled out because `17.` would both tokenise
+  badly and be inert). Worth grepping `\b(18|19|20)[0-9]{2}\b` over any level
+  whose subject invites a chronology.
+
 - `b1-texture` (level 5) is **seeded**: ten posts of 562-577 words and the
   vocabulary behind them. Five of the ten levels now hold real content, the
   dictionary holds 5,252 rows covering all of them, and `term_gap.py` reports
@@ -343,9 +374,11 @@ would hit it the same way.
 - The dictionary is projected to reach roughly 7,400 rows at ten levels, and
   that estimate still looks about right, though the growth per level is falling
   as the shared vocabulary does more of the work: 1,420 terms for level 1, then
-  +1,238 for level 2, +936 for level 3, +888 for level 4 and +770 for level 5 —
-  57% of level 5's vocabulary was already covered by the levels before it. At
-  5,252 rows `fetchDictionary` makes six sequential requests on every app load.
+  +1,238 for level 2, +936 for level 3, +888 for level 4, +770 for level 5 and
+  +729 for level 6 — 60% of level 6's vocabulary was already covered by the
+  levels before it. At 5,981 rows `fetchDictionary` still makes six sequential
+  requests on every app load, confirmed in the running app: offsets 0 through
+  5000, all `200`.
   Worth revisiting before the level count gets much higher — it is a latency
   problem long before it is a free-tier one (ten levels is projected at ~4% of
   the 500 MB quota).
@@ -357,13 +390,32 @@ would hit it the same way.
   drafts carried three more (`werde` twice, `sehe` once); a grep for Konjunktiv I
   forms caught them before seeding, and it is worth running on every new level.
   It earned its keep again on level 5, which carried two (`sei` in an indirect
-  question, `habe` in reported speech); both were rewritten as indicatives before
-  seeding. Level 3 narrates in Präteritum and reaches for Konjunktiv II, and
+  question, `habe` in reported speech), and on level 6, which carried three
+  (`sei` and `wolle` in one post, `werde` and `seien` in another) — a level full
+  of verdicts, proclamations and reported speech is exactly where the form
+  creeps in. All were rewritten as indicatives before seeding, and the grep is
+  worth running on every new level. Level 3 narrates in Präteritum and reaches for Konjunktiv II, and
   levels 4 and 5 continue from there — the register climbs across the B1 levels
   rather than sitting flat.
 - **The German in every seeded level has been read by nobody but the model that
   wrote it.** Accepted knowingly: a wrong sentence in a learning app teaches the
   error, and the mitigation is that correcting one is a file edit and a re-run.
+- **Level 6 has been seen in the running app, but only from outside the gate.**
+  The switcher lists all six levels and the sixth reads "Level 6: B1 Fabric",
+  disabled, with the label "Finish every post in Level 5 to open this" — the
+  *withheld* state rather than "No posts in this level yet", which is the
+  distinction Feature 2's Trap 2 was about, and it is right because
+  `level_progress` reports `posts_total = 10` for a level the reader cannot yet
+  see the posts of. The unlocked walk is still open: the author's account stands
+  at 2 of 10 on Level 5, and Level 6 opens only when that reaches 10.
+
+  The cheap check was done and predicts the walk. Impersonating the reader in a
+  rolled-back transaction, Level 6 reported 0 visible posts and `is_unlocked =
+  false`; completing Level 5 through `reading_sessions` inside the same
+  transaction flipped it to `is_unlocked = true` with 10 visible posts and the
+  right first card. The rollback left the account untouched — still 44 sessions,
+  43 progress rows, 2 of 10 on Level 5.
+
 - **Level 5 has been walked in the running app while unlocked**, by the author
   rather than from SQL, and this gap is closed. Finishing Level 4 opened it on
   screen: the switcher lists all five levels, the dashboard reads "Level 5: B1
