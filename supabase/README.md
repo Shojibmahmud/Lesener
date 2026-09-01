@@ -315,6 +315,71 @@ would hit it the same way.
 
 ## Known gaps
 
+- `b1-register` (level 7) is **seeded**: ten posts of 581-608 words and the
+  vocabulary behind them. Seven of the ten levels now hold real content, the
+  dictionary holds 6,549 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level — no word in levels 1-7 can render as an em
+  dash. Level 7's subject field is the arts — theatre, literature, radio, film,
+  museums and criticism — after level 6's twentieth century. Its level row did
+  not exist and was created by `_level.tsv`, the same route levels 4, 5 and 6
+  took. Level 7's posts are `posts.id` 97-106.
+
+  Verified by checksum, as levels 5 and 6 were: thirty digests (`md5(body)`,
+  `md5(title)`, `md5(blurb)` for all ten posts) match the authored files, and an
+  `md5` over the whole `term || '|' || translation` set ordered `collate "C"`
+  came back `8a724f6906fdded2094d260ba76f1c34` from both the database and the
+  file. Only 585 of 6,549 dictionary rows had changed, so the delta went in as
+  three statements rather than the seventeen the generator emits. Reader counts —
+  53 sessions, 52 progress rows, 31 saved words, none orphaned — are unchanged
+  from before the seed.
+
+- **An established level's vocabulary can be wrong rather than missing, and
+  `term_gap.py` cannot see it.** The script only reports terms with *no* row, so
+  a word the earlier levels already bought passes silently even when this
+  level's sense is different. Level 7 needed 17 existing rows widened, and three
+  were actively misleading in context: `karten` read "maps; cards" where a
+  theatre level means tickets, `gedreht` read "turned, twisted" where it means
+  filmed, and `strich` read "struck out, deleted" where the Feuilleton piece
+  means the printed rule on the page. Each widened row keeps its original sense
+  and adds the new one, so earlier levels are unaffected. Worth reviewing, on any
+  new level, the words its subject re-uses: `haus`/`häuser`, `stück`, `werk`,
+  `folgen`, `blatt`, `spielen`, `lief`/`liefen` all moved here.
+
+- **`tests/rls_checks.sql` did not need renumbering for this seed, and the note
+  that any content change breaks it is out of date.** Its content-dependent
+  assertions were long since rewritten as shapes and floors: the dictionary
+  check asserts `reachable`, the levels check asserts `at least 2`, and
+  `'A: posts visible (L1 only)', '10'` stays true no matter how many levels are
+  seeded, because the gate hides everything above level 1 from a reader with no
+  progress. Re-checked against the live project after this seed: all five
+  content-sensitive assertions still pass, and `b1-register` reports
+  `posts_total = 10` while `is_unlocked = false`, which is the distinction the
+  client needs to tell *withheld* from *empty*.
+
+- **Level 7 has been walked in the running app while unlocked**, by the author
+  rather than from SQL, and this gap is closed on the same day it was seeded.
+  Finishing Level 6 opened it on screen: the switcher lists all seven levels,
+  the dashboard reads "Level 7: B1 Register — 1 of 10 posts completed" at 10%,
+  the header badge reads "B1 · Level 7", and all ten cards show their own title
+  and blurb. The account went from 51 to 61 progress rows (Level 6 now 10 of 10)
+  and stands at 1 of 10 on Level 7.
+
+  The cheap check had predicted the walk exactly, and the two agree.
+  Impersonating the same reader in a rolled-back transaction while they were
+  1 of 10 through Level 6, Level 7 reported 0 visible posts; completing Level 6
+  through `reading_sessions` inside the same transaction flipped it to 10
+  visible posts with `Das Stadttheater` as the first card, which is what the
+  dashboard then showed. Worth keeping as the cheap check before the real one:
+  it is free, it needs no reading, and it has now predicted the walk on levels
+  5, 6 and 7.
+
+  The vocabulary path was proven end to end rather than only in SQL: `fürst` was
+  tapped in Level 7's *Das Stadttheater*, returned "prince, sovereign ruler" and
+  was saved to the bank — one of the 568 rows authored for this level. A tap
+  reaching this far into a 6,549-row dictionary also exercises
+  `fetchDictionary`'s paging at its new seventh request, which is where the
+  level-1 seed originally failed.
+
 - `b1-fabric` (level 6) is **seeded**: ten posts of 562-610 words and the
   vocabulary behind them. Six of the ten levels now hold real content, the
   dictionary holds 5,981 rows covering all of them, and `term_gap.py` reports
@@ -344,7 +409,11 @@ would hit it the same way.
   (`in den zwanziger Jahren`, `im Sommer nach der Währungsreform`, `der
   siebzehnte Juni` — the ordinal spelled out because `17.` would both tokenise
   badly and be inert). Worth grepping `\b(18|19|20)[0-9]{2}\b` over any level
-  whose subject invites a chronology.
+  whose subject invites a chronology. Level 7 goes further and contains **no
+  digits at all** in any body, checked directly rather than by year pattern:
+  every quantity is spelled out (`siebentausend Eichen`, `siebenunddreißig`,
+  `ein Fünftel`, `alle fünf Jahre`), which is the stronger form of the same rule
+  and the one worth applying from here on.
 
 - `b1-texture` (level 5) is **seeded**: ten posts of 562-577 words and the
   vocabulary behind them. Five of the ten levels now hold real content, the
@@ -374,11 +443,13 @@ would hit it the same way.
 - The dictionary is projected to reach roughly 7,400 rows at ten levels, and
   that estimate still looks about right, though the growth per level is falling
   as the shared vocabulary does more of the work: 1,420 terms for level 1, then
-  +1,238 for level 2, +936 for level 3, +888 for level 4, +770 for level 5 and
-  +729 for level 6 — 60% of level 6's vocabulary was already covered by the
-  levels before it. At 5,981 rows `fetchDictionary` still makes six sequential
-  requests on every app load, confirmed in the running app: offsets 0 through
-  5000, all `200`.
+  +1,238 for level 2, +936 for level 3, +888 for level 4, +770 for level 5,
+  +729 for level 6 and +568 for level 7 — 68% of level 7's vocabulary was
+  already covered by the levels before it, the highest re-use yet, and that held
+  even though the arts were an entirely fresh subject field. At 6,549 rows
+  `fetchDictionary` makes seven sequential requests on every app load, offsets 0
+  through 6000, up from six at 5,981 — confirmed in the running app by a
+  level-7 word resolving on tap.
   Worth revisiting before the level count gets much higher — it is a latency
   problem long before it is a free-tier one (ten levels is projected at ~4% of
   the 500 MB quota).
@@ -394,9 +465,15 @@ would hit it the same way.
   (`sei` and `wolle` in one post, `werde` and `seien` in another) — a level full
   of verdicts, proclamations and reported speech is exactly where the form
   creeps in. All were rewritten as indicatives before seeding, and the grep is
-  worth running on every new level. Level 3 narrates in Präteritum and reaches for Konjunktiv II, and
-  levels 4 and 5 continue from there — the register climbs across the B1 levels
-  rather than sitting flat.
+  worth running on every new level. Level 7 carried one — `dürfe` in reported
+  speech in the Kollwitz post — caught and rewritten before seeding; the grep's
+  only other hits were `ich habe` and `Ich gehe` in the two first-person pieces,
+  which is the false-positive rate that makes the over-broad pattern worth
+  keeping. Level 3 narrates in Präteritum and reaches for Konjunktiv II, and
+  levels 4 to 7 continue from there — the register climbs across the B1 levels
+  rather than sitting flat. Level 7 sits at the top of that climb so far, with
+  `fiele` and `ließe` in conditional clauses; if the ramp ever needs flattening,
+  those are the first two to soften.
 - **The German in every seeded level has been read by nobody but the model that
   wrote it.** Accepted knowingly: a wrong sentence in a learning app teaches the
   error, and the mitigation is that correcting one is a file edit and a re-run.

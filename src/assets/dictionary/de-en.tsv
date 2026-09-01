@@ -611,7 +611,7 @@ bislang	bislang	so far, up to now
 bisschen	bisschen	a bit
 bitte	bitte	please; ask (I ask)
 blankem	blankem	bare, plain (dative)
-blatt	Blatt	sheet (of paper); leaf
+blatt	Blatt	sheet (of paper); a print, a printed sheet; leaf
 blaue	blaue	blue
 blech	Blech	sheet metal, tin
 bleibe	bleibe	stay (I stay)
@@ -717,7 +717,7 @@ böse	böse	evil; angry
 bösen	Bösen	evil
 bücher	Bücher	books
 bückt	bückt	bends down
-bühne	Bühne	stage
+bühne	Bühne	stage; theatre, venue
 bühnenwerke	Bühnenwerke	stage works
 bürger	Bürger	citizens
 bürgeramt	Bürgeramt	citizens' registration office
@@ -879,7 +879,7 @@ draht	Draht	wire
 drauf	drauf	on it; used up, gone
 draußen	draußen	outside
 dreht	dreht	turns
-drehte	drehte	turned
+drehte	drehte	turned; shot, filmed
 drei	drei	three
 dreieinhalb	dreieinhalb	three and a half
 dreihundert	dreihundert	three hundred
@@ -1297,7 +1297,7 @@ flügen	Flügen	flights (dative)
 flüssigen	flüssigen	liquid, molten
 flüssigkeit	Flüssigkeit	liquid
 folge	Folge	consequence, result; episode
-folgen	Folgen	consequences; to follow
+folgen	Folgen	consequences; episodes; to follow
 folgt	folgt	follows
 fordern	fordern	to demand
 forderung	Forderung	demand, claim
@@ -1445,7 +1445,7 @@ gedacht	gedacht	thought; intended
 gedanke	Gedanke	thought
 gedanken	Gedanken	thoughts
 gedankenlosigkeit	Gedankenlosigkeit	thoughtlessness
-gedreht	gedreht	turned, twisted
+gedreht	gedreht	turned, twisted; shot, filmed (of a film)
 geduld	Geduld	patience
 gefahren	gefahren	driven, travelled
 gefallen	gefallen	fallen, been made (of a decision); pleased
@@ -1762,7 +1762,7 @@ hat	hat	has
 hatte	hatte	had
 hatten	hatten	had
 hauptfächern	Hauptfächern	main subjects (dative plural)
-haus	Haus	house
+haus	Haus	house, building; a theatre or museum as an institution
 hausangestellte	Hausangestellte	domestic servant
 hausbesitzer	Hausbesitzer	homeowners
 hause	Hause	home
@@ -1876,7 +1876,7 @@ hätten	hätten	would have
 häufig	häufig	often, frequently
 häufiger	häufiger	more often
 häufigste	häufigste	most frequent, commonest
-häuser	Häuser	houses
+häuser	Häuser	houses, buildings; theatres, museums (as institutions)
 häusern	Häusern	houses
 höchstens	höchstens	at most
 höchster	höchster	highest
@@ -2188,8 +2188,8 @@ krieg	Krieg	war
 kriegen	Kriegen	wars (dative)
 krimi	Krimi	crime drama
 krise	Krise	crisis
-kritik	Kritik	criticism
-kritiker	Kritiker	critics
+kritik	Kritik	criticism; review; the critics
+kritiker	Kritiker	critic, critics
 kritisierte	kritisierte	criticised
 kronen	Kronen	treetops, crowns
 kruste	Kruste	crust
@@ -2341,8 +2341,8 @@ lichts	Lichts	of light
 lieber	lieber	rather, preferably
 liebesbegriff	Liebesbegriff	concept of love
 lied	Lied	song
-lief	lief	ran, was running
-liefen	liefen	ran, were running
+lief	lief	ran, was running; was on, was showing
+liefen	liefen	ran, were running; were on, were being broadcast
 liefern	liefern	to supply, to deliver
 liefert	liefert	supplies, delivers
 lieferung	Lieferung	instalment, delivery
@@ -3362,7 +3362,7 @@ speichern	speichern	to store, to save
 sperrmüll	Sperrmüll	bulky waste
 spezialisiert	spezialisiert	specialised
 spiegel	Spiegel	mirror
-spielen	Spielen	to play; playing
+spielen	Spielen	to play; to perform, to act; playing
 spielplätze	Spielplätze	playgrounds
 spielt	spielt	plays
 spielzeug	Spielzeug	toy
@@ -3495,7 +3495,7 @@ streitfragen	Streitfragen	disputed questions
 streitkultur	Streitkultur	culture of disagreement
 streng	streng	strict, rigorous
 strenge	Strenge	rigour, strictness
-strich	strich	struck out, deleted
+strich	strich	line, stroke, rule (on a page); struck out, deleted
 stritt	stritt	argued, quarrelled
 stritten	stritten	argued, quarrelled
 strom	Strom	electricity; current
@@ -3531,8 +3531,8 @@ stölzl	Stölzl	Stölzl (surname)
 störten	störten	bothered, disturbed
 störung	Störung	fault, disruption
 störungen	Störungen	faults, interference
-stück	Stück	piece, work
-stücke	Stücke	pieces
+stück	Stück	piece, work; play (in the theatre)
+stücke	Stücke	pieces, works; plays, radio plays; items, objects
 stühle	Stühle	chairs
 stürzte	stürzte	collapsed; fell
 suchen	suchen	to look for, to search
@@ -4150,7 +4150,7 @@ wer	wer	who
 werbung	Werbung	advertising
 werde	werde	will, shall (I); become
 werden	werden	to become; will
-werk	Werk	work; plant
+werk	Werk	work, body of work; plant, factory
 werke	Werke	plants, works
 werkes	Werkes	of the plant, of the works
 werkhalle	Werkhalle	factory hall
@@ -4826,7 +4826,7 @@ kanonen	Kanonen	cannons, guns
 kanäle	Kanäle	canals; channels
 kapitän	Kapitän	captain
 karge	karge	bare, barren, sparse
-karten	Karten	maps; cards
+karten	Karten	tickets; cards; maps
 katastrophenschutz	Katastrophenschutz	civil protection, disaster response
 kaub	Kaub	Kaub (town on the Rhine)
 kehle	Kehle	throat
@@ -5980,3 +5980,571 @@ zählten	zählten	counted
 überredete	überredete	persuaded
 überredeten	überredeten	persuaded
 überzeugt	überzeugt	convinced
+abenden	Abenden	evenings (dative plural)
+abgehängt	abgehängt	taken down, removed; left behind
+abgelehnt	abgelehnt	rejected, turned down
+abgeschrieben	abgeschrieben	written off, given up on; copied
+abgetrennt	abgetrennt	separated, divided off
+abonnement	Abonnement	subscription, season ticket
+abonnenten	Abonnenten	subscribers, season-ticket holders
+abonniert	abonniert	subscribes; subscribed
+absichert	absichert	backs up, supports, secures
+absicht	Absicht	intention, purpose
+absichtlich	absichtlich	deliberate, intentional; on purpose
+absprache	Absprache	agreement, arrangement; collusion
+abwechselnd	abwechselnd	alternately, in turn
+abzeichnete	abzeichnete	showed up, became visible
+abzuliefern	abzuliefern	to deliver, to hand in
+akademie	Akademie	academy
+albern	albern	silly, foolish
+altstadt	Altstadt	old town, historic town centre
+angesprochen	angesprochen	addressed, spoken to; asked about
+ansage	Ansage	announcement
+anspielungen	Anspielungen	allusions, references
+anständig	anständig	decent, respectable; properly
+apparat	Apparat	apparatus, machinery, system
+arbeiterviertel	Arbeiterviertel	working-class district
+arbeitsjahren	Arbeitsjahren	working years (dative)
+armen	Armen	the poor; poor (inflected); arms (dative plural)
+atmet	atmet	breathes
+aue	Aue	water meadow, floodplain
+aufbauen	aufbauen	to build up, to set up
+aufführungen	Aufführungen	performances, productions
+aufgegeben	aufgegeben	given up, abandoned; placed (an order)
+aufgeschüttet	aufgeschüttet	piled up, heaped up
+aufheben	aufheben	to lift, to cancel, to abolish; to keep
+aufwachsen	aufwachsen	to grow up
+ausführlichsten	ausführlichsten	most detailed, most thorough
+ausgabe	Ausgabe	edition, issue; expense
+ausstellen	ausstellen	to exhibit, to display; exhibiting
+ausstellt	ausstellt	exhibits, displays; puts on show
+ausstellung	Ausstellung	exhibition
+ausstellungen	Ausstellungen	exhibitions
+ausstellungsraum	Ausstellungsraum	exhibition space, gallery room
+autoren	Autoren	authors, writers
+autorin	Autorin	author, writer (female)
+bahnhof	Bahnhof	railway station
+bandbreite	Bandbreite	range, breadth
+banner	Banner	banner
+basalt	Basalt	basalt (a dark volcanic rock)
+bat	bat	asked, requested (past of bitten)
+bauernkrieg	Bauernkrieg	Peasants War (a sixteenth-century uprising)
+bedrohung	Bedrohung	threat
+begeisterter	begeisterter	enthusiastic (inflected)
+begrüßte	begrüßte	greeted, welcomed
+behaupteten	behaupteten	claimed, asserted
+behauptung	Behauptung	claim, assertion
+behindert	behindert	hinders, obstructs
+behinderung	Behinderung	obstruction, hindrance; disability
+behält	behält	keeps, retains
+belegt	belegt	enrolled in, taken (a course); occupied
+belehrend	belehrend	preachy, moralising, didactic
+beleidigt	beleidigt	insults, offends; offended
+belesen	belesen	well-read
+belgien	Belgien	Belgium
+bemerken	bemerken	to notice; to remark
+berlins	Berlins	of Berlin
+berufen	berufen	to appoint, to call; appointed
+berät	berät	advises
+berühmteste	berühmteste	most famous; the most famous one
+berühmtester	berühmtester	most famous (inflected)
+beschweren	beschweren	to complain
+besitzer	Besitzer	owner
+besonderes	besonderes	special, particular; something special
+besonderheit	Besonderheit	special feature, peculiarity
+besorgen	besorgen	to get hold of, to order in
+besprechung	Besprechung	review; meeting
+besprechungen	Besprechungen	reviews; meetings
+besprochen	besprochen	reviewed; discussed
+bestellung	Bestellung	order
+bestseller	Bestseller	bestseller
+bestsellern	Bestsellern	bestsellers (dative)
+betrunkene	Betrunkene	drunk, drunkard
+beute	Beute	loot, plunder, spoils; prey
+beutel	Beutel	bag, pouch
+bildete	bildete	formed, made up
+billigen	billigen	cheap (inflected); to approve of
+billigste	billigste	cheapest
+bindet	bindet	binds, ties; commits
+blicken	blicken	to look, to gaze
+blättern	Blättern	sheets, prints, pages (dative); to leaf through
+blätterte	blätterte	leafed through, turned the pages
+brannte	brannte	burned, was burning
+buches	Buches	of the book
+buchhandlung	Buchhandlung	bookshop
+buchhandlungen	Buchhandlungen	bookshops
+buchhändlerin	Buchhändlerin	bookseller (female)
+buchstäblich	buchstäblich	literally
+buhen	buhen	to boo
+bunten	bunten	colourful, coloured (inflected)
+busse	Busse	buses
+bänke	Bänke	benches
+böden	Böden	floors, grounds
+büchern	Büchern	books (dative plural)
+bühnen	Bühnen	stages, theatres
+darstellt	darstellt	depicts, represents
+decken	decken	to cover; ceilings
+demütigte	demütigte	humiliated
+diskussion	Diskussion	discussion
+dorfes	Dorfes	of the village
+dran	dran	up next, one's turn; on it
+draufgehen	draufgehen	to be used up, to go (of time or money)
+dreihundertmal	dreihundertmal	three hundred times
+drittes	Drittes	a third thing
+drohte	drohte	threatened
+druckplatten	Druckplatten	printing plates
+drängen	drängen	to push, to press, to force
+dunklem	dunklem	dark (inflected)
+durchs	durchs	through the (durch das)
+echten	echten	real, genuine (inflected)
+egal	egal	no matter, all the same
+eichen	Eichen	oaks, oak trees
+eigener	eigener	own (inflected)
+eigens	eigens	specially, expressly
+eigentum	Eigentum	property, ownership
+eigentümlichsten	eigentümlichsten	strangest, most peculiar
+eingang	Eingang	entrance
+eingelassen	eingelassen	set into, embedded; let in
+einkommens	Einkommens	of the income
+einstieg	Einstieg	way in, starting point, entry
+eintritt	Eintritt	admission, entry; admission fee
+einwohnern	Einwohnern	inhabitants, residents (dative)
+elfenbein	Elfenbein	ivory
+endungen	Endungen	endings (of words)
+engagiert	engagiert	engaged, hired; committed
+ensemble	Ensemble	ensemble, resident company of actors
+entgegen	entgegen	against, contrary to; towards
+entschuldigt	entschuldigt	excuses, justifies
+ernüchternd	ernüchternd	sobering
+erschienen	erschienen	appeared, was published
+erwachsen	erwachsen	grown-up, adult
+erwachsene	erwachsene	adult (inflected); adults
+erwachsener	Erwachsener	an adult
+erzwungen	erzwungen	forced, compelled
+eröffnen	eröffnen	to open, to inaugurate
+etat	Etat	budget
+etats	Etats	of the budget; budgets
+ewig	ewig	forever, eternal
+fachgerecht	fachgerecht	properly, expertly, to professional standards
+fachwissen	Fachwissen	expert knowledge, expertise
+fachzeitschriften	Fachzeitschriften	specialist journals, trade magazines
+fair	fair	fair
+falls	falls	in case, if
+fassbinder	Fassbinder	Fassbinder (a surname)
+fein	fein	fine, delicate; finely
+feldzugs	Feldzugs	of the military campaign
+fernsehgeräte	Fernsehgeräte	television sets
+fertiggestellt	fertiggestellt	completed, finished
+feuer	Feuer	fire
+feuilleton	Feuilleton	the arts and culture pages of a newspaper
+fiele	fiele	were to fall, would fall (subjunctive of fallen)
+figur	Figur	figure, character; sculpted figure
+figuren	Figuren	figures, characters
+film	Film	film, movie
+filme	Filme	films, movies
+filmhochschule	Filmhochschule	film school, film academy
+finanzamt	Finanzamt	tax office
+flandern	Flandern	Flanders (a region of Belgium)
+flexiblen	flexiblen	flexible (inflected)
+fliesen	Fliesen	tiles
+fortgesetzt	fortgesetzt	continued
+fortsetzungen	Fortsetzungen	instalments, serial parts
+französischen	Französischen	French (inflected)
+freitag	Freitag	Friday
+fängt	fängt	catches; begins
+führte	führte	led, guided; hosted, conducted
+fünftel	Fünftel	fifth (a fifth part)
+fürs	fürs	for the (für das)
+fürst	Fürst	prince, sovereign ruler
+fürstentümer	Fürstentümer	principalities
+gagen	Gagen	fees, pay for performers
+galoppierendes	galoppierendes	galloping
+gartenschau	Gartenschau	garden show, horticultural exhibition
+gastarbeiter	Gastarbeiter	guest worker, migrant worker
+gedichtband	Gedichtband	volume of poetry
+gedruckte	gedruckte	printed (inflected)
+gedrucktes	gedrucktes	printed (neuter)
+gedämpft	gedämpft	dimmed; muffled, subdued
+geflickten	geflickten	patched, mended (inflected)
+gegenstands	Gegenstands	of the object, of the item
+gehasst	gehasst	hated
+geliebt	geliebt	loved
+geltendes	geltendes	applicable, currently in force
+gelungen	gelungen	successful, well done; succeeded
+gepackt	gepackt	packed; grabbed
+geräten	Geräten	devices, sets (dative plural)
+geschaffen	geschaffen	created, made
+geschmacks	Geschmacks	of taste
+geschriebene	geschriebene	written (inflected)
+gespielt	gespielt	played, performed
+gestapo	Gestapo	Gestapo (the Nazi secret state police)
+gestimmt	gestimmt	been right, been in order; voted
+gestöhnt	gestöhnt	groaned, moaned
+getränk	Getränk	drink, beverage
+getränks	Getränks	of the drink
+gewissheit	Gewissheit	certainty
+gezeigt	gezeigt	shown, displayed
+geübt	geübt	practised, skilled, experienced
+glaubwürdig	glaubwürdig	credible, believable
+gräbern	Gräbern	graves (dative plural)
+hallt	hallt	echoes, reverberates
+handlung	Handlung	plot, storyline; act, deed
+handwerklich	handwerklich	hands-on, in terms of craft
+hart	hart	hard, harsh, tough
+harte	harte	hard, harsh (inflected)
+haupteingang	Haupteingang	main entrance
+haupthaus	Haupthaus	main building
+heim	Heim	home; residential institution
+heimkehrer	Heimkehrer	returning soldier, homecomer
+herausfand	herausfand	found out, discovered
+herauszufinden	herauszufinden	to find out
+hereinholt	hereinholt	brings in, brings back in
+hereinkommt	hereinkommt	comes in, enters
+hergerichtet	hergerichtet	prepared, set up, made ready
+herr	Herr	gentleman, man; Mr
+herunterladen	herunterladen	to download
+herz	Herz	heart
+hierhergekommen	hierhergekommen	come here, got here
+hinausgehen	Hinausgehen	going out; to go out
+hineinkommt	hineinkommt	comes in, gets in
+hineinzuschreiben	hineinzuschreiben	to write in, to write into it
+hingehe	hingehe	go there (I go there)
+hingehört	hingehört	belongs, goes (in a place)
+hinschaut	hinschaut	looks, takes a look, pays attention
+hintereinander	hintereinander	one after another, in a row
+hinterzimmer	Hinterzimmer	back room
+holzdielen	Holzdielen	wooden floorboards
+honorar	Honorar	fee, payment for a piece of work
+hotels	Hotels	hotels
+hunderttausendmal	hunderttausendmal	a hundred thousand times
+händler	Händler	dealer, trader, merchant
+händlern	Händlern	dealers, traders (dative)
+hängte	hängte	hung (something somewhere)
+höflich	höflich	polite, politely
+höflicher	höflicher	polite (inflected); more polite
+hölle	Hölle	hell
+hörer	Hörer	listener, listeners
+hörspiel	Hörspiel	radio play, radio drama
+hörspielstudio	Hörspielstudio	radio drama studio
+innenstädten	Innenstädten	town centres, city centres (dative)
+inszenierung	Inszenierung	production, staging
+intendantin	Intendantin	artistic director, theatre manager (female)
+interviews	Interviews	interviews
+jugend	Jugend	youth, young people
+jüngerer	jüngerer	younger (inflected)
+kaiser	Kaiser	emperor
+kannte	kannte	knew, was familiar with
+kaputter	kaputter	broken (inflected)
+karaffe	Karaffe	carafe, jug
+karl	Karl	Karl (a first name)
+karteikarten	Karteikarten	index cards, filing cards
+kassel	Kassel	Kassel (a city in central Germany)
+kassetten	Kassetten	cassettes, tapes
+kaufhaus	Kaufhaus	department store
+kies	Kies	gravel
+kinderzimmern	Kinderzimmern	children's rooms (dative)
+kindisch	kindisch	childish
+kino	Kino	cinema
+kinokarten	Kinokarten	cinema tickets
+kiste	Kiste	box, crate
+klangen	klangen	sounded
+klaren	klaren	clear (inflected)
+klatschen	klatschen	to clap, to applaud
+kneipe	Kneipe	pub, bar
+knickt	knickt	bends, snaps, creases
+kniet	kniet	kneels
+kochen	Kochen	to cook; cooking
+kokosnüsse	Kokosnüsse	coconuts
+kollwitz	Kollwitz	Kollwitz (a surname)
+kommentar	Kommentar	comment, commentary
+kommissar	Kommissar	detective inspector, police superintendent
+komponierter	komponierter	composed (inflected)
+konkurrierenden	konkurrierenden	competing, rival (inflected)
+kontinenten	Kontinenten	continents (dative)
+konzentrieren	konzentrieren	to concentrate, to focus
+konzert	Konzert	concert
+konzerte	Konzerte	concerts
+kopfhörer	Kopfhörer	headphones
+kriegsende	Kriegsende	the end of the war
+krimireihe	Krimireihe	crime series, detective series
+kulissen	Kulissen	stage sets, scenery
+kundschaft	Kundschaft	customers, clientele
+kunst	Kunst	art
+kunstform	Kunstform	art form
+kunstlehrer	Kunstlehrer	art teacher
+kunstwelt	Kunstwelt	art world
+kunstwerk	Kunstwerk	work of art
+käthe	Käthe	Käthe (a female first name)
+königin	Königin	queen
+königreich	Königreich	kingdom
+königreichs	Königreichs	of the kingdom
+künste	Künste	arts
+künstlerin	Künstlerin	artist (female)
+künstlerinnen	Künstlerinnen	artists (female)
+landkarte	Landkarte	map
+lautet	lautet	reads, goes, runs (of a text or title)
+lehnte	lehnte	leaned; refused, turned down
+leihgabe	Leihgabe	loan (an object lent to a museum)
+liebhaber	Liebhaber	enthusiast, connoisseur; lover
+ließe	ließe	would let, would allow (subjunctive of lassen)
+links	links	left, on the left
+lohnendste	lohnendste	most worthwhile, most rewarding
+loswerden	loswerden	to get rid of, to get off one's chest
+längere	längere	longer (inflected)
+längste	längste	longest
+lösten	lösten	solved; dissolved
+male	Male	times, occasions
+malschulen	Malschulen	painting schools, art schools
+manches	manches	some things, some of it
+mangel	Mangel	lack, shortage
+massenhaft	massenhaft	in huge numbers, en masse
+medaille	Medaille	medal
+mehreres	mehreres	several things, a number of things
+merkwürdig	merkwürdig	strange, odd, peculiar
+mikrofonen	Mikrofonen	microphones (dative)
+milder	milder	milder, gentler
+millionenpublikum	Millionenpublikum	an audience of millions
+misslungen	misslungen	failed, botched, unsuccessful
+mitbezahlt	mitbezahlt	helps to pay for, pays towards
+mittelgroße	mittelgroße	medium-sized
+moderatorin	Moderatorin	host, presenter (female)
+müde	müde	tired
+münze	Münze	coin
+müssten	müssten	would have to (subjunctive of müssen)
+nachbarin	Nachbarin	neighbour (female)
+nachbarland	Nachbarland	neighbouring country
+nachbildet	nachbildet	reproduces, models, imitates
+nachfragen	Nachfragen	asking, follow-up questions; to enquire
+nachgeholt	nachgeholt	made up for, caught up on
+nachlässe	Nachlässe	discounts, reductions
+nation	Nation	nation
+nebensache	Nebensache	a side issue, a minor matter
+neuere	neuere	newer, more recent
+notdürftig	notdürftig	makeshift, barely adequate
+notiert	notiert	noted down, recorded
+nächstes	Nächstes	next thing
+nützlichste	nützlichste	most useful
+objekte	Objekte	objects, items
+offener	offener	open (inflected); more openly
+ohren	Ohren	ears
+opfer	Opfer	victim, victims; sacrifice
+packte	packte	packed; grabbed
+palast	Palast	palace
+parkt	parkt	parks
+pausen	Pausen	breaks, pauses, intervals
+perücken	Perücken	wigs
+peter	Peter	Peter (a male first name)
+pflanzung	Pflanzung	planting
+pflaster	Pflaster	paving, cobbles; sticking plaster
+pflegen	pflegen	to look after, to maintain, to care for
+platte	Platte	plate, panel, slab
+preiskampf	Preiskampf	price war
+premiere	Premiere	premiere, opening night
+probt	probt	rehearses
+produktionen	Produktionen	productions
+professur	Professur	professorship, chair
+provenienzforschung	Provenienzforschung	provenance research, tracing where an object came from
+publikums	Publikums	of the audience
+putzfrau	Putzfrau	cleaning woman, cleaner
+putzfrauen	Putzfrauen	cleaning women, cleaners
+rabatte	Rabatte	discounts
+raub	Raub	robbery, plunder, theft
+raums	Raums	of the room, of the space
+rechtfertigen	rechtfertigen	to justify
+redaktion	Redaktion	editorial office, newsroom
+redeten	redeten	talked, spoke
+regalreihen	Regalreihen	rows of shelves
+regisseur	Regisseur	director (of a film or play)
+regisseure	Regisseure	directors
+regulärer	regulärer	regular, standard (inflected)
+reichlich	reichlich	plenty of, ample; quite
+reichs	Reichs	of the empire, of the Reich
+reiseberichte	Reiseberichte	travel accounts, travelogues
+reist	reist	travels
+rettet	rettet	saves, rescues
+riesiger	riesiger	huge, enormous (inflected)
+roh	roh	raw, rough, crude
+roman	Roman	novel
+ruine	Ruine	ruin
+runde	runde	round (inflected)
+rundes	rundes	round (neuter)
+rückgabe	Rückgabe	return, restitution, giving back
+rüstung	Rüstung	armour; armament
+salatkopf	Salatkopf	head of lettuce
+sammlungen	Sammlungen	collections
+schafft	schafft	manages, achieves; creates
+schauspielerin	Schauspielerin	actress, actor (female)
+schauspielern	Schauspielern	actors (dative)
+schiffsladungen	Schiffsladungen	ship cargoes, shiploads
+schildern	Schildern	signs, labels (dative); to describe
+schlange	Schlange	queue, line; snake
+schlosses	Schlosses	of the palace, of the castle
+schluss	Schluss	end, conclusion
+schneiderei	Schneiderei	tailoring workshop, costume department
+schreibende	Schreibende	writers, those who write
+schultern	Schultern	shoulders
+schwester	Schwester	sister; nurse
+senkrecht	senkrecht	vertical, upright
+serien	Serien	series
+seriös	seriös	serious, respectable, reputable
+setzt	setzt	puts, places, sets
+siebentausend	siebentausend	seven thousand
+siebenunddreißig	siebenunddreißig	thirty-seven
+sinken	sinken	to sink, to fall, to drop
+sitze	sitze	sit (I sit)
+sofa	Sofa	sofa, couch
+soldatenfriedhof	Soldatenfriedhof	war cemetery, military cemetery
+sonderangebote	Sonderangebote	special offers
+sonderbar	sonderbar	strange, odd
+sonntags	sonntags	on Sundays
+spielzeit	Spielzeit	theatre season; playing time
+sprachlich	sprachlich	linguistically, in terms of language
+sprechern	Sprechern	speakers, voice actors (dative)
+spur	Spur	trace, trail, track
+stab	Stab	rod, bar, staff
+stadtbild	Stadtbild	townscape, the look of a city
+stadttheater	Stadttheater	municipal theatre, city theatre
+stapft	stapft	trudges, tramps
+stattgefunden	stattgefunden	taken place, happened
+stehenden	stehenden	standing, upright (inflected)
+streicht	streicht	cuts, deletes; paints
+studierende	Studierende	students
+studio	Studio	studio
+ständige	ständige	permanent, standing (inflected)
+sätzen	Sätzen	sentences; rates (dative plural)
+tagebuch	Tagebuch	diary, journal
+tags	tags	by day, during the day
+takt	Takt	beat, rhythm; tact
+tatsache	Tatsache	fact
+team	Team	team
+teams	Teams	teams
+telefone	Telefone	telephones
+textes	Textes	of the text
+theaterabend	Theaterabend	an evening at the theatre
+theaters	Theaters	of the theatre
+theaterstück	Theaterstück	play, stage play
+these	These	thesis, proposition
+tiefgarage	Tiefgarage	underground car park
+tippte	tippte	typed
+titel	Titel	title, titles
+titeln	Titeln	titles (dative plural)
+trauen	trauen	to trust; to dare
+trauer	Trauer	grief, mourning
+treppe	Treppe	stairs, staircase
+treppenhäusern	Treppenhäusern	stairwells (dative)
+trinke	trinke	drink (I drink)
+truppe	Truppe	troop, force; troupe
+u-boot	U-Boot	submarine
+umgeben	umgeben	surrounded; to surround
+unaufrichtig	unaufrichtig	insincere, dishonest
+unbedingt	unbedingt	absolutely, at all costs
+unnormal	unnormal	abnormal, not normal
+unterbrach	unterbrach	interrupted
+unteren	unteren	lower (inflected)
+unterhaltsam	unterhaltsam	entertaining
+unterhaltsame	Unterhaltsame	the entertaining part; entertaining (inflected)
+unterscheidet	unterscheidet	distinguishes, sets apart, differs
+untertitel	Untertitel	subtitles; subtitle
+unumstritten	unumstritten	uncontested, undisputed
+unwidersprochen	unwidersprochen	unchallenged, uncontradicted
+verb	Verb	verb
+verbrannte	verbrannte	burned, was burned
+verdienen	verdienen	to earn; to deserve
+verdächtigen	Verdächtigen	suspect, suspects; to suspect
+verfasser	Verfasser	author, writer of a text
+verfolgen	verfolgen	to follow, to keep track of; to persecute
+verfolgten	verfolgten	followed, kept track of; persecuted
+vergingen	vergingen	passed, went by (of time)
+vergleichen	vergleichen	to compare; comparison
+vergnügen	Vergnügen	pleasure, enjoyment
+vergrößern	vergrößern	to enlarge, to scale up
+verheizt	verheizt	burned up, squandered, used up
+verkäufe	Verkäufe	sales
+verlag	Verlag	publishing house, publisher
+verlage	Verlage	publishers, publishing houses
+verlangte	verlangte	demanded, required
+verläuft	verläuft	runs, proceeds, goes
+vermietet	vermietet	rents out, lets
+verneinte	verneinte	denied, said no
+versteckte	versteckte	hidden (inflected); hid
+versteigert	versteigert	auctioned off
+versteigerungskataloge	Versteigerungskataloge	auction catalogues
+verstellen	verstellen	to disguise, to put on (a voice)
+verstummt	verstummt	fallen silent, died away
+vervielfältigen	vervielfältigen	to reproduce, to duplicate
+vervielfältigtes	vervielfältigtes	reproduced, duplicated (neuter)
+verwaltet	verwaltet	administers, manages
+verwarf	verwarf	rejected, discarded, threw out
+viermal	viermal	four times
+viertelstunde	Viertelstunde	quarter of an hour
+vitrine	Vitrine	display case, glass cabinet
+vorab	vorab	in advance, beforehand
+vorausging	vorausging	preceded, came before
+vorbeigehen	vorbeigehen	to walk past, to pass by
+vorbeikam	vorbeikam	got past, got round
+vorderen	vorderen	front (inflected)
+vorhatte	vorhatte	had planned, intended
+vorlesen	vorlesen	to read aloud; reading aloud
+vorletzter	vorletzter	the one before last, second to last
+vorliest	vorliest	reads aloud
+vornamen	Vornamen	first name, given name
+vorrätig	vorrätig	in stock, on the shelf
+vorwurf	Vorwurf	reproach, accusation, criticism
+waagerechten	waagerechten	horizontal (inflected)
+wanne	Wanne	tub, tray, basin
+ware	Ware	goods, commodity, product
+warmer	warmer	warm (inflected)
+wartezimmer	Wartezimmer	waiting room
+webern	Webern	weavers (dative plural)
+wechseln	wechseln	to change, to switch, to take turns
+weggehen	weggehen	to go away, to leave
+weggenommen	weggenommen	taken away
+weigerte	weigerte	refused
+weihnachtsmärchen	Weihnachtsmärchen	Christmas play for children
+wein	Wein	wine
+weint	weint	cries, weeps
+weitergebracht	weitergebracht	helped along, got further
+weitesten	weitesten	furthest, farthest
+wesentlicher	wesentlicher	essential, substantial (inflected)
+wettbewerbs	Wettbewerbs	of the competition
+wichtigere	wichtigere	more important
+wichtiges	Wichtiges	something important
+wiederaufgebauten	wiederaufgebauten	rebuilt, reconstructed (inflected)
+winzigen	winzigen	tiny (inflected)
+wirtinnen	Wirtinnen	landladies, women running a pub
+wirtschaftswunder	Wirtschaftswunder	the economic miracle of the postwar years
+witz	Witz	joke; wit; the point of something
+wohnzimmern	Wohnzimmern	living rooms (dative)
+womöglich	womöglich	possibly, quite likely
+worten	Worten	words (dative plural)
+wortwahl	Wortwahl	choice of words, wording
+wunderte	wunderte	was surprised, wondered
+wänden	Wänden	walls (dative plural)
+wüste	Wüste	desert
+zahlte	zahlte	paid
+zeichnung	Zeichnung	drawing
+zerknülltes	zerknülltes	crumpled up (neuter)
+zerstört	zerstört	destroyed
+zetteln	Zetteln	slips of paper, notes (dative)
+zugesehen	zugesehen	watched, looked on
+zuhören	zuhören	to listen
+zuhört	zuhört	listens
+zurückführen	zurückführen	to trace back, to put down to
+zurückgeflogen	zurückgeflogen	flown back
+zurückkam	zurückkam	came back, returned
+zurückzuverfolgen	zurückzuverfolgen	to trace back, to follow back
+zusammengezogen	zusammengezogen	drawn together, hunched, contracted
+zusammenlebte	zusammenlebte	lived together
+zusammenlegen	zusammenlegen	to merge, to combine
+zusammenstellt	zusammenstellt	puts together, compiles
+zuschauer	Zuschauer	viewer, viewers, spectators
+zuschlagen	Zuschlagen	slamming shut; to slam; to strike
+zuschlägt	zuschlägt	slams; strikes, hits home
+zweckmäßig	zweckmäßig	functional, practical, plain
+zweihunderttausend	zweihunderttausend	two hundred thousand
+zwischenhändler	Zwischenhändler	wholesaler, middleman
+älterer	älterer	older, elderly (inflected)
+äußert	äußert	expresses, speaks out
+üben	üben	to practise
+überraschend	überraschend	surprising, surprisingly
+übrige	Übrige	the rest, the remainder
