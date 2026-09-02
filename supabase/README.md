@@ -315,6 +315,74 @@ would hit it the same way.
 
 ## Known gaps
 
+- `b1-rhythm` (level 8) is **seeded**: ten posts of 601-635 words and the
+  vocabulary behind them. Eight of the ten levels now hold real content, the
+  dictionary holds 7,151 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level — no word in levels 1-8 can render as an em
+  dash. Level 8's subject field is sport, festivals and free time — the 50+1
+  rule, the Schrebergarten, Karneval, Christmas markets, hiking, Munich 1972,
+  the Volkshochschule, the swimming pool and the Ehrenamt — a deliberately
+  human counterweight after level 6's twentieth century and level 7's arts. Its
+  level row did not exist and was created by `_level.tsv`, the same route levels
+  4 to 7 took. Level 8's posts are `posts.id` 107-116.
+
+  Coverage keeps improving as the shared vocabulary grows: 1,309 of the 1,911
+  terms level 8 can produce were already bought by levels 1-7, so only 602 rows
+  were new — 68% of this level's vocabulary came free, against 57% at level 5.
+
+  Verified by checksum, as levels 5 to 7 were: thirty digests (`md5(body)`,
+  `md5(title)`, `md5(blurb)` for all ten posts) match the authored files, and an
+  `md5` over the whole `term || '|' || translation` set ordered `collate "C"`
+  came back `fa27c579fab30a2697cb8e529219f6bc` from both the database and the
+  file. Only 618 of 7,151 rows had changed, so the delta went in as two
+  statements rather than the eighteen the generator emits. Reader counts — 63
+  sessions, 62 progress rows, 32 saved words, none orphaned — were unchanged by
+  the seed itself; they moved afterwards only because the author then read
+  Level 7 to the end, which is the walk recorded below.
+
+  One trap worth recording for the next level: comparing `length(p.body)` from
+  Postgres against `len(body.encode())` in Python reports all ten posts as
+  mismatched while every digest matches. `length()` counts *characters* and the
+  Python figure counts *bytes*, and German prose carries 40-60 multi-byte
+  characters per post. Compare `octet_length()`, or trust the digests.
+
+- **Level 8 has been walked in the running app while unlocked**, by the author
+  rather than from SQL, and this gap was closed on the same day it was seeded.
+  It was first walked *locked*, which is worth recording because that state has
+  its own screen: the switcher listed all eight levels with Level 8 rendered as
+  `🔒 Level 8: B1 Rhythm` and the tooltip "Finish every post in Level 7 to open
+  this", while `level_progress` still reported `posts_total = 10` with
+  `is_unlocked = false` — the distinction the client needs to tell *withheld*
+  from *empty*.
+
+  Finishing Level 7 opened it on screen. The dashboard reads "Level 8: B1 Rhythm
+  — 1 of 10 posts completed" at 10%, the header badge reads "B1 · Level 8", all
+  ten cards show their own title and blurb, and *Fünfzig plus eins* is marked
+  Gelesen while the other nine offer "Read post". The account went from 62 to 72
+  progress rows (Level 7 now 10 of 10) and stands at 1 of 10 on Level 8.
+
+  The cheap check had predicted the walk exactly, and the two agree.
+  Impersonating the same reader in a rolled-back transaction while they were
+  1 of 10 through Level 7, Level 8 reported 0 visible posts; completing Level 7
+  through `reading_sessions` inside the same transaction flipped it to
+  `is_unlocked = true` with all ten posts visible and the body of *Fünfzig plus
+  eins* reaching the reader, which is what the dashboard then showed. That check
+  has now predicted the walk on levels 5, 6, 7 and 8, for the cost of one
+  transaction that is thrown away.
+
+  The vocabulary path was proven end to end rather than only in SQL:
+  `betriebssportgruppen` was tapped in Level 8's *Fünfzig plus eins*, returned
+  "company sports clubs" and was saved to the bank — one of the 602 rows authored
+  for this level, taking it from 32 to 33 saved words.
+
+  The paging was measured rather than assumed. `Bahnsteig` was tapped in Level
+  1's *Der Alltag in Berlin* and returned "platform", and the network log shows
+  `fetchDictionary` making exactly eight requests — offsets 0 through 7,000, the
+  last one short — so all 7,151 rows reach the reader and the paging loop still
+  stops on its own. This is the read that silently truncated at
+  1,000 during the level-1 seed, and it is now three pages past where level 7
+  left it.
+
 - `b1-register` (level 7) is **seeded**: ten posts of 581-608 words and the
   vocabulary behind them. Seven of the ten levels now hold real content, the
   dictionary holds 6,549 rows covering all of them, and `term_gap.py` reports
@@ -336,14 +404,26 @@ would hit it the same way.
 - **An established level's vocabulary can be wrong rather than missing, and
   `term_gap.py` cannot see it.** The script only reports terms with *no* row, so
   a word the earlier levels already bought passes silently even when this
-  level's sense is different. Level 7 needed 17 existing rows widened, and three
+  level's sense is different. It happens on every level: level 8 needed 16
+  existing rows widened, and four were actively misleading in context —
+  `wirtschaft` read "economics; economy" where the carnival piece means *a pub*,
+  `umzug` read "move, relocation" where it means *a parade*, `zug` read only
+  "train" where a reader walks *in a procession*, and `tor` read "gate" where the
+  block stands behind the *goal*. Level 7 needed 17 rows widened, and three
   were actively misleading in context: `karten` read "maps; cards" where a
   theatre level means tickets, `gedreht` read "turned, twisted" where it means
   filmed, and `strich` read "struck out, deleted" where the Feuilleton piece
   means the printed rule on the page. Each widened row keeps its original sense
   and adds the new one, so earlier levels are unaffected. Worth reviewing, on any
   new level, the words its subject re-uses: `haus`/`häuser`, `stück`, `werk`,
-  `folgen`, `blatt`, `spielen`, `lief`/`liefen` all moved here.
+  `folgen`, `blatt`, `spielen`, `lief`/`liefen` all moved here, and level 8 added
+  `platz`, `stand`, `band`, `eis`, `kasse`, `leinen`, `wagen`, `anlagen`,
+  `gefahren`, `fremden`, `sitzungen` and `überträgt` to the list.
+
+  The way to find them is not to read the whole dictionary. Take the words the
+  new level's *subject* owns — for a sport level `tor`, `platz`, `spiel`,
+  `tabelle`; for a festival one `zug`, `umzug`, `wagen`, `garde` — and read only
+  those rows against the sentences that use them.
 
 - **`tests/rls_checks.sql` did not need renumbering for this seed, and the note
   that any content change breaks it is out of date.** Its content-dependent
@@ -354,7 +434,10 @@ would hit it the same way.
   progress. Re-checked against the live project after this seed: all five
   content-sensitive assertions still pass, and `b1-register` reports
   `posts_total = 10` while `is_unlocked = false`, which is the distinction the
-  client needs to tell *withheld* from *empty*.
+  client needs to tell *withheld* from *empty*. Still true after the level 8
+  seed: the file has not been touched since the level 2 seed, every remaining
+  literal is scoped to a fresh test user's own rows, and adding a level changes
+  none of them.
 
 - **Level 7 has been walked in the running app while unlocked**, by the author
   rather than from SQL, and this gap is closed on the same day it was seeded.
