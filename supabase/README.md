@@ -315,6 +315,92 @@ would hit it the same way.
 
 ## Known gaps
 
+- `b1-command` (level 9) is **seeded**: ten posts of 625-658 words and the
+  vocabulary behind them. Nine of the ten levels now hold real content, the
+  dictionary holds 7,629 rows covering all of them, and `term_gap.py` reports
+  full coverage for every level - no word in levels 1-9 can render as an em
+  dash. Level 9's subject field is Germany looking outward - the euro, the
+  Schengen border, a year abroad, the asylum article of the Grundgesetz,
+  Marlene Dietrich, a Goethe-Institut classroom in Cairo, the port of Hamburg,
+  development aid, the emigrants of the nineteenth century and an army that has
+  to ask parliament - which was the last big gap in the arc after eight levels
+  that never looked past the border. It is the last B1 level; level 10 is the
+  B2 preview. Its level row did not exist and was created by `_level.tsv`, the
+  same route levels 4 to 8 took. Level 9's posts are `posts.id` 117-126.
+
+  Coverage keeps improving: 1,372 of the 1,850 terms level 9 can produce were
+  already bought by levels 1-8, so only 478 rows were new - 74% of this level's
+  vocabulary came free, against 68% at level 8 and 57% at level 5. Ten earlier
+  rows were widened rather than added, because a level about borders and trade
+  makes narrow senses wrong: `karte` had "card, ticket" and now carries *map*,
+  `klagen` had only the verb and now carries the noun *lawsuits*, and `anlegen`
+  gained *to dock, to berth* alongside *to invest*.
+
+  A finding worth recording for level 10: **a level about the world pays a
+  proper-noun tax**. Every place and person name survives `clean()` as a
+  tappable term needing its own dictionary row, so Kairo, Bremerhaven, Athen,
+  Namibia and Hunsrück each cost a row the way any other word does. It also
+  constrains the prose, because `clean()` keeps only `[A-Za-zÄÖÜäöüß-]`: São
+  Paulo, Curaçao and Québec would tokenise to junk no row can match, so the
+  examples were chosen from names that survive the regex.
+
+  Verified by checksum, as levels 5 to 8 were: thirty digests (`md5(body)`,
+  `md5(title)`, `md5(blurb)` for all ten posts) match the authored files, and an
+  `md5` over the whole `term || '|' || translation` set ordered `collate "C"`
+  came back `8e223fb6150f90f0624f56fc77724d3f` from both the database and the
+  file. The same digest computed against the file at the *previous* commit
+  matched the database before the seed, which is what made the delta provable:
+  only 488 of 7,629 rows changed, so the dictionary went in as two statements
+  rather than the eight the generator emits at a batch size of 1,000. Reader
+  counts - 73 sessions, 72 progress rows, 33 saved words, none unlinked - were
+  unchanged by the seed itself. They moved afterwards only because the author
+  then finished Level 8 and read the first post of Level 9, which is the walk
+  recorded below: 83 sessions, 82 progress rows, 34 saved words.
+
+  `supabase/tests/rls_checks.sql` needed no renumbering this time. Its levels
+  and dictionary assertions were converted from censuses to shape checks in an
+  earlier pass ("at least 2", "reachable"), and its one literal count is
+  L1 posts, which no later level touches. That earlier change is what stops
+  every content seed from breaking a test for a reason that has nothing to do
+  with RLS.
+
+- **Level 9 has been walked in the running app while unlocked**, by the author,
+  and this gap was closed on the same day it was seeded. Finishing Level 8
+  opened it: the switcher lists all nine levels with Level 9 selected, the
+  dashboard reads "Level 9: B1 Command - 1 of 10 posts completed" at 10%, the
+  header badge reads "B1 - Level 9", and all ten cards show their own title and
+  blurb with *Eine Währung für viele* marked Gelesen. The account went from 72
+  to 82 progress rows (Level 8 now 10 of 10) and stands at 1 of 10 on Level 9.
+
+  The cheap check had predicted the walk exactly, and the two agree.
+  Impersonating the same reader in a rolled-back transaction while they were
+  1 of 10 through Level 8, Level 9 reported `posts_total = 10` with
+  `is_unlocked = false` - withheld rather than empty; completing Level 8 through
+  `reading_sessions` inside the same transaction flipped it to
+  `is_unlocked = true` with all ten posts visible and the body of *Eine Währung
+  für viele* reaching the reader. That check has now predicted the walk on
+  levels 5, 6, 7, 8 and 9, for the cost of one transaction that is thrown away.
+
+  The paging was measured rather than assumed, and this level makes the
+  measurement sharper than before. `loadContent` fetches the dictionary at app
+  boot, so a dashboard load is enough: the network log shows `fetchDictionary`
+  making exactly eight requests - offsets 0 through 7,000 under `order=id.asc`,
+  every one a 200, the last one short - so all 7,629 rows reach the reader and
+  the loop still stops on its own. What is new is that **Level 9's own rows are
+  the ones on the last page**. The 478 rows written for this level carry the
+  highest ids, so `kleingeld` sits at rank 7,381 and `zentralbank` at 7,600:
+  the eighth request is no longer a formality, it is the request that makes this
+  level's vocabulary work at all. A truncated read would have left Level 9
+  looking fine on levels 1 to 8 and full of em dashes on itself.
+
+  One word from this level was saved during the walk - `eigenes` ("own") from
+  *Eine Währung für viele*, taking the author from 29 to 30 saved words. Worth
+  noting for the next level that this particular save proves less than it looks:
+  `eigenes` is an old row at rank 1,702, so it only demonstrates that page two
+  arrived. The eight-request network log is the evidence that the new rows
+  reach the reader; a tap only adds to it if the word tapped is one of the new
+  ones.
+
 - `b1-rhythm` (level 8) is **seeded**: ten posts of 601-635 words and the
   vocabulary behind them. Eight of the ten levels now hold real content, the
   dictionary holds 7,151 rows covering all of them, and `term_gap.py` reports

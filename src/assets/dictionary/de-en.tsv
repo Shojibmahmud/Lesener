@@ -77,7 +77,7 @@ alt	alt	old
 alte	alte	old
 altem	altem	old (dative)
 alten	alten	old
-alter	alter	old
+alter	Alter	old; age
 alternative	Alternative	alternative
 altes	altes	old
 altmodisch	altmodisch	old-fashioned
@@ -135,7 +135,7 @@ anhält	anhält	stops; lasts, continues
 ankommt	ankommt	arrives; depends on
 anlage	Anlage	installation, plant; aptitude, disposition
 anlagen	Anlagen	installations, plants, facilities; grounds, allotment sites
-anlegen	anlegen	to invest, to deposit; to lay out
+anlegen	anlegen	to invest, to deposit; to dock, to berth; to lay out
 anmeldbar	anmeldbar	registrable, able to be filed
 anmelden	anmelden	to register; to file an application
 anmeldung	Anmeldung	registration
@@ -263,7 +263,7 @@ augustinus	Augustinus	Augustine
 aus	aus	from, out of
 ausbau	Ausbau	expansion, build-out
 ausbilden	ausbilden	to train apprentices; training
-ausbildung	Ausbildung	vocational training
+ausbildung	Ausbildung	vocational training; training, instruction
 ausbildungsberufe	Ausbildungsberufe	recognised training occupations
 ausbildungsplätze	Ausbildungsplätze	apprenticeship places
 ausbildungsvertrag	Ausbildungsvertrag	training contract
@@ -1957,7 +1957,7 @@ isar	Isar	the Isar (the river through Munich)
 isolierung	Isolierung	insulation
 ist	ist	is
 italien	Italien	Italy
-ja	ja	yes
+ja	ja	yes; a yes, an approval
 jacke	Jacke	jacket
 jacob	Jacob	Jacob (first name)
 jahr	Jahr	year
@@ -2035,7 +2035,7 @@ karneval	Karneval	carnival
 karotte	Karotte	carrot
 karriere	Karriere	career
 karsten	Karsten	Karsten (name)
-karte	Karte	card, ticket
+karte	Karte	card, ticket; map
 kartenlesegerät	Kartenlesegerät	card reader
 kartenzahlung	Kartenzahlung	card payment
 kartons	Kartons	cardboard boxes
@@ -2564,7 +2564,7 @@ mondprogramm	Mondprogramm	moon programme
 monopol	Monopol	monopoly
 montag	Montag	Monday
 mord	Mord	murder
-morgen	Morgen	morning
+morgen	Morgen	morning; tomorrow
 moscheen	Moscheen	mosques
 motor	Motor	engine, motor
 motoren	Motoren	engines, motors
@@ -2781,7 +2781,7 @@ paar	Paar	a few; couple, pair
 palästina	Palästina	Palestine
 pandemie	Pandemie	pandemic
 pannen	Pannen	breakdowns
-papier	Papier	paper
+papier	Papier	paper; a document, a written agreement
 papiere	Papiere	papers, documents
 papieren	Papieren	papers
 paris	Paris	Paris
@@ -4835,7 +4835,7 @@ keller	Keller	cellars, basements
 kenterte	kenterte	capsized
 kirchturm	Kirchturm	church tower, steeple
 kisten	Kisten	crates, boxes
-klagen	klagen	to sue, take legal action; to complain
+klagen	klagen	to sue, take legal action; lawsuits, legal actions; to complain
 klei	Klei	clay soil deposited by the sea
 kleinteilig	kleinteilig	small-scale, fragmented
 klimaaktivisten	Klimaaktivisten	climate activists
@@ -4948,7 +4948,7 @@ offene	offene	open
 oktober	Oktober	October
 ordnet	ordnet	orders, arranges
 pacht	Pacht	lease, rent for land
-pachten	pachten	to lease, rent land
+pachten	pachten	to lease, rent land; leases, ground rents
 palmen	Palmen	palm trees
 pegel	Pegel	water level; gauge
 permafrost	Permafrost	permafrost
@@ -6683,7 +6683,7 @@ einkauf	Einkauf	shopping, purchase
 einkehr	Einkehr	a stop for food and drink
 einladung	Einladung	invitation
 einrichtungen	Einrichtungen	institutions, facilities
-einsatz	Einsatz	call-out, operation; use
+einsatz	Einsatz	call-out, operation, deployment; use
 einsehen	einsehen	to inspect, to view; to accept
 einsicht	Einsicht	access to files, inspection; insight
 einstellen	einstellen	to stop, to suspend; to hire
@@ -7150,3 +7150,481 @@ zweit	zweit	in twos, as in zu zweit
 älteste	älteste	oldest
 überdachter	überdachter	roofed, covered
 übung	Übung	practice, drill, exercise
+aachen	Aachen	Aachen (city in western Germany)
+abgeladen	abgeladen	unloaded, dumped
+abgesaugt	abgesaugt	sucked off, vacuumed up
+ablehnungen	Ablehnungen	rejections, refusals
+abliest	abliest	reads off, reads out
+abschließt	abschließt	takes out (a policy), concludes; locks up
+absichtserklärung	Absichtserklärung	declaration of intent
+abstimmung	Abstimmung	vote, ballot
+absätze	Absätze	paragraphs; heels
+abzugeben	abzugeben	to hand over, to give up
+adressen	Adressen	addresses
+afghanistan	Afghanistan	Afghanistan
+agentur	Agentur	agency
+amerikanische	amerikanische	American
+aneinanderstoßen	aneinanderstoßen	to meet, to border on one another
+anerkannt	anerkannt	recognised, accredited
+anfangs	anfangs	at first, initially
+angemeldet	angemeldet	registered, signed up
+angerechnet	angerechnet	credited, counted towards
+angewendet	angewendet	applied
+anhörung	Anhörung	hearing, formal interview
+anspruch	Anspruch	claim, entitlement
+anstellt	anstellt	employs, takes on
+antragsteller	Antragsteller	applicant
+antwerpen	Antwerpen	Antwerp
+antwortbögen	Antwortbögen	answer sheets
+anwesenheit	Anwesenheit	attendance, presence
+anwohner	Anwohner	residents, local people
+anwältinnen	Anwältinnen	lawyers (female)
+asphalt	Asphalt	asphalt, tarmac
+asylrecht	Asylrecht	right of asylum
+athen	Athen	Athens
+aufeinander	aufeinander	at one another, on each other
+aufgehört	aufgehört	stopped, given up
+aufgeschrieben	aufgeschrieben	written down
+aufgestellt	aufgestellt	set up, raised (a force); put up
+aufmerksamkeit	Aufmerksamkeit	attention
+aufruft	aufruft	calls out, calls up
+aufschreibt	aufschreibt	writes down
+aufstieg	Aufstieg	rise, ascent
+auftrags	Auftrags	of the order, of the mandate
+auge	Auge	eye
+ausdrücklichen	ausdrücklichen	explicit, express
+ausgaben	Ausgaben	spending, expenditure; editions
+ausgebaggert	ausgebaggert	dredged
+ausgeschrieben	ausgeschrieben	put out to tender, advertised
+ausgespielt	ausgespielt	played off against one another
+ausgesprochen	ausgesprochen	pronounced, said out loud
+aushandeln	aushandeln	to negotiate
+auslandsjahr	Auslandsjahr	year abroad
+ausländischer	ausländischer	foreign
+ausrüstung	Ausrüstung	equipment, kit
+aussprache	Aussprache	pronunciation
+aussprechen	aussprechen	to pronounce, to say out loud
+austauschstudenten	Austauschstudenten	exchange students
+ausverkauft	ausverkauft	sold out
+auswanderer	Auswanderer	emigrants
+auswanderung	Auswanderung	emigration
+ausweisen	Ausweisen	identity papers, ID cards
+auszugeben	auszugeben	to spend
+außenpolitik	Außenpolitik	foreign policy
+backstein	Backstein	brick
+beantragte	beantragte	applied for
+beauftragte	Beauftragte	commissioner, ombudsperson
+beauftragten	Beauftragten	of the commissioner
+becher	Becher	cup, beaker
+beendete	beendete	ended, brought to an end
+bekämpfte	bekämpfte	fought, fought against
+beladenes	beladenes	loaded
+belegter	belegter	documented, evidenced
+bequeme	bequeme	comfortable, convenient
+beratung	Beratung	advice, consultancy
+bereiten	bereiten	to prepare; to cause
+bericht	Bericht	report
+berichtet	berichtet	reports
+beschaffung	Beschaffung	procurement
+bescheide	Bescheide	official decisions, notices
+betrifft	betrifft	concerns, affects
+beurteilen	beurteilen	to judge, to assess
+bildern	Bildern	pictures
+bildungsministerium	Bildungsministerium	ministry of education
+billigem	billigem	cheap
+blinden	blinden	blind
+brasilien	Brasilien	Brazil
+bremerhaven	Bremerhaven	Bremerhaven (German port city)
+brummen	Brummen	humming, droning
+bundesamtes	Bundesamtes	of the federal office
+bundestages	Bundestages	of the Bundestag
+bündnisgebietes	Bündnisgebietes	of the alliance territory
+bündnissen	Bündnissen	alliances
+bündnisses	Bündnisses	of the alliance
+büros	Büros	offices
+dauerstreit	Dauerstreit	running dispute
+davorsteht	davorsteht	stands in front of it
+dazulegen	dazulegen	to add, to chip in on top
+deck	Deck	deck
+demonstrationen	Demonstrationen	demonstrations
+deutschsein	Deutschsein	being German, Germanness
+dichters	Dichters	of the poet
+dichtungsring	Dichtungsring	sealing ring, gasket
+dick	dick	thick, fat
+dienstweg	Dienstweg	official channels, chain of command
+dietrich	Dietrich	Dietrich (a surname)
+dollar	Dollar	dollar
+dreißiger	dreißiger	of the thirties
+dringender	dringender	more urgent
+droht	droht	threatens, is looming
+drücken	drücken	to press, to push
+durchgesetzt	durchgesetzt	pushed through, got one's way
+durchsetzt	durchsetzt	enforces
+dünne	dünne	thin
+ecken	Ecken	corners
+ehre	Ehre	honour
+ehrenbürgerin	Ehrenbürgerin	honorary citizen (female)
+eigenartigsten	eigenartigsten	strangest, oddest
+eigenem	eigenem	own
+eingelöst	eingelöst	redeemed, cashed in
+eingereist	eingereist	entered the country
+einsatzfähige	einsatzfähige	operational, fit for service
+einschränken	einschränken	to limit, to restrict
+einsätzen	Einsätzen	deployments, missions
+eintreten	eintreten	to join; to enter
+einwohner	Einwohner	inhabitants
+eisstand	Eisstand	ice cream stand
+empfehlen	empfehlen	to recommend
+engel	Engel	angel
+entkommen	entkommen	to escape
+entscheider	Entscheider	decision makers, case officers
+entwicklungshilfe	Entwicklungshilfe	development aid
+erasmus	Erasmus	Erasmus (scholar; the exchange programme)
+erdkundeunterricht	Erdkundeunterricht	geography lessons
+erinnern	erinnern	to remind; to remember
+erlebnissen	Erlebnissen	experiences
+erließen	erließen	issued, enacted
+ersatzteilen	Ersatzteilen	spare parts
+erscheinen	Erscheinen	publication, appearing
+ersparnissen	Ersparnissen	savings
+erweiterungen	Erweiterungen	expansions, extensions
+ethik	Ethik	ethics
+fachbüchern	Fachbüchern	specialist books, textbooks
+fahrbahn	Fahrbahn	carriageway, roadway
+fahrkarten	Fahrkarten	tickets
+fahrplan	Fahrplan	timetable, schedule
+falle	Falle	trap
+fehlende	fehlende	missing, lacking
+fehlerhaft	fehlerhaft	faulty, flawed
+filmviertels	Filmviertels	of the film district
+finnland	Finnland	Finland
+firmenzentrale	Firmenzentrale	company headquarters
+flugplätze	Flugplätze	airfields
+flur	Flur	corridor, hallway
+flussaufwärts	flussaufwärts	upstream
+formulare	Formulare	forms
+fragten	fragten	asked
+fraktion	Fraktion	parliamentary group
+freundeskreis	Freundeskreis	circle of friends
+front	Front	front (in a war)
+fruchtbarem	fruchtbarem	fertile
+fußballfelder	Fußballfelder	football pitches
+fähre	Fähre	ferry
+fässern	Fässern	barrels
+gebaggert	gebaggert	dredged
+gebeten	gebeten	asked, requested
+gedauert	gedauert	lasted
+gedicht	Gedicht	poem
+gedächtnis	Gedächtnis	memory
+gefehlt	gefehlt	been missing, been lacking
+geflohen	geflohen	fled
+geflüchtete	Geflüchtete	refugees
+geflügel	Geflügel	poultry
+gefüllt	gefüllt	filled
+gegeneinander	gegeneinander	against each other
+geholfen	geholfen	helped
+gelandet	gelandet	landed, ended up
+geldes	Geldes	of the money
+gemeinsamen	gemeinsamen	shared, joint
+gemeinsames	gemeinsames	shared, joint
+gemeinschaft	Gemeinschaft	community
+gemerkt	gemerkt	noticed
+genehmigungen	Genehmigungen	permits, approvals
+genießen	genießen	to enjoy
+geprägt	geprägt	shaped, left a mark on
+gescheiterten	gescheiterten	failed
+geschraubt	geschraubt	screwed; tinkered with, adjusted
+geteiltes	geteiltes	shared, divided
+gewechselt	gewechselt	changed, switched
+gewöhnlich	gewöhnlich	ordinary, usual
+gezeichnet	gezeichnet	drawn
+glaube	glaube	believe; belief, faith
+glücklich	glücklich	happy
+greifen	greifen	to reach, to grab; to take effect
+grundlagen	Grundlagen	foundations, legal bases
+grundrecht	Grundrecht	basic right
+günstiger	günstiger	cheaper, more favourable
+hafenarbeiters	Hafenarbeiters	of the dock worker
+hallen	Hallen	halls
+hamburger	Hamburger	of Hamburg; a Hamburg native
+handelsregeln	Handelsregeln	trade rules
+hauptstädten	Hauptstädten	capital cities
+heimatstädte	Heimatstädte	home towns
+herausfällt	herausfällt	falls out, drops out
+herrscht	herrscht	rules, prevails
+heutige	heutige	today's, present-day
+hierherkamen	hierherkamen	came here
+hindurchgeht	hindurchgeht	walks through
+hineingehen	hineingehen	to go in, to enter
+hinfahren	hinfahren	to travel there
+hinflug	Hinflug	outward flight
+hinsetzen	hinsetzen	to sit down
+hinweg	hinweg	across, over
+hinzuschicken	hinzuschicken	to send there
+hoffentlich	hoffentlich	hopefully
+hoffnung	Hoffnung	hope
+hunsrück	Hunsrück	the Hunsrück (a German upland region)
+hupt	hupt	honks, sounds the horn
+hälften	Hälften	halves
+härter	härter	harder, tougher
+höchstzahl	Höchstzahl	maximum number, cap
+instituts	Instituts	of the institute
+internationales	internationales	international
+irland	Irland	Ireland
+kabine	Kabine	cabin, booth
+kai	Kai	quay, wharf
+kairo	Kairo	Cairo
+kapitäne	Kapitäne	captains
+kaputten	kaputten	broken
+kasernen	Kasernen	barracks
+kassen	Kassen	coffers, tills; health insurers
+kippt	kippt	tips over, turns
+kleingeld	Kleingeld	small change
+klimaanlage	Klimaanlage	air conditioning
+klimaprojekte	Klimaprojekte	climate projects
+koche	koche	cook
+koffern	Koffern	suitcases
+kofferraum	Kofferraum	car boot, trunk
+komitee	Komitee	committee
+kommentare	Kommentare	comments, opinion pieces
+kontrollen	Kontrollen	checks, controls
+kontrollieren	kontrollieren	to check, to control
+kopfhörern	Kopfhörern	headphones
+kopien	Kopien	copies
+kranführer	Kranführer	crane operator
+krankenhaus	Krankenhaus	hospital
+krankenwagen	Krankenwagen	ambulance
+krankheiten	Krankheiten	diseases, illnesses
+kredite	Kredite	loans, credits
+kräne	Kräne	cranes
+kränen	Kränen	cranes
+kunde	Kunde	customer
+küsten	Küsten	coasts
+lacht	lacht	laughs
+lagerhäuser	Lagerhäuser	warehouses
+landessprache	Landessprache	the local language
+langweiligste	langweiligste	most boring
+laufende	laufende	working, running; current
+lautete	lautete	read, ran (of a text)
+lebensplan	Lebensplan	plan for one's life
+lehrerin	Lehrerin	teacher (female)
+lehrerinnen	Lehrerinnen	teachers (female)
+lehrers	Lehrers	of the teacher
+leinwand	Leinwand	screen, canvas
+leserbriefe	Leserbriefe	letters to the editor
+leuchtet	leuchtet	lights up, shines
+lippenstift	Lippenstift	lipstick
+lohnte	lohnte	was worth it, paid off
+lokal	Lokal	pub, restaurant
+luxemburg	Luxemburg	Luxembourg
+lädt	lädt	invites; loads
+längsten	längsten	longest
+lärm	Lärm	noise
+lästig	lästig	annoying, tiresome
+löhnen	Löhnen	wages
+machthaber	Machthaber	rulers, those in power
+mandat	Mandat	mandate
+marlene	Marlene	Marlene (a first name)
+maße	Maße	dimensions, measurements
+mechaniker	Mechaniker	mechanic
+militärdienst	Militärdienst	military service
+mischt	mischt	mixes; interferes
+missernten	Missernten	crop failures
+mitbekommen	mitbekommen	to catch, to get wind of
+mitgefahren	mitgefahren	come along, taken part
+mitgefühl	Mitgefühl	compassion, sympathy
+mitmachte	mitmachte	took part; held up, cooperated
+mitnahmen	mitnahmen	took with them
+mochte	mochte	liked
+monatelanger	monatelanger	months-long
+monatliche	monatliche	monthly
+mosel	Mosel	the Moselle (river)
+musikerin	Musikerin	musician (female)
+möglichst	möglichst	as ... as possible
+nachgebaute	nachgebaute	reconstructed, rebuilt
+nachnamen	Nachnamen	surname
+nahverkehr	Nahverkehr	local public transport
+namibia	Namibia	Namibia
+nein	Nein	no; a refusal
+netze	Netze	networks, nets
+nordamerika	Nordamerika	North America
+nummern	Nummern	numbers
+ohio	Ohio	Ohio
+ordnern	Ordnern	ring binders, files
+ortes	Ortes	of the place
+papiers	Papiers	of the paper, of the document
+parlamentsarmee	Parlamentsarmee	parliamentary army
+pfandflaschen	Pfandflaschen	deposit bottles
+plakat	Plakat	poster
+plenarsaal	Plenarsaal	plenary chamber
+politisches	politisches	political
+postkarte	Postkarte	postcard
+proteste	Proteste	protests
+prüfungsterminen	Prüfungsterminen	exam dates
+pumpe	Pumpe	pump
+pünktlich	pünktlich	on time, punctual
+ranglisten	Ranglisten	rankings, league tables
+rauer	rauer	rougher, harsher
+rechtsweg	Rechtsweg	legal recourse, the courts
+regierungserklärungen	Regierungserklärungen	government policy statements
+reiches	reiches	rich
+reiseliste	Reiseliste	travel list
+renten	Renten	pensions
+rettungspakete	Rettungspakete	bailout packages
+revolution	Revolution	revolution
+rissen	rissen	tore; fought over
+rohr	Rohr	pipe, tube
+rollen	Rollen	roles; rolls
+romantisch	romantisch	romantic
+rotem	rotem	red
+rotterdam	Rotterdam	Rotterdam
+russland	Russland	Russia
+rätsel	Rätsel	puzzle, riddle
+rückflug	Rückflug	return flight
+sammelt	sammelt	collects, gathers
+sammle	sammle	collect, raise money
+sarg	Sarg	coffin
+schadet	schadet	harms, does damage
+schale	Schale	bowl, dish
+schauspielunterricht	Schauspielunterricht	acting lessons
+scheinwerfer	Scheinwerfer	floodlights, headlights
+schengen	Schengen	Schengen (village in Luxembourg; the treaty)
+scherz	Scherz	joke
+schlafen	schlafen	to sleep
+schlagbaum	Schlagbaum	barrier, border gate
+schlagen	schlagen	to hit, to beat; to handle (freight)
+schlamm	Schlamm	mud
+schlepper	Schlepper	tugboat; people smuggler
+schleppte	schleppte	dragged, lugged
+schriftstellern	Schriftstellern	writers
+schuldenkrise	Schuldenkrise	debt crisis
+schulplätze	Schulplätze	school places
+schwersten	schwersten	hardest, heaviest
+schwierigkeiten	Schwierigkeiten	difficulties
+schärfer	schärfer	sharper, stricter
+sechzehnten	sechzehnten	sixteenth
+semester	Semester	semester, term
+sicheres	sicheres	safe
+soldat	Soldat	soldier
+sortiert	sortiert	sorted, arranged
+spendenaktionen	Spendenaktionen	fundraising campaigns
+sperrig	sperrig	bulky, awkward
+spuckte	spuckte	spat
+spürbar	spürbar	noticeable, palpable
+spüren	spüren	to feel, to sense
+staatsbürgerschaft	Staatsbürgerschaft	citizenship
+stabilisierung	Stabilisierung	stabilisation
+stapel	Stapel	stacks, piles
+star	Star	star (a celebrity)
+stattfinden	stattfinden	to take place
+stau	Stau	traffic jam, tailback
+steh	steh	stand
+steuergeld	Steuergeld	taxpayers' money
+stipendien	Stipendien	scholarships, grants
+stock	Stock	floor, storey; stick
+studentin	Studentin	student (female)
+stufe	Stufe	level, step
+stuhlreihen	Stuhlreihen	rows of chairs
+ständiges	ständiges	constant, permanent
+sängerin	Sängerin	singer (female)
+tagesordnung	Tagesordnung	agenda
+tanken	tanken	to fill up with fuel
+tausch	Tausch	exchange, swap
+telefonierte	telefonierte	talked on the phone
+terminal	Terminal	terminal
+terminplan	Terminplan	schedule of appointments
+tiefes	tiefes	deep
+tätig	tätig	active, working
+ukraine	Ukraine	Ukraine
+umgerannt	umgerannt	knocked over, run into
+umgerechnet	umgerechnet	converted, recalculated
+umschlagen	umschlagen	to handle (freight); to turn, to tip over
+unabhängigkeit	Unabhängigkeit	independence
+unangenehmer	unangenehmer	more unpleasant
+unauffälligen	unauffälligen	inconspicuous, unremarkable
+undenkbar	undenkbar	unthinkable
+unglaubwürdig	unglaubwürdig	not credible, implausible
+untergang	Untergang	downfall, ruin; sinking
+unterhalt	Unterhalt	upkeep, maintenance
+unterhält	unterhält	maintains, runs; entertains
+unterkunft	Unterkunft	accommodation, hostel
+verbringt	verbringt	spends (time)
+verfahrens	Verfahrens	of the procedure
+verfolgte	Verfolgte	persecuted people
+vergangenheitsformen	Vergangenheitsformen	past tense forms
+vergleichbar	vergleichbar	comparable
+verkleinert	verkleinert	reduced, scaled down
+verliebt	verliebt	falls in love; in love
+verließen	verließen	left, departed from
+verräterin	Verräterin	traitor (female)
+verschifft	verschifft	shipped
+verspätung	Verspätung	delay, lateness
+verstecken	verstecken	to hide
+vertauscht	vertauscht	swapped, reversed
+verteidigen	verteidigen	to defend
+vertiefung	Vertiefung	deepening
+verwandte	Verwandte	relatives
+verwechselt	verwechselt	confuses, mixes up
+verweigern	verweigern	to refuse
+verzieh	verzieh	forgave
+vierten	vierten	fourth
+visa	Visa	visas
+visum	Visum	visa
+vorbeifahren	vorbeifahren	to drive past
+vorfahren	Vorfahren	ancestors
+vorwürfe	Vorwürfe	accusations, reproaches
+vorübergehend	vorübergehend	temporarily
+waggon	Waggon	railway wagon
+warnweste	Warnweste	high-visibility vest
+warteten	warteten	waited
+wartezeit	Wartezeit	waiting time
+wegwischen	wegwischen	to wipe away, to brush aside
+weisungen	Weisungen	instructions, directives
+welthandel	Welthandel	world trade
+wenden	wenden	to turn; to turn to somebody
+wertvoll	wertvoll	valuable
+wiedergesehen	wiedergesehen	seen again
+wohnstraßen	Wohnstraßen	residential streets
+wohnungssuche	Wohnungssuche	flat hunting
+worte	Worte	words (in connected speech)
+wunder	Wunder	miracle, wonder
+wundern	wundern	to be surprised, to wonder
+wunsch	Wunsch	wish
+wussten	wussten	knew
+wütende	wütende	furious, angry
+zahlungsmittel	Zahlungsmittel	means of payment, currency
+zeile	Zeile	line (of text)
+zeitfenster	Zeitfenster	time window
+zeitraum	Zeitraum	period of time
+zelten	Zelten	tents
+zentimeter	Zentimeter	centimetre
+zentralbank	Zentralbank	central bank
+zerschossenen	zerschossenen	shot to pieces, shelled
+zertifikat	Zertifikat	certificate
+zielland	Zielland	destination country
+zigaretten	Zigaretten	cigarettes
+zinsen	Zinsen	interest (on money)
+zollhaus	Zollhaus	customs house
+zumutung	Zumutung	an imposition, a nuisance
+zurückfährt	zurückfährt	travels back, returns
+zurückgedrängt	zurückgedrängt	pushed back, reduced
+zurückholen	zurückholen	to bring back
+zusammenfassung	Zusammenfassung	summary
+zusammengeschlossen	zusammengeschlossen	joined together, merged
+zuschlägen	Zuschlägen	supplements, top-ups
+zusätzliches	zusätzliches	additional
+zwanzigste	zwanzigste	twentieth
+zweierlei	zweierlei	two things, of two kinds
+zweitwichtigste	zweitwichtigste	second most important
+zölle	Zölle	tariffs, customs duties
+änderten	änderten	changed
+ärgern	ärgern	to annoy; to be annoyed
+äußerst	äußerst	extremely
+österreich	Österreich	Austria
+östlichen	östlichen	eastern
+überfahrt	Überfahrt	crossing, passage
+überlastet	überlastet	overloaded, overstretched
+überlegen	überlegen	superior; to think over
+überquerte	überquerte	crossed
+überstanden	überstanden	survived, got through
+übte	übte	practised, trained
