@@ -315,6 +315,109 @@ would hit it the same way.
 
 ## Known gaps
 
+- `b2-threshold` (level 10) is **seeded**, and the ladder is complete: ten
+  posts of 450-500 words and the vocabulary behind them. All ten levels now hold
+  real content, the dictionary holds 8,170 rows, and `term_gap.py` reports full
+  coverage for every level - no word anywhere in the app can render as an em
+  dash. Level 10's subject field is prehistoric animals, chosen because Germany
+  holds an outsized share of that story: the Messel pit, the Neandertal, the
+  Solnhofen limestone and Archaeopteryx, the Berlin Naturkundemuseum's mounted
+  skeleton and where it was dug up, Tilly Edinger, the Schoeningen spears, the
+  Loewenmensch, Ice Age bones out of the Rhine gravel, and what has to happen
+  before a slab becomes a species. Its level row did not exist and was created
+  by `_level.tsv`, the same route levels 4 to 9 took. Level 10's posts are
+  `posts.id` 127-136, and it is the first row in `levels` whose `cefr` is not
+  `B1`.
+
+  **The length ladder reverses here, on purpose.** Word counts climbed from 473
+  at level 1 to 640 at level 9; level 10 drops back to level 1's own band,
+  456-476. The difficulty moves out of stamina and into grammar, so the reader
+  meets B2 at a length they have already proved they can finish. Longer
+  sentences at the same word count mean fewer paragraphs - 8 or 9 here against
+  level 9's 9 - which is worth expecting rather than fighting.
+
+  Coverage held up better than a fresh subject field deserved: 1,069 of the
+  1,610 terms level 10 can produce were already bought by levels 1-9, so only
+  541 rows were new - 66% free, against 74% at level 9. Five earlier rows were
+  widened rather than added, and one of them mattered more than the rest:
+  `art` carried only "kind, sort; manner", which is simply the wrong sense in a
+  level where *Art* means **species** on nearly every page. Also widened were
+  `platten` (gained *slabs*, having meant only *records*), `frage` (had only
+  the verb *ask*, now carries the noun *question*), `lagen` (gained *layers,
+  strata*) and `arbeiten` (gained *works, operations*). The lesson generalises:
+  a new subject field is likelier to make an old row **wrong** than to leave a
+  word missing, and only reading the level's own senses against the existing
+  rows catches that - `term_gap.py` reports nothing, because the term is there.
+
+  Two traps this level paid that earlier ones did not. **Deep time is the worst
+  numeral trap the app has met**: the subject is nothing but large numbers, and
+  numerals are inert. Every magnitude is spelled out - `achtundvierzig
+  Millionen`, `dreihunderttausend`, `vierzigtausend` - and the bodies contain
+  **not one digit**, verified by grep. Each number word costs a dictionary row
+  and is tappable, which is the trade worth making. **Latin binomials cost two
+  rows each** and have no italics to mark them as foreign, so they were used
+  only where they are genuinely the name people know (Archaeopteryx) and German
+  preferred elsewhere - `Urvogel`, `Flugsaurier`, `Wollnashorn`.
+
+  Verified by checksum, as levels 5 to 9 were: thirty digests (`md5(body)`,
+  `md5(title)`, `md5(blurb)` for all ten posts) match the authored files, and an
+  `md5` over the whole `term || '|' || translation` set ordered `collate "C"`
+  came back `67900538ad60b3536a9521fa2420370b` from both the database and the
+  file. The database matched the *previous* commit's file
+  (`66517d69eab626b900ce451b57c7b6d0`) before the seed, which is what made the
+  delta provable: only 546 of 8,170 rows changed, so the dictionary went in as
+  three statements rather than the twenty-one the generator emits at a batch
+  size of 1,000. Reader counts - 83 sessions, 82 progress rows, 34 saved words,
+  none unlinked - were unchanged by the seed, and unchanged again after the app
+  walk below. `03-cleanup.sql` was checked read-only and would have relabelled
+  nothing (0 rows), which is right: every level 10 post is new, so no saved word
+  points at one.
+
+  `supabase/tests/rls_checks.sql` needed no change, for the same reason it
+  needed none at level 9.
+
+- **Level 10 has been walked in the running app while unlocked**, by the author,
+  on the same day it was seeded, and this gap was closed rather than carried.
+
+  It was first seen from outside the gate: the switcher listed all ten levels
+  with the tenth disabled, labelled "Finish every post in Level 9 to open this"
+  - the *withheld* state rather than "No posts in this level yet", which is the
+  distinction Feature 2's Trap 2 was about, and right because `level_progress`
+  reports `posts_total = 10` for a level whose posts the reader cannot yet see.
+
+  Finishing Level 9 opened it. The switcher now shows Level 10 selected and
+  enabled, the dashboard reads "Level 10: B2 Threshold - 2 of 10 posts
+  completed" at 20%, and all ten cards carry their own title and blurb with
+  *Die Grube Messel* and *Der Neandertaler* marked Gelesen. The account went
+  from 83 to 94 sessions and 82 to 93 progress rows (Level 9 now 10 of 10),
+  saved words from 34 to 38, and the dictionary digest was re-checked
+  afterwards and is unchanged - reading does not touch content.
+
+  **The B2 badge has now been rendered, and this is the first time.** The header
+  reads `B2 · Level 10` where every previous level drew `B1`, and the reader
+  eyebrow draws `{level.cefr} · {post.topic}`. Nine levels of content shipped
+  before anything in this app had to display a CEFR string other than `B1`; it
+  displays correctly, and the ladder has no untested state left in it.
+
+  The cheap check was done and predicts the walk. Impersonating the reader in a
+  rolled-back transaction, Level 10 reported `posts_total = 10` with
+  `is_unlocked = false` and **0 posts visible** - withheld, not empty;
+  completing Level 9 through `reading_sessions` inside the same transaction
+  flipped it to `is_unlocked = true` with all ten posts reaching the reader. The
+  transaction was thrown away and the counts re-read afterwards to prove it: 83
+  sessions, 82 progress rows, Level 9 still at exactly 1 completed. That check
+  has now predicted the walk on levels 5, 6, 7, 8, 9 and 10.
+
+  The paging was measured, not assumed, and it crossed another boundary. At
+  8,170 rows the network log shows `fetchDictionary` making exactly **nine**
+  requests - offsets 0 through 8,000 under `order=id.asc`, every one a 200, the
+  last one short - up from eight at 7,629. As at level 9, this level's rows sit
+  on the final page, and by rank rather than raw id (the id sequence has gaps
+  now, so `max(id)` is 8,365 against 8,170 rows): `schöningen` ranks 8,016,
+  `stoßzahn` 8,041, `tilly` 8,061 and `übersehen` 8,170. **170 of Level 10's own
+  rows are reachable only by the ninth request.** A client that stopped at eight
+  would leave levels 1-9 looking perfect and Level 10 full of em dashes.
+
 - `b1-command` (level 9) is **seeded**: ten posts of 625-658 words and the
   vocabulary behind them. Nine of the ten levels now hold real content, the
   dictionary holds 7,629 rows covering all of them, and `term_gap.py` reports
@@ -619,12 +722,24 @@ would hit it the same way.
   `fetchDictionary` makes seven sequential requests on every app load, offsets 0
   through 6000, up from six at 5,981 — confirmed in the running app by a
   level-7 word resolving on tap.
-  Worth revisiting before the level count gets much higher — it is a latency
-  problem long before it is a free-tier one (ten levels is projected at ~4% of
-  the 500 MB quota).
-- **The CEFR ladder is levels 1-9 B1, level 10 B2.** Level 10 is a deliberate
-  first taste of B2 rather than the top of a smooth ramp, so B2 grammar —
-  Konjunktiv I in reported speech above all — is held back until then. Level 1
+  The ladder is now complete and the projection can be closed: +478 for level 8,
+  +478 for level 9 and +541 for level 10 landed the table at **8,170 rows**,
+  against the ~7,400 projected — over by about 10%, because the last two levels
+  opened subject fields further from the earlier ones than the trend assumed.
+  Nine sequential requests per app load is the settled cost. Worth revisiting if
+  a B2 app ever extends this table rather than starting its own — it is a
+  latency problem long before it is a free-tier one (~4% of the 500 MB quota).
+- **The CEFR ladder is levels 1-9 B1, level 10 B2, and level 10 has now been
+  written.** It is a deliberate first taste of B2 rather than the top of a
+  smooth ramp, so B2 grammar — Konjunktiv I in reported speech above all — was
+  held back through levels 1 to 9 and **spent** at level 10. The grep that
+  policed that reservation therefore inverts at the top of the ladder: on levels
+  1-9 a hit is a defect to rewrite, on level 10 it is checked and kept. Its 33
+  hits there were read individually; the genuine ones are correct, and
+  `hätten`/`bekämen` appear exactly where Konjunktiv I collapses into the
+  indicative in the third person plural and written German switches to
+  Konjunktiv II. The B2 register is now written down beside the B1 one in
+  `.claude/skills/content-authoring/SKILL.md`. Level 1
   carried three Konjunktiv I constructions and two lexical Präteritum verbs from
   the original seed; both were corrected in Feature 14 and re-seeded. Level 4's
   drafts carried three more (`werde` twice, `sehe` once); a grep for Konjunktiv I

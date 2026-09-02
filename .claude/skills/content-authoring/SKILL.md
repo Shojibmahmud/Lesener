@@ -95,11 +95,48 @@ re-checking against the source rather than trusting this file.
 - **Numerals are inert.** `1989` cleans to nothing and cannot be tapped. Use
   figures where they carry meaning, but never write a chronology — a paragraph
   dense with dates gives the reader nothing to learn.
+- **Spell magnitudes out.** The same rule bites hardest where the subject is
+  made of large numbers. `48` teaches nothing; `achtundvierzig` is a word the
+  reader can tap and keep. Level 10 was written without a single digit in any
+  body, which is the safe default for anything numeric — geology, populations,
+  money — and costs only a dictionary row per number word.
 
 **Register.** Aim at the level the `levels.cefr` row actually claims, not at the
 textbook page being imitated. For B1: Präsens and Perfekt carry the narration,
 Präteritum only for `sein`, `haben`, `werden` and modals; Passiv sparingly;
 concrete nouns over nominalised officialese; sentences mostly under 20 words.
+
+For B2, which today means level 10 alone, the constructions B1 avoids are the
+whole point and were deliberately held back for it:
+
+- **Konjunktiv I in reported speech** — `er habe`, `sie sei`, `es gebe`, `man
+  werde`. Where the form would collapse into the indicative, as `haben` and
+  `bekommen` do in the third person plural, written German switches to
+  Konjunktiv II (`hätten`, `bekämen`); a draft that leaves `haben` there has got
+  the rule wrong rather than merely chosen differently.
+- **Konjunktiv II past the politeness formulas** — real counterfactuals:
+  `hätte … können`, `wäre … geworden`, `ließe sich`.
+- **Passiv freely**, including in subordinate clauses and as Zustandspassiv.
+- **Extended attributive participles** — `die aus dem Kies geborgenen Knochen`.
+  Almost absent below B2 and one of the clearest markers of written German.
+- **Nominalisation and Funktionsverbgefüge** — `in Frage stellen`, `zur
+  Diskussion stehen` — which B1 is told to avoid.
+- **Concessive and argumentative connectors** (`zwar … doch`, `allerdings`,
+  `hingegen`, `demgegenüber`, `insofern`) and genitive prepositions
+  (`angesichts`, `infolge`, `zugunsten`, `trotz`).
+- **The 20-word ceiling lifts.** Periodic sentences with two subordinate clauses
+  are the point.
+
+Subject matter has to earn the grammar. Reported speech needs positions to
+attribute, so a B2 level wants arguments and contested claims rather than
+procedure. Note also that longer sentences at the same word count mean fewer
+paragraphs: level 10 runs 450–500 words in 8 or 9, where level 9 needed 9 for 640.
+
+`grep -nE '\b(sei|seien|habe|haben|werde|gebe|könne|wolle|dürfe|müsse|handle|lasse|komme|hätten)\b'`
+over a new level's bodies is worth running either way. On levels 1–9 it catches
+Konjunktiv I that crept in and must come out; on a B2 level it is read the other
+way, to confirm each hit is deliberate and correctly formed. First-person `ich
+habe` and the like are the expected false positives.
 
 Write real-world topics — portraits, history, how something in Germany actually
 works — rather than phrasebook scenes. Vary the voice: third person for
