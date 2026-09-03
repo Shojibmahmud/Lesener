@@ -1,6 +1,6 @@
 # Content in the app's hands
 
-**Status:** Draft · **Feature:** 3 · **Date:** 2026-08-16
+**Status:** Implemented · **Feature:** 3 · **Date:** 2026-08-16
 
 ## Problem
 

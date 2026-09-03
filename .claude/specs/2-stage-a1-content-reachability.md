@@ -1,6 +1,6 @@
 # Content reachability
 
-**Status:** Draft · **Feature:** 2 · **Date:** 2026-08-14
+**Status:** Implemented · **Feature:** 2 · **Date:** 2026-08-14
 
 ## Problem
 

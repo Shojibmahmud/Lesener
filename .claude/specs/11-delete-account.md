@@ -1,6 +1,6 @@
 # Delete account
 
-**Status:** Draft · **Feature:** 11 · **Date:** 2026-08-20
+**Status:** Implemented · **Feature:** 11 · **Date:** 2026-08-20
 
 > Spec 11, built on branch `feature/11-delete-account`, planned as **Feature 5** in `.claude/roadmaps/5-delete-account-roadmap.md`. The spec and roadmap sequences diverged at spec 2 and have not agreed since. This spec is authoritative on observable behaviour; the roadmap is authoritative on how it gets built, and must be reconciled to anything here it disagrees with.
 

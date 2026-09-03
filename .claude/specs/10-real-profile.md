@@ -1,6 +1,6 @@
 # Real Profile
 
-**Status:** Draft · **Feature:** 10 · **Date:** 2026-08-19
+**Status:** Implemented · **Feature:** 10 · **Date:** 2026-08-19
 
 > **Numbering.** Spec 10, built on branch `feature/10-real-profile`, planned as **Feature 4** in `.claude/roadmaps/4-real-profile-roadmap.md`. The spec and roadmap sequences diverged at spec 2 and have not agreed since; the branch and spec numbers coinciding here is chance. This spec is authoritative on observable behaviour; the roadmap is authoritative on how it gets built.
 

@@ -1,6 +1,6 @@
 # Profile Theme
 
-**Status:** Draft · **Feature:** 12 · **Date:** 2026-08-22
+**Status:** Implemented · **Feature:** 12 · **Date:** 2026-08-22
 
 ## Problem
 The light/dark switcher works, but the answer is remembered only by the browser it was pressed in. A reader who signs in on a second browser, on their phone, in a private window, or after clearing site data is back to light — even though the account already remembers their name, their saved words, their reading progress and which levels they have unlocked.

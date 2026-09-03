@@ -1,6 +1,6 @@
 # Persist Reading Progress
 
-**Status:** Draft · **Feature:** 8 · **Date:** 2026-08-18
+**Status:** Implemented · **Feature:** 8 · **Date:** 2026-08-18
 
 ## Problem
 
