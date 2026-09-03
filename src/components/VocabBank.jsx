@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import ThemeToggle from './ThemeToggle';
+import { gutter, headerRow, useIsNarrow } from '../lib/responsive';
 
 export default function VocabBank({ dark, toggleTheme, saved, postLabels, goDashboard, onRemove, removeFailed }) {
+  // Only the word rows change shape: on a phone the translation moves under the
+  // word rather than sharing the line with it.
+  const narrow = useIsNarrow();
+
   // Grouped by the post a word was met in, in the order the words were saved.
   //
   // The heading comes from the library where the post is still there, so
@@ -34,10 +39,7 @@ export default function VocabBank({ dark, toggleTheme, saved, postLabels, goDash
     <div style={{ animation: 'fade .35s ease' }}>
       <header
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '14px 40px',
+          ...headerRow,
           background: 'var(--bg)',
           borderBottom: '1px solid var(--line)',
           position: 'sticky',
@@ -45,17 +47,17 @@ export default function VocabBank({ dark, toggleTheme, saved, postLabels, goDash
           zIndex: 20,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
           <button
             className="btng"
             onClick={goDashboard}
-            style={{ width: 34, height: 34, borderRadius: 10, border: '1px solid var(--line)', color: 'var(--muted)', fontSize: 15 }}
+            style={{ width: 34, height: 34, borderRadius: 10, border: '1px solid var(--line)', color: 'var(--muted)', fontSize: 15, flexShrink: 0 }}
           >
             ←
           </button>
           <span style={{ font: '600 19px var(--serif)' }}>Vocabulary bank</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           <span style={{ padding: '8px 14px', borderRadius: 10, background: 'var(--ind-soft)', color: 'var(--ind)', font: '700 12.5px var(--ui)' }}>
             {saved.length} words
           </span>
@@ -63,7 +65,7 @@ export default function VocabBank({ dark, toggleTheme, saved, postLabels, goDash
         </div>
       </header>
 
-      <main style={{ maxWidth: 900, margin: '0 auto', padding: '44px 40px 90px' }}>
+      <main style={{ maxWidth: 900, margin: '0 auto', padding: `44px ${gutter} 90px` }}>
         {removeFailed && (
           <p
             role="alert"
@@ -100,14 +102,44 @@ export default function VocabBank({ dark, toggleTheme, saved, postLabels, goDash
               <div
                 key={it.id}
                 className="rowh"
-                style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 40px', alignItems: 'center', gap: 16, padding: '14px 12px', borderBottom: '1px solid var(--line2)', borderRadius: 10 }}
+                style={{
+                  display: 'grid',
+                  // minmax(0, 1fr) rather than 1fr: a bare `1fr` track carries an
+                  // implicit `min-width: auto`, so a German compound noun wider
+                  // than its share forces the whole row — and the page — wider
+                  // rather than wrapping inside it.
+                  gridTemplateColumns: narrow ? 'minmax(0, 1fr) 44px' : 'minmax(0, 1fr) minmax(0, 1fr) 40px',
+                  alignItems: 'center',
+                  gap: narrow ? '2px 12px' : 16,
+                  padding: '14px 12px',
+                  borderBottom: '1px solid var(--line2)',
+                  borderRadius: 10,
+                }}
               >
-                <span style={{ font: '600 15.5px var(--ui)' }}>{it.surface_form}</span>
-                <span style={{ font: '400 15px var(--ui)', color: 'var(--muted)' }}>{it.translation ?? '—'}</span>
+                {/* DOM order is unchanged when these stack — the narrow layout
+                    places them by grid area rather than reordering, so the trash
+                    buttons stay in saved-order for anything selecting them by
+                    index. */}
+                <span style={{ font: '600 15.5px var(--ui)', overflowWrap: 'anywhere', ...(narrow ? { gridColumn: 1, gridRow: 1 } : {}) }}>{it.surface_form}</span>
+                <span style={{ font: '400 15px var(--ui)', color: 'var(--muted)', overflowWrap: 'anywhere', ...(narrow ? { gridColumn: 1, gridRow: 2 } : {}) }}>
+                  {it.translation ?? '—'}
+                </span>
                 <button
                   className="trash"
                   onClick={() => onRemove(it.id)}
-                  style={{ justifySelf: 'end', width: 32, height: 32, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}
+                  style={{
+                    justifySelf: 'end',
+                    // 44px on a phone: the 32px box was under the size a thumb
+                    // hits reliably, and it is the only destructive control here.
+                    width: narrow ? 44 : 32,
+                    height: narrow ? 44 : 32,
+                    borderRadius: 9,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 15,
+                    ...(narrow ? { gridColumn: 2, gridRow: '1 / 3' } : {}),
+                  }}
                 >
                   🗑
                 </button>

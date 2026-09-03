@@ -611,7 +611,7 @@ export default function App() {
   // Hold the painted background until the stored session has been read, so a
   // returning reader does not see Landing flash before the dashboard.
   if (!authReady) {
-    return <div style={{ minHeight: '100vh', background: 'var(--bg)' }} />;
+    return <div style={{ minHeight: '100dvh', background: 'var(--bg)' }} />;
   }
 
   // Signed in and the library is still on its way, or never arrived. Someone on
@@ -637,7 +637,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg)' }}>
       {screen === 'landing' && (
         <Landing dark={dark} toggleTheme={toggleTheme} goSignIn={goSignIn} goSignUp={goSignUp} />
       )}

@@ -11,6 +11,7 @@ import {
 import Logo from './Logo';
 import PasswordField from './PasswordField';
 import ThemeToggle from './ThemeToggle';
+import { gutter } from '../lib/responsive';
 
 function tabStyle(active) {
   return {
@@ -170,9 +171,13 @@ export default function AuthScreen({
   // that. maxLength matches the database's 60-character limit — it counts UTF-16
   // code units rather than characters, so on astral-plane input it is stricter
   // than the column, never looser, and cannot produce a value the check refuses.
+  //
+  // The row wraps rather than squeezing: side by side inside a 420px card both
+  // fields are comfortable, but on a 320px screen they become two ~110px boxes.
+  // A 150px flex basis is what decides when they stop sharing a line.
   const nameInputs = (
-    <div style={{ display: 'flex', gap: 12 }}>
-      <div style={{ flex: 1 }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+      <div style={{ flex: '1 1 150px', minWidth: 0 }}>
         <label htmlFor="auth-first-name" style={labelStyle}>
           First name
         </label>
@@ -188,7 +193,7 @@ export default function AuthScreen({
           style={{ ...inputStyle, marginBottom: 16 }}
         />
       </div>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: '1 1 150px', minWidth: 0 }}>
         <label htmlFor="auth-last-name" style={labelStyle}>
           Last name
         </label>
@@ -227,13 +232,19 @@ export default function AuthScreen({
   );
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, position: 'relative', animation: 'fade .35s ease' }}>
-      <ThemeToggle dark={dark} onToggle={toggleTheme} style={{ position: 'absolute', top: 24, right: 32 }} />
-      <div style={{ position: 'absolute', top: 24, left: 32 }}>
+    // A real header row rather than two absolutely positioned corners. Absolute
+    // placement is fine while the card is short, but the card is centred and
+    // grows with the form -- the sign-up card is tall enough that on a phone its
+    // top corners reached up under the logo and the toggle and sat behind them.
+    // A column with the card taking `margin: auto` centres it in whatever space
+    // is left over instead, so the two can never collide at any height.
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', padding: gutter, animation: 'fade .35s ease' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
         <Logo onClick={goLanding} />
+        <ThemeToggle dark={dark} onToggle={toggleTheme} />
       </div>
 
-      <div style={{ width: '100%', maxWidth: 420, animation: 'rise .4s cubic-bezier(.2,.7,.3,1)' }}>
+      <div style={{ width: '100%', maxWidth: 420, margin: 'auto', animation: 'rise .4s cubic-bezier(.2,.7,.3,1)' }}>
         <div
           style={{
             background: isUp ? 'var(--ind-up-soft)' : 'var(--surf)',

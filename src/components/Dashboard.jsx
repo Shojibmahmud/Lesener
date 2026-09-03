@@ -1,5 +1,6 @@
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
+import { gutter, headerRow, useIsNarrow } from '../lib/responsive';
 
 // The avatar's letter. `charAt(0)` is wrong here in two ways, both found by
 // looking at a running build rather than at a test: on a Bengali name it takes
@@ -50,6 +51,12 @@ export default function Dashboard({
   openPost,
   reviewPost,
 }) {
+  // Only two things here change shape rather than size: the header drops the
+  // level badge, and the level switcher becomes one scrolling row. Everything
+  // else on this screen is handled by clamp() and an auto-filling grid, which
+  // need no breakpoint at all.
+  const narrow = useIsNarrow();
+
   // Sign-up requires both names and the accounts that predate it were given
   // one, so a nameless reader should not exist. These fallbacks are a guard
   // rather than a state anyone should reach: without them a missing name would
@@ -86,19 +93,16 @@ export default function Dashboard({
     <div style={{ animation: 'fade .35s ease' }}>
       <header
         style={{
+          ...headerRow,
           position: 'sticky',
           top: 0,
           zIndex: 30,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '14px 40px',
           background: 'var(--bg)',
           borderBottom: '1px solid var(--line)',
         }}
       >
         <Logo />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative', flexShrink: 0 }}>
           <button
             className="btng"
             onClick={goVocab}
@@ -106,9 +110,15 @@ export default function Dashboard({
           >
             <span style={{ color: 'var(--muted)', fontWeight: 500 }}>Saved</span> {savedCount}
           </button>
-          <span style={{ padding: '8px 14px', borderRadius: 10, background: 'var(--grn-soft)', color: 'var(--grn)', font: '700 12.5px var(--ui)', letterSpacing: '.02em' }}>
-            {level.cefr} · Level {level.position}
-          </span>
+          {/* Dropped on a phone rather than wrapped. Five non-shrinking items
+              do not fit a 360px row, and this is the one that is pure
+              duplication -- the line under the greeting names the level
+              already, a few centimetres below. */}
+          {!narrow && (
+            <span style={{ padding: '8px 14px', borderRadius: 10, background: 'var(--grn-soft)', color: 'var(--grn)', font: '700 12.5px var(--ui)', letterSpacing: '.02em' }}>
+              {level.cefr} · Level {level.position}
+            </span>
+          )}
           <ThemeToggle dark={dark} onToggle={toggleTheme} />
           <button
             onClick={toggleMenu}
@@ -123,6 +133,7 @@ export default function Dashboard({
                 top: 48,
                 right: 0,
                 width: 250,
+                maxWidth: 'calc(100vw - 32px)',
                 background: 'var(--surf)',
                 border: '1px solid var(--line)',
                 borderRadius: 16,
@@ -169,14 +180,35 @@ export default function Dashboard({
         </div>
       </header>
 
-      <main style={{ maxWidth: 1180, margin: '0 auto', padding: 40 }}>
+      <main style={{ maxWidth: 1180, margin: '0 auto', padding: gutter }}>
         {/* Every level, locked ones included. A level a reader cannot open yet
             is still worth seeing — it is what they are working towards, and
             hiding it makes the progress line above it meaningless. Rendered only
             when there is more than one, because a single-level switcher offers a
             choice that does not exist. */}
         {(levels ?? []).length > 1 && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 26, flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 8,
+              marginBottom: 26,
+              // Ten pills carrying full level names wrap into five ragged rows
+              // on a phone, filling the screen before a single post is visible.
+              // One swipeable row instead, bled to the gutters so it reads as
+              // scrollable rather than cut off.
+              ...(narrow
+                ? {
+                    flexWrap: 'nowrap',
+                    overflowX: 'auto',
+                    scrollSnapType: 'x proximity',
+                    marginLeft: `calc(-1 * ${gutter})`,
+                    marginRight: `calc(-1 * ${gutter})`,
+                    paddingLeft: gutter,
+                    paddingRight: gutter,
+                  }
+                : { flexWrap: 'wrap' }),
+            }}
+          >
             {levels.map((l) => {
               const isOpen = unlocked ? unlocked.get(l.id) : true;
               const isCurrent = l.id === level.id;
@@ -198,6 +230,9 @@ export default function Dashboard({
                     background: isCurrent ? 'var(--ind-soft)' : 'var(--surf)',
                     color: isOpen ? (isCurrent ? 'var(--ind)' : 'var(--text)') : 'var(--muted)',
                     font: '600 13px var(--ui)',
+                    flexShrink: 0,
+                    scrollSnapAlign: 'start',
+                    whiteSpace: 'nowrap',
                     // Greyed and unpressable, not hidden. The cursor is the only
                     // hint a reader gets before they try it.
                     opacity: isOpen ? 1 : 0.55,
@@ -212,9 +247,20 @@ export default function Dashboard({
           </div>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: 'clamp(12px, 4vw, 24px)' }}>
           <div>
-            <h1 style={{ font: '400 40px/1.15 var(--serif)', margin: 0, letterSpacing: '-.02em' }}>{greeting}</h1>
+            <h1
+              style={{
+                fontWeight: 400,
+                fontSize: 'clamp(28px, 7vw, 40px)',
+                lineHeight: 1.15,
+                fontFamily: 'var(--serif)',
+                margin: 0,
+                letterSpacing: '-.02em',
+              }}
+            >
+              {greeting}
+            </h1>
             <p style={{ font: '400 15.5px var(--ui)', color: 'var(--muted)', margin: '8px 0 0' }}>
               Level {level.position}: {level.name}
               {/* The count comes from the level's own record, not from the posts
@@ -286,7 +332,7 @@ export default function Dashboard({
 
         {/* Left unguarded: with no posts this maps to no children, and dropping
             its margin too makes it occupy nothing at all. */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginTop: isEmpty || isLocked ? 0 : 38 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 240px), 1fr))', gap: 20, marginTop: isEmpty || isLocked ? 0 : 38 }}>
           {posts.map((p) => {
             const isDone = completed.includes(p.id);
             return (

@@ -10,8 +10,12 @@ export default function FinishModal({ doneCount, postCount, pctLabel, session, s
         background: 'rgba(15,23,42,.55)',
         backdropFilter: 'blur(3px)',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        // `margin: auto` on the card instead of centring the flex line: a
+        // flex-centred item taller than the backdrop overflows *both* ways and
+        // its top becomes unreachable, which is what a tall dialog does on a
+        // short phone. Auto margins centre while still allowing a scroll.
+        overflowY: 'auto',
+        overscrollBehavior: 'contain',
         zIndex: 60,
         padding: 24,
         animation: 'fade .2s ease',
@@ -21,6 +25,7 @@ export default function FinishModal({ doneCount, postCount, pctLabel, session, s
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
+          margin: 'auto',
           maxWidth: 460,
           background: 'var(--surf)',
           border: '1px solid var(--line)',

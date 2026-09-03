@@ -7,7 +7,7 @@ export default function ContentError({ onRetry }) {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         background: 'var(--bg)',
         display: 'flex',
         alignItems: 'center',

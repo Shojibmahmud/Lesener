@@ -1,5 +1,6 @@
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
+import { gutter, headerRow } from '../lib/responsive';
 
 const FEATURES = [
   {
@@ -24,31 +25,31 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
     <div style={{ animation: 'fade .4s ease' }}>
       <header
         style={{
+          ...headerRow,
           position: 'sticky',
           top: 0,
           zIndex: 20,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '18px 40px',
           background: 'var(--bg)',
           borderBottom: '1px solid var(--line)',
         }}
       >
         <Logo />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {/* Kept as one group so the three controls travel together if the row
+            wraps, rather than the two buttons stranding the toggle on a line of
+            its own. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           <ThemeToggle dark={dark} onToggle={toggleTheme} />
           <button
             className="btng"
             onClick={goSignIn}
-            style={{ padding: '9px 16px', borderRadius: 10, border: '1px solid var(--line)', font: '600 13.5px var(--ui)', color: 'var(--text)' }}
+            style={{ padding: '9px clamp(11px, 3.5vw, 16px)', borderRadius: 10, border: '1px solid var(--line)', font: '600 13.5px var(--ui)', color: 'var(--text)' }}
           >
             Sign In
           </button>
           <button
             className="btnp"
             onClick={goSignUp}
-            style={{ padding: '10px 18px', borderRadius: 10, background: 'var(--ind)', color: '#fff', font: '600 13.5px var(--ui)' }}
+            style={{ padding: '10px clamp(12px, 4vw, 18px)', borderRadius: 10, background: 'var(--ind)', color: '#fff', font: '600 13.5px var(--ui)' }}
           >
             Get Started
           </button>
@@ -58,12 +59,17 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
       <section
         style={{
           display: 'grid',
-          gridTemplateColumns: '1.05fr .95fr',
-          gap: 64,
+          // auto-fit rather than two fixed tracks: below roughly 860px there is
+          // no room for two 380px columns plus the gap, and the grid drops to
+          // one column on its own. The `min(100%, ...)` is what stops the track
+          // minimum exceeding the container on a very narrow screen, which is
+          // how a grid ends up wider than the page.
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 380px), 1fr))',
+          gap: 'clamp(32px, 5vw, 64px)',
           alignItems: 'center',
           maxWidth: 1240,
           margin: '0 auto',
-          padding: '88px 40px 72px',
+          padding: `clamp(40px, 8vw, 88px) ${gutter} clamp(40px, 6vw, 72px)`,
         }}
       >
         <div>
@@ -82,14 +88,27 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
           >
             10 curated B1 texts · free to start
           </div>
-          <h1 style={{ font: '400 62px/1.06 var(--serif)', letterSpacing: '-.025em', margin: '22px 0 0', textWrap: 'pretty' }}>
+          {/* Split out of the `font:` shorthand because a shorthand cannot
+              hold a clamp(). 62px inside the ~234px column this used to get on a
+              phone is what broke the headline to one word per line. */}
+          <h1
+            style={{
+              fontWeight: 400,
+              fontSize: 'clamp(34px, 8.5vw, 62px)',
+              lineHeight: 1.06,
+              fontFamily: 'var(--serif)',
+              letterSpacing: '-.025em',
+              margin: '22px 0 0',
+              textWrap: 'pretty',
+            }}
+          >
             Master German reading through <em style={{ fontStyle: 'italic', color: 'var(--ind)' }}>context</em>.
           </h1>
           <p style={{ font: '400 18px/1.7 var(--ui)', color: 'var(--muted)', margin: '22px 0 0', maxWidth: 460, textWrap: 'pretty' }}>
             Read real B1 texts. Tap any word you don't know for an instant translation, save it with one click, and watch your
             vocabulary bank grow as you level up.
           </p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 34 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 34 }}>
             <button
               className="btnp"
               onClick={goSignUp}
@@ -105,7 +124,7 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
               I have an account
             </button>
           </div>
-          <div style={{ display: 'flex', gap: 28, marginTop: 40, paddingTop: 26, borderTop: '1px solid var(--line)' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(18px, 5vw, 28px)', marginTop: 40, paddingTop: 26, borderTop: '1px solid var(--line)' }}>
             {[
               ['10', 'Curated texts'],
               ['1 tap', 'To save a word'],
@@ -120,7 +139,7 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
         </div>
 
         <div style={{ position: 'relative' }}>
-          <div style={{ position: 'absolute', inset: '-26px -18px', background: 'var(--ind-soft)', borderRadius: 28, opacity: 0.55 }} />
+          <div style={{ position: 'absolute', inset: '-16px -8px', background: 'var(--ind-soft)', borderRadius: 28, opacity: 0.55 }} />
           <div
             style={{
               position: 'relative',
@@ -176,7 +195,7 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 14,
-                    whiteSpace: 'nowrap',
+                    maxWidth: '100%',
                     animation: 'pop .3s ease',
                   }}
                 >
@@ -234,8 +253,8 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
         </div>
       </section>
 
-      <section style={{ maxWidth: 1240, margin: '0 auto', padding: '0 40px 90px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, borderTop: '1px solid var(--line)', paddingTop: 44 }}>
+      <section style={{ maxWidth: 1240, margin: '0 auto', padding: `0 ${gutter} 90px` }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 20, borderTop: '1px solid var(--line)', paddingTop: 44 }}>
           {FEATURES.map((f) => (
             <div key={f.step}>
               <div style={{ font: '600 12px var(--ui)', color: 'var(--ind)', letterSpacing: '.08em' }}>{f.step}</div>
@@ -249,8 +268,10 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
       <footer
         style={{
           borderTop: '1px solid var(--line)',
-          padding: '26px 40px',
+          padding: `26px ${gutter}`,
           display: 'flex',
+          flexWrap: 'wrap',
+          gap: 14,
           justifyContent: 'space-between',
           alignItems: 'center',
           maxWidth: 1240,
@@ -260,7 +281,7 @@ export default function Landing({ dark, toggleTheme, goSignIn, goSignUp }) {
         }}
       >
         <span>© 2026 Lesener</span>
-        <span style={{ display: 'flex', gap: 22 }}>
+        <span style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(14px, 4vw, 22px)' }}>
           <a href="#">Impressum</a>
           <a href="#">Datenschutz</a>
           <a href="#">Kontakt</a>

@@ -70,6 +70,19 @@ push, no CI). See [docs/deployment.md](docs/deployment.md).
   and branch numbers diverged at spec 2 and are only identifiers.
 - **Line references in older documents drift.** Re-grep before trusting any
   `file.js:123`; prefer searching for a symbol name.
+- **Several tests are coupled to exact markup, invisibly from the component.**
+  Changing any of these breaks a test for a reason the source does not hint at:
+  the word span's `className` is compared with `===` to `'w'` (so it may never gain
+  a second class); post cards must keep `.lift`, and no button may be inserted
+  before "Read post" inside one; the Reader's text pane must stay the *first*
+  element in the document carrying `overflow-y: auto`; the DeleteModal backdrop
+  must stay exactly two levels above its heading; the dashboard's level line must
+  stay a `<p>` inside `<main>` whose text starts `Level N:`; and VocabBank must
+  have no `<section>` other than one per word group.
+- **`index.css` is never loaded by a test** — `main.jsx` is its only importer, and
+  no test imports that. CSS changes are invisible to the suite, and jsdom does not
+  evaluate width queries either, so two variants of a thing must be a JSX ternary
+  and never one hidden by a media query.
 
 ## Constraints
 

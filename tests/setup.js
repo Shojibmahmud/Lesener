@@ -41,4 +41,51 @@ if (typeof globalThis.localStorage === 'undefined') {
   }
 }
 
+// jsdom implements no `matchMedia`, and vitest then copies the key onto the
+// global anyway with the `undefined` it found -- so `'matchMedia' in window` is
+// true while calling it throws. `src/lib/responsive.js` guards with `typeof`
+// for exactly that reason and answers "not narrow" when there is nothing to ask,
+// which means that without this shim the phone layout would be unreachable in
+// every test that will ever run: the one branch this whole feature adds, never
+// exercised.
+//
+// It answers `(max-width: Npx)` against `window.innerWidth`, which jsdom sets to
+// 1024. 1024 is wider than the 820px breakpoint, so every existing test keeps
+// the desktop path it has always taken, and a test that wants the phone layout
+// says so by setting `window.innerWidth` before rendering.
+//
+// `matches` is a getter rather than a value: a test that changes the width
+// between renders should see the new answer, not the one computed when the
+// query object happened to be made.
+if (typeof globalThis.window !== 'undefined' && typeof globalThis.window.matchMedia !== 'function') {
+  const maxWidthOf = (query) => {
+    const found = /\(\s*max-width\s*:\s*(\d+(?:\.\d+)?)px\s*\)/.exec(String(query));
+    return found ? Number(found[1]) : null;
+  };
+
+  const matchMedia = (query) => {
+    const max = maxWidthOf(query);
+    return {
+      media: String(query),
+      get matches() {
+        // Only `max-width` is understood. Anything else answers false rather
+        // than guessing, so a query this shim cannot evaluate fails towards the
+        // desktop layout rather than silently claiming a match.
+        return max === null ? false : globalThis.window.innerWidth <= max;
+      },
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    };
+  };
+
+  Object.defineProperty(globalThis.window, 'matchMedia', { value: matchMedia, configurable: true, writable: true });
+  if (globalThis !== globalThis.window) {
+    Object.defineProperty(globalThis, 'matchMedia', { value: matchMedia, configurable: true, writable: true });
+  }
+}
+
 afterEach(cleanup);

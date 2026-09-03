@@ -253,10 +253,34 @@ these **synchronously**, which is what stops the dashboard flashing before
 ## Frontend conventions
 
 - **Components are flat.** `src/components/` holds 15 files and no subdirectories.
-- **Styling is inline style objects.** `src/index.css` (170 lines) holds only the
+- **Styling is inline style objects.** `src/index.css` (229 lines) holds the
   light/dark custom properties, resets, keyframes (`pop`, `fade`, `rise`, `slideup`,
   `pulse`), a `prefers-reduced-motion` block, and six utility classes used by name:
   `.lift`, `.w` (a tappable word), `.btnp`, `.btng`, `.rowh`, `.trash`.
+- **Responsiveness is mostly written inside those inline objects.** A media query
+  cannot reach an inline style, but it does not need to: `clamp()` for type and
+  gutters, `repeat(auto-fill, minmax(min(100%, Npx), 1fr))` for the card grids, and
+  `flexWrap` cover nearly all of it with no breakpoint and no re-render on resize.
+  The `min(100%, …)` inside each `minmax` is load-bearing — without it a track
+  minimum can exceed its container and the grid ends up wider than the page.
+- **`src/lib/responsive.js` is for the few places the layout changes *shape*.** It
+  exports `NARROW` (820), a shared `gutter` and `headerRow` recipe, and
+  `useIsNarrow()`. Only three things use the hook: the Reader's sidebar becoming a
+  bottom sheet, the Dashboard's level switcher becoming a scrolling strip and its
+  header dropping the level badge, and the VocabBank's word rows stacking. Reaching
+  for it to change a padding means a `clamp()` was available and was not used.
+  - The guard inside it must stay `typeof window.matchMedia !== 'function'`. jsdom
+    implements no `matchMedia`, and vitest then copies the key onto the global with
+    that `undefined` — so `'matchMedia' in window` is true while calling it throws.
+  - `tests/setup.js` shims `matchMedia` against `window.innerWidth`. jsdom's 1024
+    is wider than the breakpoint, so every test that does not say otherwise takes
+    the desktop path.
+- **Hover affordances live behind `@media (hover: hover)`.** On a touch screen
+  `:hover` latches from a tap until something else is tapped, which left a tapped
+  word indigo — the colour that means its translation is open.
+- **The four screens' headers are four copies sharing one recipe**, not a component:
+  they carry genuinely different content, and a component covering all four needs
+  enough slots to stop being simpler.
 - **Shared auth-form styling lives in `src/lib/authUi.js`** — `inputStyle`,
   `labelStyle`, `messageStyle`, `errorMessageStyle`, `noticeMessageStyle`,
   `submitButtonStyle(busy)` — extracted because five forms share it.

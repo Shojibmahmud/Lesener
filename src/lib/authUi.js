@@ -9,7 +9,13 @@ export const inputStyle = {
   border: '1px solid var(--line)',
   background: 'var(--bg)',
   color: 'var(--text)',
-  font: '400 14.5px var(--ui)',
+  // 16px, and not a rounder-looking 14.5px, because iOS Safari zooms the page in
+  // when a form control smaller than 16px takes focus -- and does not zoom back
+  // out afterwards. The reader is left on a magnified, sideways-scrolling page
+  // for the rest of the form. This is the only 14.5px in the app that matters
+  // for that: the other eleven are body paragraphs, and iOS only reacts to a
+  // focused control.
+  font: '400 16px var(--ui)',
 };
 
 export const labelStyle = {

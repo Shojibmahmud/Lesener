@@ -4,6 +4,7 @@ import { authErrorText, errorMessageStyle, noticeMessageStyle, submitButtonStyle
 import Logo from './Logo';
 import PasswordField from './PasswordField';
 import ThemeToggle from './ThemeToggle';
+import { gutter } from '../lib/responsive';
 
 export default function NewPassword({ dark, toggleTheme, goLanding, email, onComplete, onExpired }) {
   const [password, setPassword] = useState('');
@@ -37,13 +38,19 @@ export default function NewPassword({ dark, toggleTheme, goLanding, email, onCom
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, position: 'relative', animation: 'fade .35s ease' }}>
-      <ThemeToggle dark={dark} onToggle={toggleTheme} style={{ position: 'absolute', top: 24, right: 32 }} />
-      <div style={{ position: 'absolute', top: 24, left: 32 }}>
+    // A real header row rather than two absolutely positioned corners. Absolute
+    // placement is fine while the card is short, but the card is centred and
+    // grows with the form -- the sign-up card is tall enough that on a phone its
+    // top corners reached up under the logo and the toggle and sat behind them.
+    // A column with the card taking `margin: auto` centres it in whatever space
+    // is left over instead, so the two can never collide at any height.
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', padding: gutter, animation: 'fade .35s ease' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
         <Logo onClick={goLanding} />
+        <ThemeToggle dark={dark} onToggle={toggleTheme} />
       </div>
 
-      <div style={{ width: '100%', maxWidth: 420, animation: 'rise .4s cubic-bezier(.2,.7,.3,1)' }}>
+      <div style={{ width: '100%', maxWidth: 420, margin: 'auto', animation: 'rise .4s cubic-bezier(.2,.7,.3,1)' }}>
         <div style={{ background: 'var(--surf)', border: '1px solid var(--line)', borderRadius: 20, boxShadow: 'var(--shadow-lg)', padding: 32 }}>
           <h2 style={{ font: '400 30px/1.2 var(--serif)', margin: '0 0 6px', letterSpacing: '-.02em' }}>
             Choose a new password

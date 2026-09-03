@@ -1,7 +1,15 @@
 :root {
   /* --bg is duplicated in index.html's inline <style>, which paints the canvas
      before this file exists. Change one and change the other; theme-boot.test.js
-     fails if they drift. */
+     fails if they drift.
+
+     It also has to stay the *first* --bg in this file, and the dark-theme
+     selector below must stay the first occurrence of itself: theme-boot finds
+     the dark colour by slicing the file from that selector and taking the next
+     --bg after it. Anything mentioning that selector higher up -- a rule, or a
+     comment like this one quoting it -- moves the slice and makes the test read
+     the light colour instead. Which is exactly what happened while this comment
+     was being written. */
   --bg: #FDFBF7;
   --surf: #FFFFFF;
   --surf2: #F7F4ED;
@@ -47,8 +55,26 @@ html, body {
   margin: 0;
 }
 
+html {
+  /* iOS inflates text in landscape unless told not to. */
+  -webkit-text-size-adjust: 100%;
+
+  /* The backstop for horizontal overflow, and `clip` rather than `hidden` on
+     purpose. `hidden` on one axis makes the other compute from `visible` to
+     `auto`, which turns the element into a scroll container and silently breaks
+     the four sticky headers. `clip` creates no scroll container, so sticky keeps
+     working. Safari only understands it from 16; older Safari drops the line and
+     gets today's behaviour, which is why this is a net rather than the fix. */
+  overflow-x: clip;
+}
+
 #root {
+  /* 100vh on a mobile browser is the viewport with the URL bar *excluded*, so a
+     100vh minimum leaves the document taller than what is on screen -- a phantom
+     scroll, and a sticky header that can be scrolled away. dvh is the visible
+     height. The 100vh line stays first as the fallback for Safari below 15.4. */
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 body {
@@ -63,9 +89,6 @@ body {
 a {
   color: var(--ind);
   text-decoration: none;
-}
-a:hover {
-  color: #4F46E5;
 }
 
 button {
@@ -107,21 +130,8 @@ button {
   50% { opacity: .45; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .lift:hover, .btnp:hover { transform: none; }
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: .01ms !important;
-  }
-}
-
 .lift {
   transition: transform .22s cubic-bezier(.2, .7, .3, 1), box-shadow .22s ease, border-color .22s ease;
-}
-.lift:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
 }
 
 .w {
@@ -129,42 +139,91 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
-.w:hover {
-  background: var(--ind-soft);
-  color: var(--ind);
-}
 
 .btnp {
   transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
-.btnp:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(99, 102, 241, .35);
-}
 .btnp:active {
+  /* :active is left outside the hover block deliberately -- a touch screen has
+     no hover but it does have a press, and this is the only feedback a tap on a
+     primary button gets. */
   transform: translateY(0);
 }
 
 .btng {
   transition: background .18s ease, border-color .18s ease;
 }
-.btng:hover {
-  background: var(--surf2);
-  border-color: var(--muted);
-}
 
 .rowh {
   transition: background .16s ease;
 }
-.rowh:hover {
-  background: var(--surf2);
-}
 
 .trash {
-  opacity: .35;
   transition: opacity .16s ease, color .16s ease;
 }
-.rowh:hover .trash {
-  opacity: 1;
-  color: var(--red);
+
+/* Every hover affordance in the app, gated on a device that actually has a
+   pointer.
+
+   On a touch screen :hover latches: it applies from the tap until something
+   else is tapped. A tapped card stays lifted, a tapped row stays shaded, and --
+   the one a reader actually notices -- a tapped word in the reader stays
+   indigo, which is the exact colour that means "this word's translation is
+   open". The word looks open long after it has closed.
+
+   .trash is the other half of the same problem, inverted. Its resting state was
+   opacity .35, revealed to 1 on row hover; on a phone there is no hover, so the
+   delete control sat permanently dimmed. Declaring the dimming *inside* this
+   block leaves touch devices with the initial opacity of 1. */
+@media (hover: hover) {
+  a:hover {
+    color: #4F46E5;
+  }
+
+  .lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .w:hover {
+    background: var(--ind-soft);
+    color: var(--ind);
+  }
+
+  .btnp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(99, 102, 241, .35);
+  }
+
+  .btng:hover {
+    background: var(--surf2);
+    border-color: var(--muted);
+  }
+
+  .rowh:hover {
+    background: var(--surf2);
+  }
+
+  .trash {
+    opacity: .35;
+  }
+  .rowh:hover .trash {
+    opacity: 1;
+    color: var(--red);
+  }
+}
+
+/* Last in the file, and that placement is load-bearing. This block used to sit
+   above the utility classes, where its `.lift:hover, .btnp:hover { transform:
+   none }` had identical specificity (0,2,0) to the `.lift:hover` that followed
+   it -- a media query contributes none -- so source order won and the rule had
+   never once applied. Only the !important half of the block was doing anything.
+   Moving it here is what makes the transform suppression real. */
+@media (prefers-reduced-motion: reduce) {
+  .lift:hover, .btnp:hover { transform: none; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }
