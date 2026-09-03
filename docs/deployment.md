@@ -168,12 +168,35 @@ Netlify are both free and would serve this build unchanged.
 
 ## A note on the free tiers
 
-Both are genuinely free at this scale, with one trap worth knowing:
+Both are genuinely free at this scale. Vercel Hobby is free for non-commercial use,
+which this is, and the dictionary at 8,170 rows is about 4% of Supabase's 500 MB.
 
-**Supabase pauses a free project after roughly a week of inactivity.** A deployed
-link nobody visits will come back to a paused database and an app that cannot load
-its library. Restarting is a click in the dashboard, but the first visitor after a
-quiet fortnight sees the error state.
+The one thing worth understanding properly is Supabase's project pausing, because a
+paused database means the app loads and then cannot fetch its library.
 
-Vercel Hobby is free for non-commercial use, which this is. The dictionary at 8,170
-rows is about 4% of Supabase's 500 MB.
+### How pausing actually works
+
+Checked against [Supabase's project pausing
+guide](https://supabase.com/docs/guides/platform/free-project-pausing) on
+2026-09-03, because the one-line version of this ("it pauses after a week of
+inactivity") is alarming in a way the real policy is not.
+
+- **The trigger is low activity over a 7-day period, not zero activity.** Supabase's
+  wording is that "typically a few user requests to the database each day over the
+  previous week is enough to keep the project from being paused". Opening the
+  project in the Supabase dashboard also counts as activity.
+- **You are warned first.** A warning email goes to the project owner roughly a week
+  before the pause takes effect, and a second email confirms once it has happened.
+  Loading the site once after the warning is enough to prevent it.
+- **Restoring is one click**, from the project page in the dashboard, and the
+  project comes back with its data and configuration intact.
+- **The restore window is one year.** Note that Supabase's own page still carries the
+  anchor `#90-day-window-to-restore` from when the window was shorter, so a search
+  result or a cached copy of that page may tell you 90 days — the live text says a
+  year. After the window closes, the remaining option is downloading a backup and
+  restoring it elsewhere.
+
+In practice this only bites a project nobody touches at all — including its owner —
+for a week, and even then not without an email first. It is worth knowing before
+putting the link somewhere it might sit unvisited, rather than something to design
+around.
