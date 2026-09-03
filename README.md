@@ -100,10 +100,12 @@ Knowingly unfinished, and none of it hidden:
 - **The German has been read by nobody but the model that wrote it.** A wrong
   sentence in a learning app teaches the error. The mitigation is that correcting one
   is a file edit and a re-run.
-- **Not deployed anywhere**, and there is no CI. Three things would need fixing
-  first: `mailer_autoconfirm` is on with no mail sender configured, leaked-password
-  protection is switched off, and the deployed origin would need registering with
-  Supabase Auth.
+- **Not deployed anywhere**, and there is no CI. Two things would need doing first:
+  registering the deployed origin with Supabase Auth, and switching on
+  leaked-password protection.
+- **Sign-up sends no confirmation email**, by choice. Password reset works for any
+  address, so accounts are recoverable — but a reader who mistypes their address
+  cannot be rescued.
 - **The level gate is not DRM.** A determined client can open the next level by
   writing session rows. Accepted — the content is free to read anyway.
 - **Account deletion has no password-attempt limit.** Measured, not assumed: 140

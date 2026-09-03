@@ -132,11 +132,13 @@ injected by the runtime; you do not set them yourself.
 - **Redirect URLs** — add `http://localhost:5173` under Authentication → URL
   Configuration, or the password-reset link will refuse to come back to your dev
   server. The app sends `redirectTo: window.location.origin`.
-- **Email confirmation** — the original project runs with `mailer_autoconfirm` on
-  and no SMTP configured, which is why sign-up works there without any mail being
-  delivered. That is a development convenience and
-  [a launch blocker](operations.md#before-any-public-deployment), not a
-  recommendation.
+- **Email confirmation** — the original project runs with `mailer_autoconfirm` on,
+  so sign-up needs no confirmation click and sends no mail. That is deliberate; see
+  [security.md](security.md#why-there-is-no-signup-confirmation). On your own
+  project you can leave Supabase's default confirmation on instead, in which case
+  you will need a working sender before you can sign in at all.
+- **A mail sender** — needed only for password reset, not for sign-up. The original
+  project uses Gmail as custom SMTP, which needs no domain and costs nothing.
 
 ## Environment variables, in full
 

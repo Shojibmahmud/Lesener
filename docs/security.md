@@ -164,13 +164,41 @@ of the account they are halfway through recovering, with another email wait.
 
 | Item | Status |
 |---|---|
-| `mailer_autoconfirm = true`, no SMTP | **Blocks any public launch.** Accounts confirm without a mail being sent. See [operations.md](operations.md#before-any-public-deployment). |
+| `mailer_autoconfirm = true` | **Deliberate, not a gap.** Sign-up sends no confirmation mail and the account works immediately. See [the note below](#why-there-is-no-signup-confirmation). |
 | Leaked-password protection disabled | Open, and cheap to fix. Supabase Auth can reject passwords found in the HaveIBeenPwned corpus; the setting is off. Reported by `get_advisors(security)` as the project's one standing WARN (2026-09-03). |
 | No password-attempt limit on `delete-account` | Open. Needs a per-account counter. |
 | Level gate bypassable by a determined client | Accepted. Content is free to read. |
 | No CI, so nothing enforces the test suites | Open. |
 | No monitoring or error reporting | Open. `console.error` is the whole of it. |
 | No export path for reader data | Open. Content is reproducible from the repo; reader data is not. |
+
+## Why there is no signup confirmation
+
+`mailer_autoconfirm` is on, so an account is usable the moment it is created and no
+confirmation email is sent. This is a choice rather than an oversight, and it is
+worth writing down so nobody "fixes" it.
+
+**Custom SMTP is configured** — a Gmail account, sending as
+`Lesener, Do not Reply`. Password reset therefore works for any address, not only
+for project team members, which is what the built-in Supabase sender would have
+limited it to. Verified on 2026-09-03 by a reset mail delivered to a third-party
+address unrelated to both the sender and the project owner.
+
+So the usual argument for confirmation mail — that without a working sender nobody
+could ever recover an account — does not apply here. Recovery works.
+
+What remains is narrower, and is accepted knowingly:
+
+- **A mistyped address is unrecoverable.** Someone who signs up as
+  `jhon@gmial.com` gets in fine, and then can never reset their password, because
+  the mail goes somewhere they do not control. Confirmation-on-signup is really a
+  typo check, and that check is not being run.
+- **Anyone can sign up against an address they do not own.** The practical value of
+  doing so is close to nil — an account holds reading progress and a word list,
+  nothing more — and the true owner can take it back at any time with a password
+  reset, because they control the inbox.
+
+Turning confirmation on later is a dashboard setting and needs no code change.
 
 ## Reporting something
 
