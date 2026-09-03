@@ -1,6 +1,6 @@
 # Content seeding
 
-**Status:** Draft · **Feature:** 13 · **Date:** 2026-08-27
+**Status:** Implemented · **Feature:** 13 · **Date:** 2026-08-27
 
 ## Problem
 

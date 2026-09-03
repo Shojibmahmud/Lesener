@@ -1,6 +1,6 @@
 # Password reset
 
-**Status:** Draft · **Feature:** 1 · **Date:** 2026-08-13
+**Status:** Implemented · **Feature:** 1 · **Date:** 2026-08-13
 
 ## Problem
 

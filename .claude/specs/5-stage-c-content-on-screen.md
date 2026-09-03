@@ -1,6 +1,6 @@
 # Content on screen
 
-**Status:** Draft · **Feature:** 5 · **Date:** 2026-08-17
+**Status:** Implemented · **Feature:** 5 · **Date:** 2026-08-17
 
 ## Problem
 

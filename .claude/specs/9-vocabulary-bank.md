@@ -1,6 +1,6 @@
 # Vocabulary bank
 
-**Status:** Draft · **Feature:** 9 · **Date:** 2026-08-19
+**Status:** Implemented · **Feature:** 9 · **Date:** 2026-08-19
 
 ## Problem
 
