@@ -117,9 +117,9 @@ sitting in `public` (linter 0028/0029), which is why migration 6 exists.
 **It is not currently empty.** As of 2026-09-03 it reports exactly one WARN:
 `auth_leaked_password_protection` — Supabase Auth can check new passwords against
 HaveIBeenPwned and that check is switched off. It is a project setting rather than
-anything in this schema, it costs nothing to enable, and it belongs on the
-pre-launch list next to `mailer_autoconfirm`. Treat "one known WARN" as the baseline
-and anything else as a regression.
+anything in this schema, it costs nothing to enable, and it is one of the two items
+on the pre-launch list below. Treat "one known WARN" as the baseline and anything
+else as a regression.
 
 ## Known drift
 
@@ -161,15 +161,23 @@ Whatever the host:
 
 ### Before any public deployment
 
-Two blockers, both real:
+**Add the deployed origin to Authentication → URL Configuration.** This is the one
+that breaks things silently. Set the **Site URL** to the deployed origin and add it
+to the **redirect allowlist**; the app sends `redirectTo: window.location.origin` on
+a password reset, and an unregistered origin means the mail still sends but the link
+refuses to come home.
 
-1. **`mailer_autoconfirm` is `true` on the Supabase project, with no SMTP
-   configured.** Accounts are confirmed without an email ever being sent. That is a
-   development convenience; shipping it means anyone can create an account against
-   an address they do not own. Turn it off and configure a sender first.
-2. **Add the deployed origin to Authentication → URL Configuration.** The app sends
-   `redirectTo: window.location.origin` on a password reset; an unregistered origin
-   means reset links do not come home.
+If the host gives each preview build its own hostname — Vercel does — a reset
+started from a preview needs a wildcard entry such as
+`https://<project>-*.vercel.app/**`, or it will fail the same way.
+
+**Turn on leaked-password protection** while you are in there. It is free, it is one
+toggle, and it clears the project's one standing security advisor WARN.
+
+Mail is already handled: custom SMTP is configured and password reset reaches any
+address. Sign-up confirmation is deliberately off — see
+[security.md](security.md#why-there-is-no-signup-confirmation) for what that does
+and does not cost.
 
 Worth deciding at the same time, though neither blocks a launch:
 
