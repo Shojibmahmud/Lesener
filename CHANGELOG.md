@@ -15,9 +15,16 @@ pass, grouped by the feature they delivered rather than one line per commit.
   architecture decision records, `CONTRIBUTING.md`, `CLAUDE.md` and this file.
 - `LICENSE` (MIT).
 
+- `docs/deployment.md`, documenting the live Vercel deployment: build settings, the
+  Config-not-Secret rule for `VITE_` environment variables, how to verify a deploy
+  from the bundle itself, and the partial edge-IP unreachability seen from Bangladesh.
+
 ### Changed
+- **Deployed to <https://lesener.vercel.app>** (Vercel Hobby, built from `main`).
 - `supabase/README.md` reduced from 825 lines to a pointer; its reference material
   moved into `docs/` and its per-level seeding journal into `docs/content-log.md`.
+- `docs/operations.md` is now the backend runbook only; frontend deployment moved to
+  `docs/deployment.md`.
 
 ## [0.1.0] — 2026-09-03
 

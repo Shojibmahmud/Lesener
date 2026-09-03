@@ -6,7 +6,9 @@ in a vocabulary bank, finish a level to open the next one.
 
 Built to learn — both the German and the engineering.
 
-![The dashboard: ten levels, ten posts, progress across the top](docs/images/dashboard.jpg)
+**→ [lesener.vercel.app](https://lesener.vercel.app)**
+
+![The landing page](docs/images/landing.jpg)
 
 ## What it does
 
@@ -26,6 +28,8 @@ puts the dictionary inside the paragraph.
   than by the interface.
 - **Light and dark**, following your account rather than the browser, painted before
   the first frame so there is no white flash.
+
+![The dashboard: ten levels, ten posts, progress across the top](docs/images/dashboard.jpg)
 
 <table>
 <tr>
@@ -80,7 +84,8 @@ npm run dev              # http://localhost:5173
 | [data-model.md](docs/data-model.md) | Every table, column, constraint, policy, function, trigger and index |
 | [local-setup.md](docs/local-setup.md) | Clean checkout to running app, both paths, every environment variable |
 | [testing.md](docs/testing.md) | Both suites, what they cover, and the two harness details that are load-bearing |
-| [operations.md](docs/operations.md) | Applying migrations, deploying the Edge Function, seeding content, and what deploying the frontend would take |
+| [deployment.md](docs/deployment.md) | The live Vercel deploy: build settings, environment variables, how to verify one, and a network gotcha |
+| [operations.md](docs/operations.md) | Applying migrations, deploying the Edge Function, seeding content |
 | [security.md](docs/security.md) | The RLS posture, and the measured places where it is weaker than it looks |
 | [content-authoring.md](docs/content-authoring.md) | How German prose becomes database rows, and what ten levels taught |
 | [content-log.md](docs/content-log.md) | The per-level seeding and walkthrough journal |
@@ -89,7 +94,7 @@ npm run dev              # http://localhost:5173
 
 ## Project status
 
-**Feature-complete for what it set out to be, and not deployed.**
+**Live at <https://lesener.vercel.app>, and feature-complete for what it set out to be.**
 
 Working: all ten levels seeded and verified by checksum; sign-up, sign-in, password
 reset and change; account deletion that actually deletes; reading progress and level
@@ -100,9 +105,12 @@ Knowingly unfinished, and none of it hidden:
 - **The German has been read by nobody but the model that wrote it.** A wrong
   sentence in a learning app teaches the error. The mitigation is that correcting one
   is a file edit and a re-run.
-- **Not deployed anywhere**, and there is no CI. Two things would need doing first:
-  registering the deployed origin with Supabase Auth, and switching on
-  leaked-password protection.
+- **There is no CI.** Every push to `main` builds and goes live without running
+  `npm run lint` or `npm test` first.
+- **No staging.** Preview deployments talk to the same Supabase project as
+  production, so a preview writes real rows.
+- **No monitoring.** A production failure is invisible unless someone opens the
+  console.
 - **Sign-up sends no confirmation email**, by choice. Password reset works for any
   address, so accounts are recoverable — but a reader who mistypes their address
   cannot be rescued.

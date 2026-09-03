@@ -1,7 +1,7 @@
 # Operations
 
-The frontend is **not deployed anywhere**. The backend is. This is the runbook for
-the backend, plus an honest account of what deploying the frontend would take.
+This is the runbook for the backend — the Supabase project. The frontend has its
+own page: [deployment.md](deployment.md).
 
 ## The one-environment reality
 
@@ -142,49 +142,19 @@ can be re-seeded idempotently. What is *not* reproducible is reader data — acc
 
 ## Deploying the frontend
 
-**This has not been done.** There is no `vercel.json`, no `netlify.toml`, no
-`.github/workflows`, no Dockerfile. `dist/` exists locally but is gitignored.
+The frontend is live at <https://lesener.vercel.app>, built from `main` on Vercel's
+Hobby tier. Build settings, environment variables, the Supabase URL configuration it
+depends on, and how to verify a deploy are all in
+[deployment.md](deployment.md) — that is the runbook, this page is the backend one.
 
-It is a static Vite build with no server-side anything, so it is genuinely easy and
-genuinely free — Cloudflare Pages, Netlify and GitHub Pages all host this at no cost
-on their free tiers. Nothing here recommends one until you pick one.
-
-Whatever the host:
-
-- Build command `npm run build`, output directory `dist`.
-- Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the host's build
-  environment. They are inlined at build time, so a change means a rebuild, not a
-  restart.
-- Configure an SPA fallback (rewrite everything to `/index.html`). There is no
-  router today so nothing depends on it, but adding one later without this would
-  break every deep link.
-
-### Before any public deployment
-
-**Add the deployed origin to Authentication → URL Configuration.** This is the one
-that breaks things silently. Set the **Site URL** to the deployed origin and add it
-to the **redirect allowlist**; the app sends `redirectTo: window.location.origin` on
-a password reset, and an unregistered origin means the mail still sends but the link
-refuses to come home.
-
-If the host gives each preview build its own hostname — Vercel does — a reset
-started from a preview needs a wildcard entry such as
-`https://<project>-*.vercel.app/**`, or it will fail the same way.
-
-**Turn on leaked-password protection** while you are in there. It is free, it is one
-toggle, and it clears the project's one standing security advisor WARN.
-
-Mail is already handled: custom SMTP is configured and password reset reaches any
-address. Sign-up confirmation is deliberately off — see
-[security.md](security.md#why-there-is-no-signup-confirmation) for what that does
-and does not cost.
-
-Worth deciding at the same time, though neither blocks a launch:
+Two things carried over from before it shipped, neither of which blocks anything:
 
 - The level gate is not DRM ([security.md](security.md#the-level-gate-is-not-drm)).
 - Account deletion has no password-attempt limit
   ([security.md](security.md#no-limit-on-password-attempts)).
-- There is no CI, so nothing enforces `npm test` before a deploy.
+
+And one that now bites harder than it did: **there is no CI**, so nothing runs
+`npm run lint` or `npm test` before a push to `main` becomes the live site.
 
 ## What does not exist
 
