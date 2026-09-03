@@ -46,6 +46,9 @@ changed, also run `supabase/tests/rls_checks.sql` as one batch through MCP
 | `.claude/roadmaps/` | Staged implementation plans, `<n>-<kebab>-roadmap.md`. |
 | `docs/` | The documentation set. Start at [docs/](docs/). |
 
+Deployed at <https://lesener.vercel.app> (Vercel Hobby, builds from `main` on every
+push, no CI). See [docs/deployment.md](docs/deployment.md).
+
 ## Project rules that are easy to get wrong
 
 - **Content is applied with `execute_sql`, never `apply_migration`.** A prose

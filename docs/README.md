@@ -11,6 +11,7 @@ everything.
 | **The schema** | [data-model.md](data-model.md) | reference |
 | **The test suites** | [testing.md](testing.md) | reference + how-to |
 | **Running the backend** | [operations.md](operations.md) | how-to |
+| **The live deployment** | [deployment.md](deployment.md) | how-to |
 | **The security posture** | [security.md](security.md) | explanation |
 | **Writing German content** | [content-authoring.md](content-authoring.md) | how-to |
 | **What was seeded, when** | [content-log.md](content-log.md) | journal |
